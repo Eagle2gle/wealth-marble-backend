@@ -20,3 +20,6 @@ rebel.xml
 .gradle
 /build/
 .gradletasknamecache
+
+# env
+/src/main/resources/application-secret.properties
