@@ -53,7 +53,7 @@ jobs:
           script: |
             sudo docker rm -f $(docker ps -qa)
             sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/wealth-marble-server:${GITHUB_SHA::7}
-            docker run -d -p 8080:8080 --name wealth-marble-server ${{ secrets.DOCKERHUB_USERNAME }}/wealth-marble-server
+            docker run -d -p 8080:8080 --name wealth-marble-server ${{ secrets.DOCKERHUB_USERNAME }}/wealth-marble-server:${GITHUB_SHA::7}
             docker image prune -f
       - name: Slack Deploy bot 실행
         uses: 8398a7/action-slack@v3
