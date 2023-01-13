@@ -1,8 +1,6 @@
 name: Server CD
 
 on:
-  push:
-    branches: [ "main", "dev", "deploy-test" ]
   pull_request:
     branches: [ "main", "dev", "deploy-test"]
     types:
