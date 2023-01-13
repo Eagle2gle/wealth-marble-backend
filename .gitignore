@@ -1,4 +1,22 @@
+# macOS template
+*.DS_Store
+.AppleDouble
+.LSOverride
 
-src/.DS_Store
-src/main/.DS_Store
-.DS_Store
+# IntelliJ Project files
+.idea
+.idea/*.xml
+*.iml
+out
+gen
+build
+rebel.xml
+
+# Compiled files
+/target/
+**/target
+
+# Gradle
+.gradle
+/build/
+.gradletasknamecache
