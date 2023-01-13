@@ -2,6 +2,7 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '2.7.7'
 	id 'io.spring.dependency-management' version '1.1.0'
+	id 'jacoco'
 }
 
 group = 'io.eagle'
@@ -35,6 +36,41 @@ dependencies {
 	testImplementation 'org.springframework.security:spring-security-test'
 }
 
+jacoco {
+	toolVersion = '0.8.8'
+}
+
 tasks.named('test') {
 	useJUnitPlatform()
+	finalizedBy("jacocoTestReport")
+}
+
+tasks.jacocoTestReport {
+	reports {
+		html.enabled true
+		xml.enabled true
+	}
+
+	finalizedBy("jacocoTestCoverageVerification")
+}
+
+tasks.jacocoTestCoverageVerification {
+	violationRules {
+		rule {
+			enabled = true
+			element = "CLASS"
+
+			limit {
+				counter = 'LINE'
+				value = 'COVEREDRATIO'
+				minimum = 0.80
+			}
+
+			limit {
+				counter = "BRANCH"
+				value = "COVEREDRATIO"
+				minimum = 0.80
+			}
+		}
+	}
 }
