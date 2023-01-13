@@ -50,6 +50,8 @@ jobs:
           username: ${{ secrets.EC2_REMOTE_SSH_ID }}
           password: ${{ secrets.EC2_REMOTE_SSH_PASSWORD }}
           port: ${{ secrets.EC2_REMOTE_SSH_PORT }}
+          envs: GITHUB_SHA
+          script_stop: true
           script: |
             sudo docker rm -f $(docker ps -qa)
             sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/wealth-marble-server:${GITHUB_SHA::7}
@@ -63,3 +65,4 @@ jobs:
           fields: repo,commit,message,author
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_DEPLOY_URL }}
+        if: always()
