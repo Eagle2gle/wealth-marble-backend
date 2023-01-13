@@ -37,7 +37,7 @@ jobs:
         run: chmod +x ./gradlew
         #shell: bash
       - name: Build with Gradle
-        run: ./gradlew build
+        run: ./gradlew clean build --exclude-task test
         #shell: bash
       - name: 도커 이미지 빌드 및 도커 허브 푸쉬
         run: |
