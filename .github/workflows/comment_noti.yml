@@ -1,0 +1,32 @@
+name: PR Comment Notifiy
+
+on:
+  issue_comment:
+    types: [created, edited, deleted]
+
+jobs:
+  pull_request_comment:
+    if: contains(github.event.comment.html_url, '/pull/')
+    steps:
+      - name: Add comment
+        if: contains(github.event.comment.body, '/comment-done')   # check the comment if it contains the keywords
+        uses: actions/github-script@v5
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: 'Comment 감사합니다~ 💫'
+            })
+      - name : notify slack
+        uses: 8398a7/action-slack@v3
+        with:
+          status: custom
+          custom_payload: |
+            {
+              text : "PR Comment 달았습니다~"
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_DM_URL }}
