@@ -22,4 +22,4 @@ rebel.xml
 .gradletasknamecache
 
 # env
-/src/main/resources/application-mysql.properties
+/src/main/resources/application-mysql.yml
