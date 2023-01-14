@@ -1,6 +1,0 @@
-spring:
-  datasource:
-    url: jdbc:mysql://database-1.catj0gacaxgq.ap-northeast-2.rds.amazonaws.com:3306/eagle?autoReconnect=true
-    username : root
-    password: 19960910
-    driver-class-name: com.mysql.cj.jdbc.Driver
