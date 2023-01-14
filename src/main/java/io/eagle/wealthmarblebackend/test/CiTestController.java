@@ -11,6 +11,7 @@ public class CiTestController {
     @GetMapping("/test")
     public String test(){
         System.out.println("${spring.datasource.username}");
+        System.out.println("hi");
         return "spring ci test";
     }
 
