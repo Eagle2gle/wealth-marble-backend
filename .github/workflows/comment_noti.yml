@@ -7,6 +7,7 @@ on:
 jobs:
   pull_request_comment:
     if: ${{ github.event.issue.pull_request }}
+    runs-on: ubuntu-latest
     steps:
       - name: Add comment
         if: contains(github.event.comment.body, '/comment-done')   # check the comment if it contains the keywords
