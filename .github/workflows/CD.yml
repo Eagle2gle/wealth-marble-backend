@@ -27,10 +27,11 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
+
       - uses: actions/checkout@v3
-      - run: touch ./src/main/resources/application-mysql.properties
-      - run: echo "${{ secrets.APPLICATION }}" > ./src/main/resources/application-mysql.properties
-      - run: cat ./src/main/resources/application-mysql.properties
+      - name: 환경변수 입력
+        run: touch ./src/main/resources/application-mysql.yml || echo "${{ secrets.APPLICATION }}" > ./src/main/resources/application-mysql.yml
+
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew
         #shell: bash
@@ -43,6 +44,7 @@ jobs:
           docker build -t wealth-marble-server .
           docker tag wealth-marble-server ${{ secrets.DOCKERHUB_USERNAME }}/wealth-marble-server:${GITHUB_SHA::7}
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/wealth-marble-server:${GITHUB_SHA::7}
+
       - name: execute remot ssh
         uses: appleboy/ssh-action@master
         with:
@@ -57,6 +59,7 @@ jobs:
             sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/wealth-marble-server:${GITHUB_SHA::7}
             docker run -d -p 8080:8080 --name wealth-marble-server ${{ secrets.DOCKERHUB_USERNAME }}/wealth-marble-server:${GITHUB_SHA::7}
             docker image prune -f
+
       - name: Slack Deploy bot 실행
         uses: 8398a7/action-slack@v3
         with:
