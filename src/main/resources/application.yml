@@ -2,3 +2,8 @@ spring:
   profiles:
     include:
       - mysql
+  jpa:
+    properties:
+      hibernate:
+        validator:
+          apply_to_ddl: false
