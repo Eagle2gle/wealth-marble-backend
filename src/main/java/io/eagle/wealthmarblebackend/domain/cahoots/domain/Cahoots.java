@@ -1,6 +1,7 @@
 package io.eagle.wealthmarblebackend.domain.cahoots.domain;
 
 import io.eagle.wealthmarblebackend.common.BaseEntity;
+import io.eagle.wealthmarblebackend.domain.user.domain.User;
 import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
@@ -8,14 +9,16 @@ import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 @Entity
-public class CahootsEntity extends BaseEntity {
+public class Cahoots extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     // TODO : FK 추가
-    private Integer adminId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "admin_id")
+    private User user;
 
     @NotNull
     @Enumerated(EnumType.STRING)
