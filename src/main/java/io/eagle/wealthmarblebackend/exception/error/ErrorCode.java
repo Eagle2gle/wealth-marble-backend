@@ -10,10 +10,12 @@ public enum ErrorCode {
 
     // Global
     INVALID_PARAMETER(HttpStatus.BAD_REQUEST, "잘못된 파라미터입니다."),
-    INVALID_DTO(HttpStatus.BAD_REQUEST, "잘못된 요청입니다."),
+    INVALID_REQUEST_BODY(HttpStatus.BAD_REQUEST, "잘못된 요청입니다."),
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "내부 서버 오류입니다."),
 
     // User
+
+    // Security
 
 
     // Vacation
