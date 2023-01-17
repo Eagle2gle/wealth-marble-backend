@@ -1,20 +1,26 @@
 package io.eagle.wealthmarblebackend.exception.error;
 
+import lombok.Builder;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 
 @Getter
-@RequiredArgsConstructor
+@Builder
 public class ErrorResponse {
     private final HttpStatus status;
     private final String message;
 
     public static ErrorResponse of(ErrorCode errorCode) {
-        return new ErrorResponse(errorCode.getHttpStatus(), errorCode.getMessage());
+        return ErrorResponse.builder()
+                .status(errorCode.getHttpStatus())
+                .message(errorCode.getMessage())
+                .build();
     }
 
     public static ErrorResponse of(ErrorCode errorCode, String message) {
-        return new ErrorResponse(errorCode.getHttpStatus(), message);
+        return ErrorResponse.builder()
+                .status(errorCode.getHttpStatus())
+                .message(message)
+                .build();
     }
 }
