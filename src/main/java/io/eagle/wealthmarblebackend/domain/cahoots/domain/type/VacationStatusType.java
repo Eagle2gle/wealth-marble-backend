@@ -1,4 +1,4 @@
-package io.eagle.wealthmarblebackend.domain.cahoots.domain;
+package io.eagle.wealthmarblebackend.domain.cahoots.domain.type;
 
 public enum VacationStatusType {
     CAHOOTS_BEFORE,
