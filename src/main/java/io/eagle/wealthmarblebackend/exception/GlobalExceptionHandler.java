@@ -56,13 +56,15 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     /*
      * Request parameter DTO 검증 에러
      */
-//    @ExceptionHandler(BindException.class)
-//    public ResponseEntity<Object> handleRequestParamValidException(BindException e, HttpServletRequest request) {
-//        ErrorCode errorCode = ErrorCode.INVALID_PARAMETER;
-//        String message = makeBindingErrorMessage(e.getBindingResult());
-//        log.warn("[{}] Request Parameter 이상.. {}", request.getRequestURI(), message );
-//        return handleExceptionInternal(errorCode, message);
-//    }
+    @Override
+    public ResponseEntity<Object> handleBindException(
+            BindException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+
+        ErrorCode errorCode = ErrorCode.INVALID_PARAMETER;
+        String message = makeBindingErrorMessage(ex.getBindingResult());
+        log.warn("Request Parameter 이상.. {}",  message );
+        return handleExceptionInternal(errorCode, message);
+    }
 //
 //    /*
 //     * Request Body 검증 에러
@@ -89,7 +91,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     /*
      * 이외 에러
      */
-    @ExceptionHandler({Exception.class})
+    @ExceptionHandler(Exception.class)
     public ResponseEntity<Object> handleUnExpectedException(Exception e) {
         ErrorCode errorCode = ErrorCode.INTERNAL_SERVER_ERROR;
         log.error(e.getMessage());
