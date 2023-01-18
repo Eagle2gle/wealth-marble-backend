@@ -3,6 +3,8 @@ spring:
     include:
       - mysql
   jpa:
+    hibernate:
+      ddl-auto: create
     properties:
       hibernate:
         validator:
