@@ -16,7 +16,6 @@ public class CahootsController {
 
     @PostMapping
     public ResponseEntity createCahoots (@Valid CreateCahootsDto createCahootsDto){
-        System.out.println(createCahootsDto.toString());
         cahootsService.create(createCahootsDto);
         return ResponseEntity.ok().build();
     }
