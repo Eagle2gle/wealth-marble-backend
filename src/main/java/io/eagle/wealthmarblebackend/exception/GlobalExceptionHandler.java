@@ -29,7 +29,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(ApiException.class)
     public ResponseEntity<Object> handleCustomException(ApiException e) {
         ErrorCode errorCode = e.getErrorCode();
-        log.warn("{}", errorCode.getMessage() );
+        log.warn(errorCode.getMessage());
         return handleExceptionInternal(errorCode);
     }
 
@@ -58,8 +58,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
      */
     @Override
     public ResponseEntity<Object> handleBindException(
-            BindException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
-
+            BindException ex,
+            HttpHeaders headers,
+            HttpStatus status,
+            WebRequest request
+    ) {
         ErrorCode errorCode = ErrorCode.INVALID_PARAMETER;
         String message = makeBindingErrorMessage(ex.getBindingResult());
         log.warn("Request Parameter 이상.. {}",  message );
