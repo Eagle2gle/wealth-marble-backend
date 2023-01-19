@@ -18,50 +18,50 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
-@NoArgsConstructor
+@Builder
 public class CreateCahootsDto {
 
     @Length(min = 5, max = 15, message = "공모 제목을 5자 이상, 15자 미만으로 작성해주세요.")
-    private String title;
+    private final String title;
 
-    private ThemeLocationType themeLocation;
+    private final ThemeLocationType themeLocation;
 
-    private ThemeBuildingType themeBuilding;
+    private final ThemeBuildingType themeBuilding;
 
     @NotBlank(message = "휴가지 위치를 확인해주세요.")
-    private String location;
+    private final String location;
 
     @Positive(message = "휴가지 건설 예상 시간을 확인해주세요.")
-    private Integer expectedMonth;
+    private final Integer expectedMonth;
 
     @Positive(message = "휴가지 건설 진행 예상 비용을 확인해주세요.")
     @Max(100000000)
-    private Long expectedTotalCost;
+    private final Long expectedTotalCost;
 
     @NotBlank
     @Size(min = 10, max = 50, message = "휴가지 아이디어 간략 소개를 10자이상 50자 이하로 작성해주세요.")
-    private String shortDescription;
+    private final String shortDescription;
 
     @NotBlank
     @Size(min = 5, max = 4000, message = "휴가지 아이디어 상세 소개를 5자이상 4000자 이하로 작성해주세요.")
-    private String descritption;
+    private final String descritption;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private LocalDate stockStart;
+    private final LocalDate stockStart;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private LocalDate stockEnd;
+    private final LocalDate stockEnd;
 
     @Positive(message = "1주당 공모 가격을 작성해주세요.")
-    private Long stockPrice;
+    private final Long stockPrice;
 
     @Positive(message = "목표 공모 주식 수를 작성해주세요.")
-    private Integer stockNum;
+    private final Integer stockNum;
 
     // TODO : hashtag
 
     // TODO : picture url
-    private List<MultipartFile> images = new ArrayList<>();
+    private final List<MultipartFile> images = new ArrayList<>();
 
     /*
      * 공모 시작 및 마감 날짜 검증

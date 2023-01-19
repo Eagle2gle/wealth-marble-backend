@@ -30,7 +30,7 @@ public class Cahoots extends BaseEntity {
 
     @NotNull
     @Enumerated(EnumType.STRING)
-    private VacationStatusType vacationStatusType; // CAHOOTS_BEFORE, CAHOOTS_ONGOING, CAHOOTS_OPEN, CAHOOTS_CLOSE
+    private VacationStatusType status; // CAHOOTS_BEFORE, CAHOOTS_ONGOING, CAHOOTS_OPEN, CAHOOTS_CLOSE
 
     @NotNull
     @Length(min = 5, max = 15)
@@ -63,7 +63,7 @@ public class Cahoots extends BaseEntity {
     private Stock stock;
 
     public Cahoots(CreateCahootsDto createCahootsDto) {
-        this.vacationStatusType = VacationStatusType.CAHOOTS_BEFORE;
+        this.status = VacationStatusType.CAHOOTS_BEFORE;
         this.title = createCahootsDto.getTitle();
         this.theme = new Theme(createCahootsDto.getThemeLocation(), createCahootsDto.getThemeBuilding());
         this.location = createCahootsDto.getLocation();
