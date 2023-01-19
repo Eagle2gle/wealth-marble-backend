@@ -23,3 +23,6 @@ rebel.xml
 
 # env
 /src/main/resources/application-mysql.yml
+
+# generated
+/src/main/generated/
