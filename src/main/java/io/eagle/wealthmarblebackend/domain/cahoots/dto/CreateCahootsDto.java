@@ -2,6 +2,8 @@ package io.eagle.wealthmarblebackend.domain.cahoots.dto;
 
 import io.eagle.wealthmarblebackend.domain.cahoots.domain.type.ThemeBuildingType;
 import io.eagle.wealthmarblebackend.domain.cahoots.domain.type.ThemeLocationType;
+import io.eagle.wealthmarblebackend.exception.ApiException;
+import io.eagle.wealthmarblebackend.exception.error.ErrorCode;
 import lombok.*;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -60,4 +62,18 @@ public class CreateCahootsDto {
 
     // TODO : picture url
     private List<MultipartFile> images = new ArrayList<>();
+
+    /*
+     * 공모 시작 및 마감 날짜 검증
+     * */
+    public void validateCahootsPeriod(){
+        LocalDate today = LocalDate.now();
+        if(
+                this.stockStart.compareTo(this.stockEnd) > 0
+                        || today.compareTo(this.stockStart) > 0
+                        || today.compareTo(this.stockEnd) > 0
+        ) {
+            throw new ApiException(ErrorCode.VACATION_PERIOD_INVALID);
+        }
+    }
 }
