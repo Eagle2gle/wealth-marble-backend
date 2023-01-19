@@ -1,0 +1,64 @@
+package io.eagle.wealthmarblebackend.domain.cahoots.dto;
+
+import io.eagle.wealthmarblebackend.domain.cahoots.domain.type.ThemeBuildingType;
+import io.eagle.wealthmarblebackend.domain.cahoots.domain.type.ThemeLocationType;
+import lombok.Builder;
+import lombok.Data;
+import org.hibernate.validator.constraints.Length;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.validation.constraints.Max;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.Size;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+
+@Data
+@Builder
+public class DetailCahootsDto {
+
+//    @Length(min = 5, max = 15, message = "공모 제목을 5자 이상, 15자 미만으로 작성해주세요.")
+    private final String title;
+
+    private final ThemeLocationType themeLocation;
+
+    private final ThemeBuildingType themeBuilding;
+
+//    @NotBlank(message = "휴가지 위치를 확인해주세요.")
+    private final String location;
+
+//    @Positive(message = "휴가지 건설 예상 시간을 확인해주세요.")
+    private final Integer expectedMonth;
+
+//    @Positive(message = "휴가지 건설 진행 예상 비용을 확인해주세요.")
+//    @Max(100000000)
+    private final Long expectedTotalCost;
+
+    @NotBlank
+//    @Size(min = 10, max = 50, message = "휴가지 아이디어 간략 소개를 10자이상 50자 이하로 작성해주세요.")
+    private final String shortDescription;
+
+    @NotBlank
+//    @Size(min = 5, max = 4000, message = "휴가지 아이디어 상세 소개를 5자이상 4000자 이하로 작성해주세요.")
+    private final String descritption;
+
+//    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private final LocalDate stockStart;
+
+//    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private final LocalDate stockEnd;
+
+//    @Positive(message = "1주당 공모 가격을 작성해주세요.")
+    private final Long stockPrice;
+
+//    @Positive(message = "목표 공모 주식 수를 작성해주세요.")
+    private final Integer competitionRate;
+
+    // TODO : hashtag
+
+    // TODO : picture url
+    private final List<MultipartFile> images = new ArrayList<>();
+}
