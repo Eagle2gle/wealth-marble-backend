@@ -23,10 +23,10 @@ public class CahootsController {
 
     @GetMapping("/{cahootsId}")
     public List<Object> getCahootsInfo(@PathVariable("cahootsId") Long cahootsId, @RequestParam("info") String info){
-        if(info == "detail"){
+        if(info.equals("detail")){
             return cahootsService.getDetail(cahootsId);
-        } else if (info == "history") {
-            return = cahootsService.getHistory(cahootsId);
+        } else if (info.equals("history")) {
+            return cahootsService.getHistory(cahootsId);
         }
     }
 }

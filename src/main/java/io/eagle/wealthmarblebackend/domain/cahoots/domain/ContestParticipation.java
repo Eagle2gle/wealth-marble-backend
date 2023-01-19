@@ -1,12 +1,14 @@
 package io.eagle.wealthmarblebackend.domain.cahoots.domain;
 
+import io.eagle.wealthmarblebackend.common.BaseEntity;
 import lombok.Data;
 
 import javax.persistence.*;
+import javax.validation.constraints.Positive;
 
 @Entity
 @Data
-public class ContestParticipation {
+public class ContestParticipation extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -16,7 +18,10 @@ public class ContestParticipation {
 //    @JoinColumn(name = "user_id")
 //    private User user;
 
-    @OneToMany(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "cahoots_id")
-    private Cahoots cahoots;
+    private Vacation vacations;
+
+    @Positive
+    private Integer amount;
 }
