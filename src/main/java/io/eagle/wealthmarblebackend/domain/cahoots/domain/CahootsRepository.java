@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface CahootsRepository extends JpaRepository<Cahoots, Long> {
-    Optional<Cahoots> findByTitle(String title);
-    List<Cahoots> findByStatus(VacationStatusType type);
+public interface CahootsRepository extends JpaRepository<Vacation, Long> {
+    Optional<Vacation> findByTitle(String title);
+    List<Vacation> findByStatus(VacationStatusType type);
 }
