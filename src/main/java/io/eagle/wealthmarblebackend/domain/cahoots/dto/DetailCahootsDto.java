@@ -3,6 +3,7 @@ package io.eagle.wealthmarblebackend.domain.cahoots.dto;
 import io.eagle.wealthmarblebackend.domain.cahoots.domain.Vacation;
 import io.eagle.wealthmarblebackend.domain.cahoots.domain.type.ThemeBuildingType;
 import io.eagle.wealthmarblebackend.domain.cahoots.domain.type.ThemeLocationType;
+import io.eagle.wealthmarblebackend.domain.cahoots.domain.type.VacationStatusType;
 import lombok.Builder;
 import lombok.Data;
 
@@ -33,6 +34,8 @@ public class DetailCahootsDto {
     @NotBlank
     private final String descritption;
 
+    private final VacationStatusType status;
+
     private final LocalDate stockStart;
 
     private final LocalDate stockEnd;
@@ -60,6 +63,7 @@ public class DetailCahootsDto {
                 .competitionRate(competitionRate)
                 .themeLocation(vacation.getTheme().getThemeLocation())
                 .themeBuilding(vacation.getTheme().getThemeBuilding())
+                .status(vacation.getStatus())
                 .build();
 
     }
