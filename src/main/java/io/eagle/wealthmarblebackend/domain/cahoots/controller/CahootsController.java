@@ -1,6 +1,8 @@
 package io.eagle.wealthmarblebackend.domain.cahoots.controller;
 
 import io.eagle.wealthmarblebackend.domain.cahoots.dto.CreateCahootsDto;
+import io.eagle.wealthmarblebackend.domain.cahoots.dto.DetailCahootsDto;
+import io.eagle.wealthmarblebackend.domain.cahoots.dto.HistoryCahootsDto;
 import io.eagle.wealthmarblebackend.domain.cahoots.service.CahootsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -21,12 +23,13 @@ public class CahootsController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/{cahootsId}")
-    public List<Object> getCahootsInfo(@PathVariable("cahootsId") Long cahootsId, @RequestParam("info") String info){
-        if(info.equals("detail")){
-            return cahootsService.getDetail(cahootsId);
-        } else if (info.equals("history")) {
-            return cahootsService.getHistory(cahootsId);
-        }
+    @GetMapping(value = "/{cahootsId}", params = "info=detail")
+    public DetailCahootsDto getCahootsDetailInfo(@PathVariable("cahootsId") Long cahootsId){
+        return cahootsService.getDetail(cahootsId);
     }
+
+//    @GetMapping(value = "/{cahootsId}", params = "info=history")
+//    public HistoryCahootsDto getCahootsHistoryInfo(@PathVariable("cahootsId") Long cahootsId){
+////        return cahootsService.getHistory(cahootsId);
+//    }
 }
