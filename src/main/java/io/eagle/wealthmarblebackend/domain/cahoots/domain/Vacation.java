@@ -17,7 +17,7 @@ import javax.validation.constraints.NotNull;
 @Entity
 @Data
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Cahoots extends BaseEntity {
+public class Vacation extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -62,7 +62,7 @@ public class Cahoots extends BaseEntity {
     @Embedded
     private Stock stock;
 
-    public Cahoots(CreateCahootsDto createCahootsDto) {
+    public Vacation(CreateCahootsDto createCahootsDto) {
         this.status = VacationStatusType.CAHOOTS_BEFORE;
         this.title = createCahootsDto.getTitle();
         this.theme = new Theme(createCahootsDto.getThemeLocation(), createCahootsDto.getThemeBuilding());
