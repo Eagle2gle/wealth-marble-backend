@@ -10,6 +10,8 @@ import io.eagle.wealthmarblebackend.exception.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 
 @Service
 @RequiredArgsConstructor
@@ -28,8 +30,8 @@ public class CahootsService {
 
     public DetailCahootsDto getDetail(Long cahootsId) {
         Vacation vacation = vacationRepository.findById(cahootsId).orElseThrow(()-> new ApiException(ErrorCode.VACATION_NOT_FOUND));
-        Integer currentTotalStock = contestParticipationRepository.getCurrentContestNum(cahootsId).get(0);
-        Integer competitionRate = currentTotalStock * 100 / vacation.getStock().getNum();
+        Integer currentTotalStock = contestParticipationRepository.getCurrentContestNum(cahootsId).orElse(0);
+        Integer competitionRate =  currentTotalStock * 100 / vacation.getStock().getNum();
         return DetailCahootsDto.toDto(vacation, competitionRate);
     }
 
