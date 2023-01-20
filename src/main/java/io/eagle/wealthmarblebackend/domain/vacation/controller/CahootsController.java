@@ -26,8 +26,4 @@ public class CahootsController {
         return cahootsService.getDetail(cahootsId);
     }
 
-//    @GetMapping(value = "/{cahootsId}", params = "info=history")
-//    public HistoryCahootsDto getCahootsHistoryInfo(@PathVariable("cahootsId") Long cahootsId){
-////        return cahootsService.getHistory(cahootsId);
-//    }
 }
