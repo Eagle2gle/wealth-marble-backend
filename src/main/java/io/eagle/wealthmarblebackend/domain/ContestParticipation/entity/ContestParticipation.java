@@ -1,7 +1,7 @@
-package io.eagle.wealthmarblebackend.domain.cahoots.domain.ContestParticipation;
+package io.eagle.wealthmarblebackend.domain.ContestParticipation.entity;
 
 import io.eagle.wealthmarblebackend.common.BaseEntity;
-import io.eagle.wealthmarblebackend.domain.cahoots.domain.Vacation;
+import io.eagle.wealthmarblebackend.domain.vacation.entity.Vacation;
 import lombok.Data;
 
 import javax.persistence.*;

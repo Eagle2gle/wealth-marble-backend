@@ -1,4 +1,4 @@
-package io.eagle.wealthmarblebackend.domain.cahoots.domain.ContestParticipation;
+package io.eagle.wealthmarblebackend.domain.ContestParticipation.repository;
 
 import java.util.List;
 import java.util.Optional;

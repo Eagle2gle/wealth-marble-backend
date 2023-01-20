@@ -1,7 +1,7 @@
-package io.eagle.wealthmarblebackend.domain.cahoots.domain.ContestParticipation;
+package io.eagle.wealthmarblebackend.domain.ContestParticipation.repository;
 
 import com.querydsl.jpa.JPQLQueryFactory;
-import io.eagle.wealthmarblebackend.domain.cahoots.domain.ContestParticipation.QContestParticipation;
+import io.eagle.wealthmarblebackend.domain.ContestParticipation.entity.QContestParticipation;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
