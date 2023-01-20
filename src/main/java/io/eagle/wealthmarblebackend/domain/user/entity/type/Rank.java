@@ -1,5 +1,10 @@
 package io.eagle.wealthmarblebackend.domain.user.entity.type;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
+@Getter
+@RequiredArgsConstructor
 public enum Rank {
 
     NAMJAK("NAMJAK"),
@@ -8,7 +13,5 @@ public enum Rank {
     WHOJAK("WHOJAK"),
     GONGJAK("GONGJAK");
 
-    private String type;
-
-    Rank(String type) { this.type = type; }
+    private final String key;
 }
