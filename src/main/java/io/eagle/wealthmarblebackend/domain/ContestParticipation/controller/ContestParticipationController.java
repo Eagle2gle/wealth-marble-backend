@@ -6,15 +6,17 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
-@RequestMapping("/api/contest-participation")
+@RequestMapping("/api/cahoots")
 @RequiredArgsConstructor
 public class ContestParticipationController {
     private final ContestParticipationService contestParticipationService;
 
-    @PostMapping
-    public ResponseEntity participateCahoots (@PathVariable("cahootsId") Long cahootsId, @RequestBody Integer stocks){
-        contestParticipationService.participate(cahootsId, stocks);
+    @PostMapping("/{cahootsId}")
+    public ResponseEntity participateCahoots (@PathVariable("cahootsId") Long cahootsId, @RequestBody Map<String,Integer> param){
+        contestParticipationService.participate(cahootsId, param.get("stocks"));
         return ResponseEntity.ok().build();
     }
 }
