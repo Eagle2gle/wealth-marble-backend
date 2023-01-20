@@ -97,7 +97,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Object> handleUnExpectedException(Exception e) {
         ErrorCode errorCode = ErrorCode.INTERNAL_SERVER_ERROR;
-        log.error(e.getMessage());
+        StringBuffer errorBuff = new StringBuffer();
+        errorBuff.append(e.getMessage()).append("\n");
+        for (StackTraceElement element : e.getStackTrace()){
+            errorBuff.append("\tat ").append(element).append("\n");
+        }
+        log.error(errorBuff.toString());
         return handleExceptionInternal(errorCode);
     }
     private ResponseEntity<Object> handleExceptionInternal(ErrorCode errorCode) {
