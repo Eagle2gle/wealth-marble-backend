@@ -1,4 +1,4 @@
-package io.eagle.wealthmarblebackend.domain.user.domain.type;
+package io.eagle.wealthmarblebackend.domain.user.entity.type;
 
 public enum Rank {
 

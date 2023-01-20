@@ -1,10 +1,8 @@
-package io.eagle.wealthmarblebackend.domain.user.domain;
+package io.eagle.wealthmarblebackend.domain.user.entity;
 
-import io.eagle.wealthmarblebackend.domain.user.domain.type.ProviderType;
-import io.eagle.wealthmarblebackend.domain.user.domain.type.Rank;
+import io.eagle.wealthmarblebackend.domain.user.entity.type.ProviderType;
+import io.eagle.wealthmarblebackend.domain.user.entity.type.Rank;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
