@@ -1,8 +1,9 @@
 package io.eagle.wealthmarblebackend.domain.cahoots.domain.ContestParticipation;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ContestParticipationRepositoryCustom {
-    List<Integer> getCurrentContestNum(Long cahootsId);
+    Optional<Integer> getCurrentContestNum(Long cahootsId);
 
 }
