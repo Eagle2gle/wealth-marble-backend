@@ -31,6 +31,8 @@ public class CahootsService {
         Integer currentTotalStock = contestParticipationRepository.getCurrentContestNum(cahootsId).get(0);
         Integer competitionRate = currentTotalStock * 100 / vacation.getStock().getNum();
         return DetailCahootsDto.toDto(vacation, competitionRate);
+        Vacation newCahoots = new Vacation(createCahootsDto);
+        cahootsRepository.save(newCahoots);
     }
 
 

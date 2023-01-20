@@ -32,4 +32,5 @@ public class CahootsController {
 //    public HistoryCahootsDto getCahootsHistoryInfo(@PathVariable("cahootsId") Long cahootsId){
 ////        return cahootsService.getHistory(cahootsId);
 //    }
+
 }
