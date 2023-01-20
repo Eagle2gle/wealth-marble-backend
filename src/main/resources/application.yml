@@ -9,3 +9,6 @@ spring:
       hibernate:
         validator:
           apply_to_ddl: false
+  devtools:
+    restart:
+      enabled: true
