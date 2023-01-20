@@ -10,8 +10,6 @@ import io.eagle.wealthmarblebackend.exception.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 
 @Service
 @RequiredArgsConstructor
