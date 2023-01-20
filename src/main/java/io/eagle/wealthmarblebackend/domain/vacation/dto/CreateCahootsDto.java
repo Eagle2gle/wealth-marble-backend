@@ -1,7 +1,7 @@
-package io.eagle.wealthmarblebackend.domain.cahoots.dto;
+package io.eagle.wealthmarblebackend.domain.vacation.dto;
 
-import io.eagle.wealthmarblebackend.domain.cahoots.domain.type.ThemeBuildingType;
-import io.eagle.wealthmarblebackend.domain.cahoots.domain.type.ThemeLocationType;
+import io.eagle.wealthmarblebackend.domain.vacation.entity.type.ThemeBuildingType;
+import io.eagle.wealthmarblebackend.domain.vacation.entity.type.ThemeLocationType;
 import io.eagle.wealthmarblebackend.exception.ApiException;
 import io.eagle.wealthmarblebackend.exception.error.ErrorCode;
 import lombok.*;

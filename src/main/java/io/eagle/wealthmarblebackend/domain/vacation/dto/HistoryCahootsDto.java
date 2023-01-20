@@ -1,4 +1,4 @@
-package io.eagle.wealthmarblebackend.domain.cahoots.dto;
+package io.eagle.wealthmarblebackend.domain.vacation.dto;
 
 public class HistoryCahootsDto {
 }

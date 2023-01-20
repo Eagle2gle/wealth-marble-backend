@@ -1,7 +1,7 @@
-package io.eagle.wealthmarblebackend.domain.cahoots.domain.embeded;
+package io.eagle.wealthmarblebackend.domain.vacation.entity.embeded;
 
-import io.eagle.wealthmarblebackend.domain.cahoots.domain.type.ThemeBuildingType;
-import io.eagle.wealthmarblebackend.domain.cahoots.domain.type.ThemeLocationType;
+import io.eagle.wealthmarblebackend.domain.vacation.entity.type.ThemeBuildingType;
+import io.eagle.wealthmarblebackend.domain.vacation.entity.type.ThemeLocationType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

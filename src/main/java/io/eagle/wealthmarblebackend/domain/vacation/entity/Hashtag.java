@@ -1,4 +1,4 @@
-package io.eagle.wealthmarblebackend.domain.cahoots.domain;
+package io.eagle.wealthmarblebackend.domain.vacation.entity;
 
 import lombok.Data;
 

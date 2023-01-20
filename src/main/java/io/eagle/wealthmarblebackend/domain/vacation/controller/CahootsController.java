@@ -1,9 +1,8 @@
-package io.eagle.wealthmarblebackend.domain.cahoots.controller;
+package io.eagle.wealthmarblebackend.domain.vacation.controller;
 
-import io.eagle.wealthmarblebackend.domain.cahoots.dto.CreateCahootsDto;
-import io.eagle.wealthmarblebackend.domain.cahoots.dto.DetailCahootsDto;
-import io.eagle.wealthmarblebackend.domain.cahoots.dto.HistoryCahootsDto;
-import io.eagle.wealthmarblebackend.domain.cahoots.service.CahootsService;
+import io.eagle.wealthmarblebackend.domain.vacation.dto.CreateCahootsDto;
+import io.eagle.wealthmarblebackend.domain.vacation.dto.DetailCahootsDto;
+import io.eagle.wealthmarblebackend.domain.vacation.service.CahootsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

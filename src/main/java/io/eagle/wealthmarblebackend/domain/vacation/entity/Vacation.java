@@ -1,13 +1,13 @@
-package io.eagle.wealthmarblebackend.domain.cahoots.domain;
+package io.eagle.wealthmarblebackend.domain.vacation.entity;
 
-import io.eagle.wealthmarblebackend.common.BaseEntity;
-import io.eagle.wealthmarblebackend.domain.cahoots.domain.embeded.Period;
+import io.eagle.wealthmarblebackend.common.BaseEntity;;
 import io.eagle.wealthmarblebackend.domain.cahoots.domain.embeded.Plan;
-import io.eagle.wealthmarblebackend.domain.cahoots.domain.embeded.Stock;
-import io.eagle.wealthmarblebackend.domain.cahoots.domain.embeded.Theme;
-import io.eagle.wealthmarblebackend.domain.cahoots.domain.type.VacationStatusType;
-import io.eagle.wealthmarblebackend.domain.cahoots.dto.CreateCahootsDto;
 import io.eagle.wealthmarblebackend.domain.user.domain.User;
+import io.eagle.wealthmarblebackend.domain.vacation.dto.CreateCahootsDto;
+import io.eagle.wealthmarblebackend.domain.vacation.entity.embeded.Period;
+import io.eagle.wealthmarblebackend.domain.vacation.entity.embeded.Stock;
+import io.eagle.wealthmarblebackend.domain.vacation.entity.embeded.Theme;
+import io.eagle.wealthmarblebackend.domain.vacation.entity.type.VacationStatusType;
 import lombok.*;
 import org.hibernate.validator.constraints.Length;
 

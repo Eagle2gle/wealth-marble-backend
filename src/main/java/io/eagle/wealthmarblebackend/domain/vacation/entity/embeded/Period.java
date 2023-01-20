@@ -1,4 +1,4 @@
-package io.eagle.wealthmarblebackend.domain.cahoots.domain.embeded;
+package io.eagle.wealthmarblebackend.domain.vacation.entity.embeded;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

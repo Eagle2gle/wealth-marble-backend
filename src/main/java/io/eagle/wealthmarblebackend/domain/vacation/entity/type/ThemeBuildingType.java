@@ -1,4 +1,4 @@
-package io.eagle.wealthmarblebackend.domain.cahoots.domain.type;
+package io.eagle.wealthmarblebackend.domain.vacation.entity.type;
 
 public enum ThemeBuildingType {
     VACATION_SPOT("VACATION_SPOT"),

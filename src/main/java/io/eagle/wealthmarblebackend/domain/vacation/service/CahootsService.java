@@ -1,10 +1,10 @@
-package io.eagle.wealthmarblebackend.domain.cahoots.service;
+package io.eagle.wealthmarblebackend.domain.vacation.service;
 
-import io.eagle.wealthmarblebackend.domain.cahoots.domain.ContestParticipation.ContestParticipationRepository;
-import io.eagle.wealthmarblebackend.domain.cahoots.domain.VacationRepository;
-import io.eagle.wealthmarblebackend.domain.cahoots.domain.Vacation;
-import io.eagle.wealthmarblebackend.domain.cahoots.dto.CreateCahootsDto;
-import io.eagle.wealthmarblebackend.domain.cahoots.dto.DetailCahootsDto;
+import io.eagle.wealthmarblebackend.domain.ContestParticipation.repository.ContestParticipationRepository;
+import io.eagle.wealthmarblebackend.domain.vacation.dto.CreateCahootsDto;
+import io.eagle.wealthmarblebackend.domain.vacation.dto.DetailCahootsDto;
+import io.eagle.wealthmarblebackend.domain.vacation.entity.Vacation;
+import io.eagle.wealthmarblebackend.domain.vacation.repository.VacationRepository;
 import io.eagle.wealthmarblebackend.exception.ApiException;
 import io.eagle.wealthmarblebackend.exception.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
