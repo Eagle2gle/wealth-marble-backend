@@ -1,5 +1,7 @@
 package io.eagle.wealthmarblebackend.domain.ContestParticipation.service;
 
+import io.eagle.wealthmarblebackend.domain.ContestParticipation.dto.HistoryCahootsDto;
+import io.eagle.wealthmarblebackend.domain.ContestParticipation.dto.HistoryCahootsDtoList;
 import io.eagle.wealthmarblebackend.domain.ContestParticipation.entity.ContestParticipation;
 import io.eagle.wealthmarblebackend.domain.ContestParticipation.repository.ContestParticipationRepository;
 import io.eagle.wealthmarblebackend.domain.vacation.entity.Vacation;
@@ -10,6 +12,10 @@ import io.eagle.wealthmarblebackend.exception.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -37,4 +43,10 @@ public class ContestParticipationService {
         contestParticipationRepository.save(contestParticipation);
     }
 
+    public List<HistoryCahootsDto> getHistory(Long cahootsId) {
+        // 공모 조회
+        List<ContestParticipation> contestParticipation = contestParticipationRepository.findAllByCahootsId(cahootsId);
+        // dto 형식으로 만들기
+        return contestParticipation.stream().map(HistoryCahootsDto::toDto).collect(Collectors.toList());
+    }
 }
