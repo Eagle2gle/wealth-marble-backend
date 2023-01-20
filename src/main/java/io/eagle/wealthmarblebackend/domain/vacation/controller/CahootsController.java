@@ -22,6 +22,12 @@ public class CahootsController {
         return ResponseEntity.ok().build();
     }
 
+    @PostMapping
+    public ResponseEntity participateCahoots (@PathVariable("cahootsId") Long cahootsId, @RequestBody Integer stocks){
+        cahootsService.participate(cahootsId, stocks);
+        return ResponseEntity.ok().build();
+    }
+
     @GetMapping(value = "/{cahootsId}", params = "info=detail")
     public DetailCahootsDto getCahootsDetailInfo(@PathVariable("cahootsId") Long cahootsId){
         return cahootsService.getDetail(cahootsId);
