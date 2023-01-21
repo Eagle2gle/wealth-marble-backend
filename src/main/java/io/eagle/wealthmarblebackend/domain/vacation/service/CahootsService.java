@@ -1,5 +1,8 @@
 package io.eagle.wealthmarblebackend.domain.vacation.service;
 
+import io.eagle.wealthmarblebackend.domain.picture.service.PictureService;
+import io.eagle.wealthmarblebackend.domain.picture.entity.Picture;
+import io.eagle.wealthmarblebackend.domain.picture.repository.PictureRepository;
 import io.eagle.wealthmarblebackend.domain.ContestParticipation.repository.ContestParticipationRepository;
 import io.eagle.wealthmarblebackend.domain.vacation.dto.CreateCahootsDto;
 import io.eagle.wealthmarblebackend.domain.vacation.dto.DetailCahootsDto;
@@ -9,7 +12,9 @@ import io.eagle.wealthmarblebackend.exception.ApiException;
 import io.eagle.wealthmarblebackend.exception.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -20,12 +25,11 @@ public class CahootsService {
     private final VacationRepository vacationRepository;
     private final ContestParticipationRepository contestParticipationRepository;
 
-    public void create(CreateCahootsDto createCahootsDto) {
+    public Vacation create(CreateCahootsDto createCahootsDto) {
         createCahootsDto.validateCahootsPeriod();
-        // TODO : 사진 업로드
         // TODO : 요청 사용자의 정보 추가
         Vacation newVacation = new Vacation(createCahootsDto);
-        vacationRepository.save(newVacation);
+        return vacationRepository.save(newVacation);
     }
 
     public DetailCahootsDto getDetail(Long cahootsId) {
