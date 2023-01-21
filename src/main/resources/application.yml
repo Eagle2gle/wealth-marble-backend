@@ -9,3 +9,7 @@ spring:
       hibernate:
         validator:
           apply_to_ddl: false
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
