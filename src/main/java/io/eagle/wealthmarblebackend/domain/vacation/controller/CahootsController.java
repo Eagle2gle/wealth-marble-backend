@@ -22,7 +22,9 @@ public class CahootsController {
     @PostMapping
     public ResponseEntity createCahoots (@Valid CreateCahootsDto createCahootsDto){
         Vacation vacation = cahootsService.create(createCahootsDto);
-        pictureService.saveFiles(createCahootsDto.getImages(), vacation);
+        if(!createCahootsDto.isImagesEmpty()) {
+            pictureService.saveFiles(createCahootsDto.getImages(), vacation);
+        }
         return ResponseEntity.ok().build();
     }
 

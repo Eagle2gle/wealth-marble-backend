@@ -75,4 +75,8 @@ public class CreateCahootsDto {
             throw new ApiException(ErrorCode.VACATION_PERIOD_INVALID);
         }
     }
+
+    public boolean isImagesEmpty(){
+        return images == null || images.isEmpty();
+    }
 }
