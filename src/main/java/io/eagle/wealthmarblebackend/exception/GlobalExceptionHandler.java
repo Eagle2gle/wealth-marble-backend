@@ -33,6 +33,13 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return handleExceptionInternal(errorCode);
     }
 
+    @ExceptionHandler(S3Exception.class)
+    public ResponseEntity<Object> handleS3UploadException(S3Exception e) {
+        ErrorCode errorCode = e.getErrorCode();
+        log.warn(makeStackTraceToString(e));
+        return handleExceptionInternal(errorCode);
+    }
+
     /*
      * Request parameter가 올바르지 못한 경우 에러
      */
@@ -97,12 +104,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Object> handleUnExpectedException(Exception e) {
         ErrorCode errorCode = ErrorCode.INTERNAL_SERVER_ERROR;
-        StringBuffer errorBuff = new StringBuffer();
-        errorBuff.append(e.getMessage()).append("\n");
-        for (StackTraceElement element : e.getStackTrace()){
-            errorBuff.append("\tat ").append(element).append("\n");
-        }
-        log.error(errorBuff.toString());
+        log.error(makeStackTraceToString(e));
         return handleExceptionInternal(errorCode);
     }
     private ResponseEntity<Object> handleExceptionInternal(ErrorCode errorCode) {
@@ -130,4 +132,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return stringBuilder.toString();
     }
 
+    private String makeStackTraceToString(Exception e) {
+        StringBuffer errorBuff = new StringBuffer();
+        errorBuff.append(e.getMessage()).append("\n");
+        for (StackTraceElement element : e.getStackTrace()){
+            errorBuff.append("\tat ").append(element).append("\n");
+        }
+        return errorBuff.toString();
+    }
 }
