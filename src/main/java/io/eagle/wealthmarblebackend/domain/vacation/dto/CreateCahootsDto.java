@@ -60,8 +60,7 @@ public class CreateCahootsDto {
 
     // TODO : hashtag
 
-    // TODO : picture url
-    private final List<MultipartFile> images = new ArrayList<>();
+    private final List<MultipartFile> images;
 
     /*
      * 공모 시작 및 마감 날짜 검증
