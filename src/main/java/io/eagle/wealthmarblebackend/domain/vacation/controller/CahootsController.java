@@ -1,5 +1,6 @@
 package io.eagle.wealthmarblebackend.domain.vacation.controller;
 
+import io.eagle.wealthmarblebackend.domain.vacation.dto.BreifCahootsDtoList;
 import io.eagle.wealthmarblebackend.domain.vacation.dto.CreateCahootsDto;
 import io.eagle.wealthmarblebackend.domain.vacation.dto.DetailCahootsDto;
 import io.eagle.wealthmarblebackend.domain.vacation.service.CahootsService;
@@ -27,7 +28,7 @@ public class CahootsController {
     }
 
     @GetMapping(params = "status=ongoing")
-    public BreifCahootsListDto getBreifCahootsInfo(){
-        return cahootsService.getBreifList();
+    public BreifCahootsDtoList getBreifCahootsInfo(@PathVariable Integer offset){
+        return cahootsService.getBreifList(offset);
     }
 }
