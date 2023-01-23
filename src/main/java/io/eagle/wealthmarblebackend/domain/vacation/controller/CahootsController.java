@@ -26,4 +26,8 @@ public class CahootsController {
         return cahootsService.getDetail(cahootsId);
     }
 
+    @GetMapping(params = "status=ongoing")
+    public BreifCahootsListDto getBreifCahootsInfo(){
+        return cahootsService.getBreifList();
+    }
 }
