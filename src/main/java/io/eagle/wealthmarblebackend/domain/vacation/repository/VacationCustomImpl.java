@@ -38,6 +38,7 @@ public class VacationCustomImpl implements VacationCustom {
         QVacation vacation = QVacation.vacation;
         QContestParticipation cp = QContestParticipation.contestParticipation;
         // TODO : picture 추가
+        // TODO : no limit, offset 검토
         return queryFactory
                 .select(Projections.fields(BreifCahootsDto.class,
                         vacation.id,
