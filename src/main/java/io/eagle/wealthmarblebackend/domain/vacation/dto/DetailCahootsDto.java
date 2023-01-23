@@ -16,6 +16,7 @@ import java.util.List;
 @Builder
 public class DetailCahootsDto {
 
+    private final Long id;
     private final String title;
 
     private final ThemeLocationType themeLocation;
@@ -51,6 +52,7 @@ public class DetailCahootsDto {
 
     public static DetailCahootsDto toDto(Vacation vacation, Integer competitionRate) {
         return DetailCahootsDto.builder()
+                .id(vacation.getId())
                 .title(vacation.getTitle())
                 .descritption(vacation.getDescritption())
                 .location(vacation.getLocation())
