@@ -1,4 +1,4 @@
-package io.eagle.wealthmarblebackend.domain.picture.service;
+package io.eagle.wealthmarblebackend.domain.picture;
 
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.SdkClientException;
@@ -25,25 +25,24 @@ import java.util.List;
 @Component
 @ComponentScan(basePackages = "io.eagle.wealthmarblebackend")
 @RequiredArgsConstructor
-public class PictureService {
+public class S3 {
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
     private final AmazonS3 amazonS3;
     private final PictureRepository pictureRepository;
 
-    public void saveFiles(List<MultipartFile> images, Vacation vacation) {
-        List<Picture> imageUrls = this.getUrlsFromS3(images, vacation);
+    public void saveFiles(List<MultipartFile> images, String type) {
+        List<Picture> imageUrls = this.getUrlsFromS3(images, type);
         pictureRepository.saveAll(imageUrls);
     }
 
-    public List<Picture> getUrlsFromS3(List<MultipartFile> images, Vacation vacation) {
+    public List<Picture> getUrlsFromS3(List<MultipartFile> images, String type) {
         List<Picture> imageUrls = new ArrayList<Picture>();
         for (MultipartFile image:images) {
             String url = this.uploadFile(image);
             imageUrls.add( Picture.builder()
                             .url(url)
-                            .type("VACATION")
-                            .vacation(vacation)
+                            .type(type)
                             .build());
         }
         return imageUrls;
@@ -64,13 +63,6 @@ public class PictureService {
             throw new S3Exception(ErrorCode.S3_UPLOAD_ERROR);
         } catch (IOException e) {
             throw new S3Exception(ErrorCode.S3_UPLOAD_ERROR);
-        }
-        //object 정보 가져오기
-        ListObjectsV2Result listObjectsV2Result = amazonS3.listObjectsV2(bucket);
-        List<S3ObjectSummary> objectSummaries = listObjectsV2Result.getObjectSummaries();
-
-        for (S3ObjectSummary object: objectSummaries) {
-            log.info("object = " + object.toString());
         }
         return amazonS3.getUrl(bucket, fileName).toString();
     }
