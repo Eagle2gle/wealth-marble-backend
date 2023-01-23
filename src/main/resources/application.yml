@@ -17,3 +17,7 @@ spring:
   devtools:
     restart:
       enabled: true
+
+my:
+  int:
+    page : 10
