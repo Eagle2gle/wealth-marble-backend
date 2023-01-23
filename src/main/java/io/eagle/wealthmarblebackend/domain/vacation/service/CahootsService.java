@@ -3,9 +3,12 @@ package io.eagle.wealthmarblebackend.domain.vacation.service;
 import io.eagle.wealthmarblebackend.domain.picture.S3;
 import io.eagle.wealthmarblebackend.domain.picture.entity.Picture;
 import io.eagle.wealthmarblebackend.domain.ContestParticipation.repository.ContestParticipationRepository;
+import io.eagle.wealthmarblebackend.domain.vacation.dto.BreifCahootsDto;
+import io.eagle.wealthmarblebackend.domain.vacation.dto.BreifCahootListDto;
 import io.eagle.wealthmarblebackend.domain.vacation.dto.CreateCahootsDto;
 import io.eagle.wealthmarblebackend.domain.vacation.dto.DetailCahootsDto;
 import io.eagle.wealthmarblebackend.domain.vacation.entity.Vacation;
+import io.eagle.wealthmarblebackend.domain.vacation.entity.type.VacationStatusType;
 import io.eagle.wealthmarblebackend.domain.vacation.repository.VacationRepository;
 import io.eagle.wealthmarblebackend.exception.ApiException;
 import io.eagle.wealthmarblebackend.exception.error.ErrorCode;
@@ -14,6 +17,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
+import java.util.List;
+
 import java.util.List;
 
 
@@ -43,5 +48,8 @@ public class CahootsService {
         return DetailCahootsDto.toDto(vacation, competitionRate);
     }
 
-
+    public BreifCahootListDto getBreifList(Integer offset){
+        List<BreifCahootsDto> breifCahootsList = vacationRepository.getVacationsBreif(VacationStatusType.CAHOOTS_ONGOING, offset);
+        return new BreifCahootListDto(breifCahootsList);
+    }
 }
