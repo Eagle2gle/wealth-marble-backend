@@ -1,5 +1,7 @@
 package io.eagle.wealthmarblebackend.domain.vacation.service;
 
+import io.eagle.wealthmarblebackend.domain.picture.S3;
+import io.eagle.wealthmarblebackend.domain.picture.entity.Picture;
 import io.eagle.wealthmarblebackend.domain.ContestParticipation.repository.ContestParticipationRepository;
 import io.eagle.wealthmarblebackend.domain.vacation.dto.CreateCahootsDto;
 import io.eagle.wealthmarblebackend.domain.vacation.dto.DetailCahootsDto;
@@ -21,12 +23,17 @@ public class CahootsService {
 
     private final VacationRepository vacationRepository;
     private final ContestParticipationRepository contestParticipationRepository;
+    private final S3 s3;
 
-    public Vacation create(CreateCahootsDto createCahootsDto) {
+    public void create(CreateCahootsDto createCahootsDto) {
         createCahootsDto.validateCahootsPeriod();
         // TODO : 요청 사용자의 정보 추가
         Vacation newVacation = new Vacation(createCahootsDto);
-        return vacationRepository.save(newVacation);
+        if(!createCahootsDto.isImagesEmpty()) {
+            List<Picture> pictureList = s3.getUrlsFromS3(createCahootsDto.getImages(), "VACATION");
+            newVacation.setPictureList(pictureList);
+        }
+        vacationRepository.save(newVacation);
     }
 
     public DetailCahootsDto getDetail(Long cahootsId) {
