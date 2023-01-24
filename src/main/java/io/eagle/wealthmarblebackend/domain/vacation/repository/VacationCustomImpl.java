@@ -19,7 +19,7 @@ public class VacationCustomImpl implements VacationCustom {
     private final JPQLQueryFactory queryFactory;
 
     @Value("${eagle.int.page}")
-    private Integer page;용
+    private Integer page;
 
     public List<?> getVacationDetail(Long cahootsId){
         QVacation vacation = QVacation.vacation;
@@ -48,12 +48,7 @@ public class VacationCustomImpl implements VacationCustom {
                         ExpressionUtils.as(vacation.stock.price,"stockPrice"),
                         ExpressionUtils.as(vacation.stockPeriod.start, "stockStart"),
                         ExpressionUtils.as(vacation.stockPeriod.end, "stockEnd"),
-                        ExpressionUtils.as(
-                                (cp.stocks.sum().coalesce(0)
-                                        .multiply(100)
-                                        .divide(vacation.stock.num)),
-                                "competitionRate"
-                        )))
+                        ExpressionUtils.as((cp.stocks.sum().coalesce(0).multiply(100).divide(vacation.stock.num)),"competitionRate")))
                 .from(vacation)
                 .leftJoin(vacation.historyList, cp)
                 .where(vacation.status.eq(status))
