@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface VacationCustom {
     List<?> getVacationDetail(Long cahootsId);
-    List<BreifCahootsDto> getVacationsBreif(VacationStatusType status, Integer offset);
+    List<BreifCahootsDto> getVacationsBreif(VacationStatusType[] statusTypes, Integer offset);
 }

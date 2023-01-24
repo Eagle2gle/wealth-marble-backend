@@ -34,7 +34,7 @@ public class VacationCustomImpl implements VacationCustom {
                 .fetch();
     }
 
-    public List<BreifCahootsDto> getVacationsBreif(VacationStatusType status, Integer offset){
+    public List<BreifCahootsDto> getVacationsBreif(VacationStatusType[] statusTypes, Integer offset){
         QVacation vacation = QVacation.vacation;
         QContestParticipation cp = QContestParticipation.contestParticipation;
         // TODO : picture 추가
@@ -51,7 +51,7 @@ public class VacationCustomImpl implements VacationCustom {
                         ExpressionUtils.as((cp.stocks.sum().coalesce(0).multiply(100).divide(vacation.stock.num)),"competitionRate")))
                 .from(vacation)
                 .leftJoin(vacation.historyList, cp)
-                .where(vacation.status.eq(status))
+                .where(vacation.status.in(statusTypes))
                 .groupBy(vacation.id)
                 .orderBy(cp.stocks.sum().desc())
                 .limit(this.page)
