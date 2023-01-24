@@ -52,4 +52,9 @@ public class CahootsService {
         List<BreifCahootsDto> breifCahootsList = vacationRepository.getVacationsBreif(types, offset);
         return BreifCahootListDto.builder().result(breifCahootsList).build();
     }
+
+    public BreifV2CahootListDto getBreifV2List(VacationStatusType[] types, Integer offset){
+        List<BreifV2CahootsDto> breifCahootsList = vacationRepository.getVacationsBreifV2(types, offset);
+        return BreifV2CahootListDto.builder().result(breifCahootsList).build();
+    }
 }
