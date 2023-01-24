@@ -39,14 +39,14 @@ public class ContestParticipationService {
         }
         // 사용자 정보에서 잔액 차감 + 공모 참여 현황에 추가
         // TODO : 사용자 잔액 차감
-        ContestParticipation contestParticipation = new ContestParticipation(userId, vacation, stocks);
+        ContestParticipation contestParticipation = ContestParticipation.builder().userId(userId).vacation(vacation).stocks(stocks).build();
         contestParticipationRepository.save(contestParticipation);
     }
 
-    public List<HistoryCahootsDto> getHistory(Long cahootsId) {
+    public HistoryCahootsDtoList getHistory(Long cahootsId) {
         // 공모 조회
         List<ContestParticipation> contestParticipation = contestParticipationRepository.findAllByCahootsId(cahootsId);
         // dto 형식으로 만들기
-        return contestParticipation.stream().map(HistoryCahootsDto::toDto).collect(Collectors.toList());
+        return HistoryCahootsDtoList.builder().result(contestParticipation.stream().map(HistoryCahootsDto::toDto).collect(Collectors.toList())).build();
     }
 }

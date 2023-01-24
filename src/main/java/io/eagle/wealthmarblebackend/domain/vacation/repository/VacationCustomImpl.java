@@ -18,8 +18,8 @@ public class VacationCustomImpl implements VacationCustom {
 
     private final JPQLQueryFactory queryFactory;
 
-    @Value("${my.int.page}")
-    private Integer page;
+    @Value("${eagle.int.page}")
+    private Integer page;용
 
     public List<?> getVacationDetail(Long cahootsId){
         QVacation vacation = QVacation.vacation;

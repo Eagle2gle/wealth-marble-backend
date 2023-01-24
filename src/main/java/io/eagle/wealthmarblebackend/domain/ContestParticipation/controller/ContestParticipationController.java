@@ -25,7 +25,6 @@ public class ContestParticipationController {
 
     @GetMapping(value = "/{cahootsId}", params = "info=history")
     public HistoryCahootsDtoList getCahootsHistoryInfo(@PathVariable("cahootsId") Long cahootsId){
-        List<HistoryCahootsDto> result = contestParticipationService.getHistory(cahootsId);
-        return new HistoryCahootsDtoList(result);
+        return contestParticipationService.getHistory(cahootsId);
     }
 }
