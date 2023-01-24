@@ -8,6 +8,7 @@ import com.querydsl.jpa.JPQLQueryFactory;
 import io.eagle.wealthmarblebackend.domain.ContestParticipation.entity.QContestParticipation;
 import io.eagle.wealthmarblebackend.domain.vacation.dto.BreifCahootsDto;
 import io.eagle.wealthmarblebackend.domain.vacation.dto.BreifV2CahootsDto;
+import io.eagle.wealthmarblebackend.domain.vacation.dto.InfoConditionDto;
 import io.eagle.wealthmarblebackend.domain.vacation.entity.QVacation;
 import io.eagle.wealthmarblebackend.domain.vacation.entity.type.VacationStatusType;
 import lombok.RequiredArgsConstructor;
@@ -42,7 +43,7 @@ public class VacationCustomImpl implements VacationCustom {
                 .fetch();
     }
 
-    public List<BreifCahootsDto> getVacationsBreif(VacationStatusType[] statusTypes, Integer offset){
+    public List<BreifCahootsDto> getVacationsBreif(InfoConditionDto infoConditionDto){
         // TODO : picture 추가
         // TODO : no limit, offset 검토
         return queryFactory
@@ -58,16 +59,16 @@ public class VacationCustomImpl implements VacationCustom {
                         ExpressionUtils.as((cp.stocks.sum().coalesce(0).multiply(100).divide(vacation.stock.num)),"competitionRate")))
                 .from(vacation)
                 .leftJoin(vacation.historyList, cp)
-                .where(isInStatus(statusTypes))
+                .where(isInStatus(infoConditionDto.getTypes()), hasKeyword(infoConditionDto.getKeyword()))
                 .groupBy(vacation.id)
                 .orderBy(cp.stocks.sum().desc())
                 .limit(this.page)
-                .offset(offset * this.page)
+                .offset(infoConditionDto.getOffset() * this.page)
                 .fetch();
 
     }
 
-    public List<BreifV2CahootsDto> getVacationsBreifV2(VacationStatusType[] statusTypes, Integer offset){
+    public List<BreifV2CahootsDto> getVacationsBreifV2(InfoConditionDto infoConditionDto){
         // TODO : picture 추가
         // TODO : no limit, offset 검토
         return queryFactory
@@ -78,15 +79,20 @@ public class VacationCustomImpl implements VacationCustom {
                         ExpressionUtils.as(vacation.stockPeriod.start, "stockStart"),
                         ExpressionUtils.as(vacation.stockPeriod.end, "stockEnd")))
                 .from(vacation)
-                .where(isInStatus(statusTypes), isInDateRange())
+                .where(isInStatus(infoConditionDto.getTypes()), isInDateRange())
                 .orderBy(vacation.stockPeriod.end.asc())
                 .limit(this.page)
-                .offset(offset * this.page)
+                .offset(infoConditionDto.getOffset() * this.page)
                 .fetch();
     }
 
     private BooleanExpression isInStatus(VacationStatusType[] statusTypes){
         return statusTypes.length > 0 ? vacation.status.in(statusTypes) : null;
+    }
+
+    private BooleanExpression hasKeyword(String keyword){
+        // TODO : 검색 범위 논의
+        return keyword != null && !keyword.isBlank() ? (vacation.title.contains(keyword).or(vacation.location.contains(keyword))) : null;
     }
 
     private BooleanExpression isInDateRange(){
