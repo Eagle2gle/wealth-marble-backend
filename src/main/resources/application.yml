@@ -21,3 +21,4 @@ spring:
 eagle:
   int:
     page : 10
+    before_day : 30
