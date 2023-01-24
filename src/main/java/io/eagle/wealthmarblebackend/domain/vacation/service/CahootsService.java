@@ -45,13 +45,13 @@ public class CahootsService {
         return DetailCahootsDto.toDto(vacation, competitionRate);
     }
 
-    public BreifCahootsListDto getBreifList(VacationStatusType[] types, Integer offset){
-        List<BreifCahootsDto> breifCahootsList = vacationRepository.getVacationsBreif(types, offset);
+    public BreifCahootsListDto getBreifList(InfoConditionDto infoConditionDto){
+        List<BreifCahootsDto> breifCahootsList = vacationRepository.getVacationsBreif(infoConditionDto);
         return BreifCahootsListDto.builder().result(breifCahootsList).build();
     }
 
-    public BreifV2CahootsListDto getBreifV2List(VacationStatusType[] types, Integer offset){
-        List<BreifV2CahootsDto> breifCahootsList = vacationRepository.getVacationsBreifV2(types, offset);
+    public BreifV2CahootsListDto getBreifV2List(InfoConditionDto infoConditionDto){
+        List<BreifV2CahootsDto> breifCahootsList = vacationRepository.getVacationsBreifV2(infoConditionDto);
         return BreifV2CahootsListDto.builder().result(breifCahootsList).build();
     }
 }
