@@ -9,6 +9,6 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @Builder
-public class BreifCahootListDto {
+public class BreifCahootsListDto {
     List<BreifCahootsDto> result;
 }
