@@ -39,4 +39,10 @@ public class CahootsController {
         VacationStatusType[] types = new VacationStatusType[]{VacationStatusType.CAHOOTS_CLOSE, VacationStatusType.CAHOOTS_OPEN};
         return cahootsService.getBreifList(types, 0);
     }
+
+    @GetMapping(params = "status=ending-soon")
+    public BreifV2CahootListDto getEndedSoonBreifCahootsInfo(){
+        VacationStatusType[] types = new VacationStatusType[]{VacationStatusType.CAHOOTS_ONGOING};
+        return cahootsService.getBreifV2List(types, 0);
+    }
 }
