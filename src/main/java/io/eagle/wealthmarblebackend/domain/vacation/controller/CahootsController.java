@@ -3,6 +3,7 @@ package io.eagle.wealthmarblebackend.domain.vacation.controller;
 import io.eagle.wealthmarblebackend.domain.vacation.dto.BreifCahootListDto;
 import io.eagle.wealthmarblebackend.domain.vacation.dto.CreateCahootsDto;
 import io.eagle.wealthmarblebackend.domain.vacation.dto.DetailCahootsDto;
+import io.eagle.wealthmarblebackend.domain.vacation.entity.type.VacationStatusType;
 import io.eagle.wealthmarblebackend.domain.vacation.service.CahootsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +30,13 @@ public class CahootsController {
 
     @GetMapping(params = "status=ongoing")
     public BreifCahootListDto getBreifCahootsInfo(Integer offset){
-        return cahootsService.getBreifList(offset);
+        VacationStatusType[] types = new VacationStatusType[]{VacationStatusType.CAHOOTS_ONGOING};
+        return cahootsService.getBreifList(types, offset);
+    }
+
+    @GetMapping(params = "status=ended")
+    public BreifCahootListDto getEndedBreifCahootsInfo(){
+        VacationStatusType[] types = new VacationStatusType[]{VacationStatusType.CAHOOTS_CLOSE, VacationStatusType.CAHOOTS_OPEN};
+        return cahootsService.getBreifList(types, 0);
     }
 }
