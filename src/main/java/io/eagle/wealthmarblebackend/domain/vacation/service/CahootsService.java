@@ -48,8 +48,8 @@ public class CahootsService {
         return DetailCahootsDto.toDto(vacation, competitionRate);
     }
 
-    public BreifCahootListDto getBreifList(Integer offset){
-        List<BreifCahootsDto> breifCahootsList = vacationRepository.getVacationsBreif(VacationStatusType.CAHOOTS_ONGOING, offset);
+    public BreifCahootListDto getBreifList(VacationStatusType[] types, Integer offset){
+        List<BreifCahootsDto> breifCahootsList = vacationRepository.getVacationsBreif(types, offset);
         return BreifCahootListDto.builder().result(breifCahootsList).build();
     }
 }
