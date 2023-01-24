@@ -1,6 +1,7 @@
 package io.eagle.wealthmarblebackend.domain.vacation.repository;
 
 import io.eagle.wealthmarblebackend.domain.vacation.dto.BreifCahootsDto;
+import io.eagle.wealthmarblebackend.domain.vacation.dto.BreifV2CahootsDto;
 import io.eagle.wealthmarblebackend.domain.vacation.entity.type.VacationStatusType;
 
 import java.util.List;

@@ -3,10 +3,7 @@ package io.eagle.wealthmarblebackend.domain.vacation.service;
 import io.eagle.wealthmarblebackend.domain.picture.S3;
 import io.eagle.wealthmarblebackend.domain.picture.entity.Picture;
 import io.eagle.wealthmarblebackend.domain.ContestParticipation.repository.ContestParticipationRepository;
-import io.eagle.wealthmarblebackend.domain.vacation.dto.BreifCahootsDto;
-import io.eagle.wealthmarblebackend.domain.vacation.dto.BreifCahootListDto;
-import io.eagle.wealthmarblebackend.domain.vacation.dto.CreateCahootsDto;
-import io.eagle.wealthmarblebackend.domain.vacation.dto.DetailCahootsDto;
+import io.eagle.wealthmarblebackend.domain.vacation.dto.*;
 import io.eagle.wealthmarblebackend.domain.vacation.entity.Vacation;
 import io.eagle.wealthmarblebackend.domain.vacation.entity.type.VacationStatusType;
 import io.eagle.wealthmarblebackend.domain.vacation.repository.VacationRepository;
@@ -48,13 +45,13 @@ public class CahootsService {
         return DetailCahootsDto.toDto(vacation, competitionRate);
     }
 
-    public BreifCahootListDto getBreifList(VacationStatusType[] types, Integer offset){
+    public BreifCahootsListDto getBreifList(VacationStatusType[] types, Integer offset){
         List<BreifCahootsDto> breifCahootsList = vacationRepository.getVacationsBreif(types, offset);
-        return BreifCahootListDto.builder().result(breifCahootsList).build();
+        return BreifCahootsListDto.builder().result(breifCahootsList).build();
     }
 
-    public BreifV2CahootListDto getBreifV2List(VacationStatusType[] types, Integer offset){
+    public BreifV2CahootsListDto getBreifV2List(VacationStatusType[] types, Integer offset){
         List<BreifV2CahootsDto> breifCahootsList = vacationRepository.getVacationsBreifV2(types, offset);
-        return BreifV2CahootListDto.builder().result(breifCahootsList).build();
+        return BreifV2CahootsListDto.builder().result(breifCahootsList).build();
     }
 }

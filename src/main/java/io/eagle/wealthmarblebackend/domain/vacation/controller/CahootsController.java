@@ -1,6 +1,7 @@
 package io.eagle.wealthmarblebackend.domain.vacation.controller;
 
-import io.eagle.wealthmarblebackend.domain.vacation.dto.BreifCahootListDto;
+import io.eagle.wealthmarblebackend.domain.vacation.dto.BreifCahootsListDto;
+import io.eagle.wealthmarblebackend.domain.vacation.dto.BreifV2CahootsListDto;
 import io.eagle.wealthmarblebackend.domain.vacation.dto.CreateCahootsDto;
 import io.eagle.wealthmarblebackend.domain.vacation.dto.DetailCahootsDto;
 import io.eagle.wealthmarblebackend.domain.vacation.entity.type.VacationStatusType;
@@ -29,19 +30,19 @@ public class CahootsController {
     }
 
     @GetMapping(params = "status=ongoing")
-    public BreifCahootListDto getBreifCahootsInfo(Integer offset){
+    public BreifCahootsListDto getBreifCahootsInfo(Integer offset){
         VacationStatusType[] types = new VacationStatusType[]{VacationStatusType.CAHOOTS_ONGOING};
         return cahootsService.getBreifList(types, offset);
     }
 
     @GetMapping(params = "status=ended")
-    public BreifCahootListDto getEndedBreifCahootsInfo(){
+    public BreifCahootsListDto getEndedBreifCahootsInfo(){
         VacationStatusType[] types = new VacationStatusType[]{VacationStatusType.CAHOOTS_CLOSE, VacationStatusType.CAHOOTS_OPEN};
         return cahootsService.getBreifList(types, 0);
     }
 
     @GetMapping(params = "status=ending-soon")
-    public BreifV2CahootListDto getEndedSoonBreifCahootsInfo(){
+    public BreifV2CahootsListDto getEndedSoonBreifCahootsInfo(){
         VacationStatusType[] types = new VacationStatusType[]{VacationStatusType.CAHOOTS_ONGOING};
         return cahootsService.getBreifV2List(types, 0);
     }

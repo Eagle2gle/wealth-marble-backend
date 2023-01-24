@@ -7,6 +7,7 @@ import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.JPQLQueryFactory;
 import io.eagle.wealthmarblebackend.domain.ContestParticipation.entity.QContestParticipation;
 import io.eagle.wealthmarblebackend.domain.vacation.dto.BreifCahootsDto;
+import io.eagle.wealthmarblebackend.domain.vacation.dto.BreifV2CahootsDto;
 import io.eagle.wealthmarblebackend.domain.vacation.entity.QVacation;
 import io.eagle.wealthmarblebackend.domain.vacation.entity.type.VacationStatusType;
 import lombok.RequiredArgsConstructor;
@@ -70,7 +71,7 @@ public class VacationCustomImpl implements VacationCustom {
         // TODO : picture 추가
         // TODO : no limit, offset 검토
         return queryFactory
-                .select(Projections.fields(BreifCahootsDto.class,
+                .select(Projections.fields(BreifV2CahootsDto.class,
                         vacation.id,
                         vacation.title,
                         vacation.status,
