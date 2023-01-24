@@ -30,6 +30,7 @@ public class ContestParticipation extends BaseEntity {
     @Positive
     private Integer stocks;
 
+    @Builder
     public ContestParticipation(Long userId, Vacation vacation, Integer stocks) {
         this.stocks = stocks;
         this.vacation = vacation;

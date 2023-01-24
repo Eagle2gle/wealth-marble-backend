@@ -7,6 +7,7 @@ import io.eagle.wealthmarblebackend.domain.picture.entity.Picture;
 import io.eagle.wealthmarblebackend.domain.user.domain.User;
 import io.eagle.wealthmarblebackend.domain.vacation.dto.CreateCahootsDto;
 import io.eagle.wealthmarblebackend.domain.vacation.entity.embeded.Period;
+import io.eagle.wealthmarblebackend.domain.vacation.entity.embeded.Plan;
 import io.eagle.wealthmarblebackend.domain.vacation.entity.embeded.Stock;
 import io.eagle.wealthmarblebackend.domain.vacation.entity.embeded.Theme;
 import io.eagle.wealthmarblebackend.domain.vacation.entity.type.VacationStatusType;
@@ -73,16 +74,29 @@ public class Vacation extends BaseEntity {
     @OneToMany(mappedBy="vacation", fetch = FetchType.LAZY)
     private Set<ContestParticipation> historyList = new LinkedHashSet<>();
 
+    @Builder
     public Vacation(CreateCahootsDto createCahootsDto) {
         this.status = VacationStatusType.CAHOOTS_BEFORE;
         this.title = createCahootsDto.getTitle();
-        this.theme = new Theme(createCahootsDto.getThemeLocation(), createCahootsDto.getThemeBuilding());
+        this.theme = Theme.builder()
+                        .location(createCahootsDto.getThemeLocation())
+                        .building(createCahootsDto.getThemeBuilding())
+                        .build();
         this.location = createCahootsDto.getLocation();
-        this.plan = new Plan(createCahootsDto.getExpectedMonth(), createCahootsDto.getExpectedTotalCost() * 10000);
+        this.plan = Plan.builder()
+                        .expectedMonth(createCahootsDto.getExpectedMonth())
+                        .expectedTotalCost(createCahootsDto.getExpectedTotalCost() * 10000)
+                        .build();
         this.shortDescription = createCahootsDto.getShortDescription();
         this.descritption = createCahootsDto.getDescritption();
-        this.stockPeriod = new Period(createCahootsDto.getStockStart(), createCahootsDto.getStockEnd());
-        this.stock = new Stock(createCahootsDto.getStockPrice(), createCahootsDto.getStockNum());
+        this.stockPeriod = Period.builder()
+                            .start(createCahootsDto.getStockStart())
+                            .end(createCahootsDto.getStockEnd())
+                            .build();
+        this.stock = Stock.builder()
+                        .price(createCahootsDto.getStockPrice())
+                        .num(createCahootsDto.getStockNum())
+                        .build();
     }
 
     public void setPictureList(List<Picture> pictureList) {

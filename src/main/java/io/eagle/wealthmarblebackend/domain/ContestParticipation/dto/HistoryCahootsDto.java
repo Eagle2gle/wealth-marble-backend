@@ -17,6 +17,7 @@ public class HistoryCahootsDto {
 
     private final Integer stocks;
 
+
     public static HistoryCahootsDto toDto(ContestParticipation c){
         return new HistoryCahootsDto(c.getCreatedAt(), c.getStocks());
     }

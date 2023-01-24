@@ -1,6 +1,7 @@
-package io.eagle.wealthmarblebackend.domain.cahoots.domain.embeded;
+package io.eagle.wealthmarblebackend.domain.vacation.entity.embeded;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -9,7 +10,6 @@ import javax.validation.constraints.NotNull;
 
 @Embeddable
 @NoArgsConstructor
-@AllArgsConstructor
 @Getter
 public class Plan {
     @NotNull
@@ -17,4 +17,10 @@ public class Plan {
 
     @NotNull
     private Long expectedTotalCost;
+
+    @Builder
+    public Plan(Integer expectedMonth, Long expectedTotalCost){
+        this.expectedMonth = expectedMonth;
+        this.expectedTotalCost = expectedTotalCost;
+    }
 }
