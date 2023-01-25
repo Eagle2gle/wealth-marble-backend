@@ -2,7 +2,6 @@ package io.eagle.wealthmarblebackend.domain.vacation.entity;
 
 import io.eagle.wealthmarblebackend.common.BaseEntity;
 import io.eagle.wealthmarblebackend.domain.ContestParticipation.entity.ContestParticipation;
-import io.eagle.wealthmarblebackend.domain.cahoots.domain.embeded.Plan;
 import io.eagle.wealthmarblebackend.domain.picture.entity.Picture;
 import io.eagle.wealthmarblebackend.domain.user.domain.User;
 import io.eagle.wealthmarblebackend.domain.vacation.dto.CreateCahootsDto;
