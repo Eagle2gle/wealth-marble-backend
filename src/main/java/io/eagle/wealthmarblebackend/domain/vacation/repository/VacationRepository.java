@@ -14,4 +14,7 @@ import java.util.Optional;
 public interface VacationRepository extends JpaRepository<Vacation, Long> {
     Optional<Vacation> findByTitle(String title);
     List<Vacation> findByStatus(VacationStatusType type);
+
+    Optional<Vacation> findByIdAndStatus(Long id, VacationStatusType status);
+
 }

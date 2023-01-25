@@ -1,6 +1,7 @@
 package io.eagle.wealthmarblebackend.domain.vacation.entity;
 
-import io.eagle.wealthmarblebackend.common.BaseEntity;;
+import io.eagle.wealthmarblebackend.common.BaseEntity;
+import io.eagle.wealthmarblebackend.domain.ContestParticipation.entity.ContestParticipation;
 import io.eagle.wealthmarblebackend.domain.cahoots.domain.embeded.Plan;
 import io.eagle.wealthmarblebackend.domain.picture.entity.Picture;
 import io.eagle.wealthmarblebackend.domain.user.domain.User;
@@ -15,6 +16,8 @@ import org.hibernate.validator.constraints.Length;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 @Entity
 @Data
@@ -64,8 +67,12 @@ public class Vacation extends BaseEntity {
     @Embedded
     private Stock stock;
 
+
     @OneToMany(mappedBy = "vacation", cascade = CascadeType.ALL)
     private List<Picture> pictureList;
+
+    @OneToMany(mappedBy="vacation", fetch = FetchType.LAZY)
+    private Set<ContestParticipation> historyList = new LinkedHashSet<>();
 
     public Vacation(CreateCahootsDto createCahootsDto) {
         this.status = VacationStatusType.CAHOOTS_BEFORE;

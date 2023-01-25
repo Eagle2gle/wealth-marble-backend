@@ -1,14 +1,18 @@
 package io.eagle.wealthmarblebackend.domain.ContestParticipation.entity;
 
 import io.eagle.wealthmarblebackend.common.BaseEntity;
+import lombok.AccessLevel;
+import lombok.Builder;
 import io.eagle.wealthmarblebackend.domain.vacation.entity.Vacation;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.Positive;
 
 @Entity
 @Data
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ContestParticipation extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,5 +28,10 @@ public class ContestParticipation extends BaseEntity {
     private Vacation vacation;
 
     @Positive
-    private Integer amount;
+    private Integer stocks;
+
+    public ContestParticipation(Long userId, Vacation vacation, Integer stocks) {
+        this.stocks = stocks;
+        this.vacation = vacation;
+    }
 }

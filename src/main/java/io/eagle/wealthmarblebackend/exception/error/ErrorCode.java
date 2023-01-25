@@ -14,7 +14,7 @@ public enum ErrorCode {
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "내부 서버 오류입니다."),
 
     // User
-
+    USER_LACK_OF_CACHE(HttpStatus.BAD_REQUEST, "잔액이 부족합니다."),
     // Security
 
 
