@@ -46,6 +46,7 @@ public class VacationCustomImpl implements VacationCustom {
                         vacation.location,
                         vacation.status,
                         ExpressionUtils.as(vacation.stock.price,"stockPrice"),
+                        ExpressionUtils.as(vacation.stock.num,"stockNum"),
                         ExpressionUtils.as(vacation.stockPeriod.start, "stockStart"),
                         ExpressionUtils.as(vacation.stockPeriod.end, "stockEnd"),
                         ExpressionUtils.as((cp.stocks.sum().coalesce(0).multiply(100).divide(vacation.stock.num)),"competitionRate")))
