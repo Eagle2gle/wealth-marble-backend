@@ -21,6 +21,8 @@ public class BreifCahootsDto {
 
     private Long stockPrice;
 
+    private Integer stockNum;
+
     private Integer competitionRate;
 
     // TODO : hashtag
