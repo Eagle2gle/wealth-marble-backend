@@ -1,6 +1,7 @@
 package io.eagle.wealthmarblebackend.domain.vacation.entity.embeded;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -10,7 +11,6 @@ import java.time.LocalDate;
 
 @Embeddable
 @NoArgsConstructor
-@AllArgsConstructor
 @Getter
 public class Period {
     @NotNull
@@ -18,4 +18,10 @@ public class Period {
 
     @NotNull
     private LocalDate end;
+
+    @Builder
+    public Period(LocalDate start, LocalDate end) {
+        this.start = start;
+        this.end = end;
+    }
 }

@@ -32,7 +32,9 @@ jobs:
       - name: 환경변수 입력
         run: |
           touch ./src/main/resources/application-mysql.yml
-          echo "${{ secrets.APPLICATION }}" | base64 --decode > ./src/main/resources/application-mysql.yml
+          echo "${{ secrets.APPLICATION_MYSQL }}" | base64 --decode > ./src/main/resources/application-mysql.yml
+          touch ./src/main/resources/application-cloud.yml
+          echo "${{ secrets.APPLICATION_CLOUD }}" | base64 --decode > ./src/main/resources/application-cloud.yml
           
 
       - name: Grant execute permission for gradlew

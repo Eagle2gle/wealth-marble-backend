@@ -1,10 +1,10 @@
-package io.eagle.wealthmarblebackend.domain.cahoots.service;
+package io.eagle.wealthmarblebackend.domain.vacation.service;
 
-import io.eagle.wealthmarblebackend.domain.cahoots.domain.Cahoots;
-import io.eagle.wealthmarblebackend.domain.cahoots.domain.CahootsRepository;
-import io.eagle.wealthmarblebackend.domain.cahoots.domain.type.ThemeBuildingType;
-import io.eagle.wealthmarblebackend.domain.cahoots.domain.type.ThemeLocationType;
-import io.eagle.wealthmarblebackend.domain.cahoots.dto.CreateCahootsDto;
+
+import io.eagle.wealthmarblebackend.domain.vacation.dto.CreateCahootsDto;
+import io.eagle.wealthmarblebackend.domain.vacation.entity.type.ThemeBuildingType;
+import io.eagle.wealthmarblebackend.domain.vacation.entity.type.ThemeLocationType;
+import io.eagle.wealthmarblebackend.domain.vacation.repository.VacationRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.Before;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,7 +31,7 @@ public class CahootsServiceTest {
     private CahootsService cahootsService;
 
     @Mock
-    private CahootsRepository cahootsRepository;
+    private VacationRepository vacationRepository;
 
     public CreateCahootsDto createCahootsDto;
 

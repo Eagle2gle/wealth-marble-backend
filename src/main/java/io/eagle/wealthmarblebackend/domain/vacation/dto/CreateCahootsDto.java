@@ -60,8 +60,7 @@ public class CreateCahootsDto {
 
     // TODO : hashtag
 
-    // TODO : picture url
-    private final List<MultipartFile> images = new ArrayList<>();
+    private final List<MultipartFile> images;
 
     /*
      * 공모 시작 및 마감 날짜 검증
@@ -75,5 +74,9 @@ public class CreateCahootsDto {
         ) {
             throw new ApiException(ErrorCode.VACATION_PERIOD_INVALID);
         }
+    }
+
+    public boolean isImagesEmpty(){
+        return images == null || images.isEmpty();
     }
 }
