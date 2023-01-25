@@ -17,7 +17,7 @@ public class User implements UserDetails {
     private Long id;
 
     @Column(unique = true, nullable = false)
-    private String email;
+    private String nickname; // 추후 카카오 로그인을 구현할 경우 email을 받아오지 못하는 경우가 생겨 해당 이름 수정
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -45,7 +45,7 @@ public class User implements UserDetails {
 
     @Override
     public String getUsername() {
-        return email;
+        return nickname;
     }
 
     @Override
