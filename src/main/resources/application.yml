@@ -3,6 +3,7 @@ spring:
     include:
       - mysql
       - cloud
+      - oauth
   jpa:
     hibernate:
       ddl-auto: update
