@@ -5,17 +5,20 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.JPQLQueryFactory;
-import io.eagle.wealthmarblebackend.domain.ContestParticipation.entity.QContestParticipation;
 import io.eagle.wealthmarblebackend.domain.vacation.dto.BreifCahootsDto;
 import io.eagle.wealthmarblebackend.domain.vacation.dto.BreifV2CahootsDto;
 import io.eagle.wealthmarblebackend.domain.vacation.dto.InfoConditionDto;
-import io.eagle.wealthmarblebackend.domain.vacation.entity.QVacation;
+import io.eagle.wealthmarblebackend.domain.vacation.dto.DetailCahootsDto;
 import io.eagle.wealthmarblebackend.domain.vacation.entity.type.VacationStatusType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.time.LocalDate;
 import java.util.List;
+
+import static io.eagle.wealthmarblebackend.domain.ContestParticipation.entity.QContestParticipation.*;
+import static io.eagle.wealthmarblebackend.domain.picture.entity.QPicture.*;
+import static io.eagle.wealthmarblebackend.domain.vacation.entity.QVacation.*;
 
 @RequiredArgsConstructor
 public class VacationCustomImpl implements VacationCustom {
@@ -28,8 +31,6 @@ public class VacationCustomImpl implements VacationCustom {
     @Value("${eagle.int.before_day}")
     private Integer beforeDays;
 
-    private QVacation vacation = QVacation.vacation;
-    private QContestParticipation cp = QContestParticipation.contestParticipation;
 
     public List<?> getVacationDetail(Long cahootsId){
 
@@ -52,16 +53,16 @@ public class VacationCustomImpl implements VacationCustom {
                         vacation.title,
                         vacation.location,
                         vacation.status,
-                        ExpressionUtils.as(vacation.stock.price,"stockPrice"),
-                        ExpressionUtils.as(vacation.stock.num,"stockNum"),
-                        ExpressionUtils.as(vacation.stockPeriod.start, "stockStart"),
-                        ExpressionUtils.as(vacation.stockPeriod.end, "stockEnd"),
-                        ExpressionUtils.as((cp.stocks.sum().coalesce(0).multiply(100).divide(vacation.stock.num)),"competitionRate")))
+                        vacation.stock.price.as("stockPrice"),
+                        vacation.stock.num.as("stockNum"),
+                        vacation.stockPeriod.start.as("stockStart"),
+                        vacation.stockPeriod.end.as("stockEnd"),
+                        ExpressionUtils.as((contestParticipation.stocks.sum().coalesce(0).multiply(100).divide(vacation.stock.num)),"competitionRate")))
                 .from(vacation)
-                .leftJoin(vacation.historyList, cp)
+                .leftJoin(vacation.historyList, contestParticipation)
                 .where(isInStatus(infoConditionDto.getTypes()), hasKeyword(infoConditionDto.getKeyword()))
                 .groupBy(vacation.id)
-                .orderBy(cp.stocks.sum().desc())
+                .orderBy(contestParticipation.stocks.sum().desc())
                 .limit(this.page)
                 .offset(infoConditionDto.getOffset() * this.page)
                 .fetch();
@@ -76,8 +77,8 @@ public class VacationCustomImpl implements VacationCustom {
                         vacation.id,
                         vacation.title,
                         vacation.status,
-                        ExpressionUtils.as(vacation.stockPeriod.start, "stockStart"),
-                        ExpressionUtils.as(vacation.stockPeriod.end, "stockEnd")))
+                        vacation.stockPeriod.start.as("stockStart"),
+                        vacation.stockPeriod.end.as("stockEnd")))
                 .from(vacation)
                 .where(isInStatus(infoConditionDto.getTypes()), isInDateRange())
                 .orderBy(vacation.stockPeriod.end.asc())
