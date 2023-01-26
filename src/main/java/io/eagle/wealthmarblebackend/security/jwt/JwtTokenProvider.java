@@ -82,7 +82,7 @@ public class JwtTokenProvider {
         String refreshToken = Jwts.builder()
             .setId(id)
             .setIssuedAt(new Date(System.currentTimeMillis()))
-            .setExpiration(new Date(System.currentTimeMillis() + TOKEN_VALID_TIME))
+            .setExpiration(new Date(System.currentTimeMillis() + TOKEN_VALID_TIME * 24 *7))
             .signWith(SignatureAlgorithm.HS512, secretKey)
             .compact();
         return refreshToken;
