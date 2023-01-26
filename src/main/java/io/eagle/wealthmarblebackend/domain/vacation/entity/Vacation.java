@@ -67,11 +67,11 @@ public class Vacation extends BaseEntity {
     @Embedded
     private Stock stock;
 
-    @OneToMany(mappedBy = "vacation", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "vacation", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Picture> pictureList;
 
-    @OneToMany(mappedBy="vacation", fetch = FetchType.LAZY)
-    private Set<ContestParticipation> historyList = new LinkedHashSet<>();
+    @OneToMany(mappedBy="vacation", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<ContestParticipation> historyList;
 
     @Builder
     public Vacation(CreateCahootsDto createCahootsDto) {

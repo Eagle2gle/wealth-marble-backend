@@ -32,16 +32,28 @@ public class VacationCustomImpl implements VacationCustom {
     private Integer beforeDays;
 
 
-    public List<?> getVacationDetail(Long cahootsId){
-
+    public DetailCahootsDto getVacationDetail(Long cahootsId){
         return queryFactory
-                .select(vacation, cp.stocks.sum())
+                .select(Projections.fields(DetailCahootsDto.class,
+                        vacation.id,
+                        vacation.title,
+                        vacation.location,
+                        vacation.status,
+                        vacation.theme.themeLocation,
+                        vacation.theme.themeBuilding,
+                        vacation.plan.expectedTotalCost,
+                        vacation.plan.expectedMonth,
+                        vacation.shortDescription,
+                        vacation.descritption,
+                        vacation.stock.price.as("stockPrice"),
+                        vacation.stock.num.as("stockNum"),
+                        vacation.stockPeriod.start.as("stockStart"),
+                        vacation.stockPeriod.end.as("stockEnd"),
+                        ExpressionUtils.as((contestParticipation.stocks.sum().coalesce(0).multiply(100).divide(vacation.stock.num)), "competitionRate")))
                 .from(vacation)
-                .leftJoin(vacation.historyList, cp)
+                .leftJoin(vacation.historyList, contestParticipation)
                 .where(vacation.id.eq(cahootsId))
-                .fetchJoin()
-                .distinct()
-                .fetch();
+                .fetchOne();
     }
 
     public List<BreifCahootsDto> getVacationsBreif(InfoConditionDto infoConditionDto){
