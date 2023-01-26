@@ -47,6 +47,8 @@ public class DetailCahootsDto {
 
     private Integer competitionRate;
 
+    private Integer expectedRateOfReturn;
+
     // TODO : hashtag
 
     private List<String> images;
