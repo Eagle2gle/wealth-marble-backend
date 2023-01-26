@@ -47,6 +47,12 @@ public class CahootsService {
         return BreifV2CahootsListDto.builder().result(breifCahootsList).build();
     }
 
+    public LatestCahootsListDto getLatestsList(){
+        List<LatestCahootsDto> latestCahootsDtoList = vacationRepository.findLatestVacations();
+        latestCahootsDtoList.forEach(latestCahootsDto -> {latestCahootsDto.setImages(getImageUrls(latestCahootsDto.getId()));});
+        return LatestCahootsListDto.builder().result(latestCahootsDtoList).build();
+    }
+
     public List<String> getImageUrls(Long id){
         return pictureRepository.findUrlsByCahootsId(id);
     }
