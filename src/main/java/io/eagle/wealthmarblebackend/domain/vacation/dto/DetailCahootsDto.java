@@ -49,7 +49,6 @@ public class DetailCahootsDto {
 
     // TODO : hashtag
 
-    // TODO : picture url
     private List<String> images;
 
 //    public static DetailCahootsDto toDto(Vacation vacation, Integer competitionRate) {

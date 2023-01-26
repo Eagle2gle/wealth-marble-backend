@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -17,7 +18,6 @@ public class BreifV2CahootsDto {
 
     private LocalDate stockEnd;
 
-    // TODO : picture url
-//    private final List<String> images = new ArrayList<>();
+    private List<String> images;
 
 }
