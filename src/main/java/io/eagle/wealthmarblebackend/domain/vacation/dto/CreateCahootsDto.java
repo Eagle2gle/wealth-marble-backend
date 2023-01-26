@@ -58,6 +58,9 @@ public class CreateCahootsDto {
     @Positive(message = "목표 공모 주식 수를 작성해주세요.")
     private final Integer stockNum;
 
+    @Positive(message = "예상 수익률을 작성해주세요.")
+    private final Integer expectedRateOfReturn;
+
     // TODO : hashtag
 
     private final List<MultipartFile> images;

@@ -73,6 +73,9 @@ public class Vacation extends BaseEntity {
     @OneToMany(mappedBy="vacation", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ContestParticipation> historyList;
 
+    @NotNull
+    private Integer expectedRateOfReturn;
+
     @Builder
     public Vacation(CreateCahootsDto createCahootsDto) {
         this.status = VacationStatusType.CAHOOTS_BEFORE;
@@ -96,6 +99,7 @@ public class Vacation extends BaseEntity {
                         .price(createCahootsDto.getStockPrice())
                         .num(createCahootsDto.getStockNum())
                         .build();
+        this.expectedRateOfReturn = createCahootsDto.getExpectedRateOfReturn();
     }
 
     public void setPictureList(List<Picture> pictureList) {

@@ -45,6 +45,7 @@ public class VacationCustomImpl implements VacationCustom {
                         vacation.plan.expectedMonth,
                         vacation.shortDescription,
                         vacation.descritption,
+                        vacation.expectedRateOfReturn,
                         vacation.stock.price.as("stockPrice"),
                         vacation.stock.num.as("stockNum"),
                         vacation.stockPeriod.start.as("stockStart"),
