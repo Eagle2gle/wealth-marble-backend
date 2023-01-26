@@ -2,29 +2,20 @@ package io.eagle.wealthmarblebackend.domain.vacation.service;
 
 import io.eagle.wealthmarblebackend.domain.picture.S3;
 import io.eagle.wealthmarblebackend.domain.picture.entity.Picture;
-import io.eagle.wealthmarblebackend.domain.ContestParticipation.repository.ContestParticipationRepository;
+import io.eagle.wealthmarblebackend.domain.picture.repository.PictureRepository;
 import io.eagle.wealthmarblebackend.domain.vacation.dto.*;
 import io.eagle.wealthmarblebackend.domain.vacation.entity.Vacation;
-import io.eagle.wealthmarblebackend.domain.vacation.entity.type.VacationStatusType;
 import io.eagle.wealthmarblebackend.domain.vacation.repository.VacationRepository;
-import io.eagle.wealthmarblebackend.exception.ApiException;
-import io.eagle.wealthmarblebackend.exception.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.util.ArrayList;
 import java.util.List;
-
-import java.util.List;
-
 
 @Service
 @RequiredArgsConstructor
 public class CahootsService {
 
     private final VacationRepository vacationRepository;
-    private final ContestParticipationRepository contestParticipationRepository;
+    private final PictureRepository pictureRepository;
     private final S3 s3;
 
     public void create(CreateCahootsDto createCahootsDto) {
@@ -39,10 +30,10 @@ public class CahootsService {
     }
 
     public DetailCahootsDto getDetail(Long cahootsId) {
-        Vacation vacation = vacationRepository.findById(cahootsId).orElseThrow(()-> new ApiException(ErrorCode.VACATION_NOT_FOUND));
-        Integer currentTotalStock = contestParticipationRepository.getCurrentContestNum(cahootsId).orElse(0);
-        Integer competitionRate =  currentTotalStock * 100 / vacation.getStock().getNum();
-        return DetailCahootsDto.toDto(vacation, competitionRate);
+        DetailCahootsDto detailCahootsDto = vacationRepository.getVacationDetail(cahootsId);
+        List<String> urls = pictureRepository.findUrlsByCahootsId(cahootsId);
+        detailCahootsDto.setImages(urls);
+        return detailCahootsDto;
     }
 
     public BreifCahootsListDto getBreifList(InfoConditionDto infoConditionDto){
