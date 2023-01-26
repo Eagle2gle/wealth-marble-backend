@@ -31,18 +31,23 @@ public class CahootsService {
 
     public DetailCahootsDto getDetail(Long cahootsId) {
         DetailCahootsDto detailCahootsDto = vacationRepository.getVacationDetail(cahootsId);
-        List<String> urls = pictureRepository.findUrlsByCahootsId(cahootsId);
-        detailCahootsDto.setImages(urls);
+        detailCahootsDto.setImages(getImageUrls(cahootsId));
         return detailCahootsDto;
     }
 
     public BreifCahootsListDto getBreifList(InfoConditionDto infoConditionDto){
         List<BreifCahootsDto> breifCahootsList = vacationRepository.getVacationsBreif(infoConditionDto);
+        breifCahootsList.forEach(breifCahootsDto -> {breifCahootsDto.setImages(getImageUrls(breifCahootsDto.getId()));});
         return BreifCahootsListDto.builder().result(breifCahootsList).build();
     }
 
     public BreifV2CahootsListDto getBreifV2List(InfoConditionDto infoConditionDto){
         List<BreifV2CahootsDto> breifCahootsList = vacationRepository.getVacationsBreifV2(infoConditionDto);
+        breifCahootsList.forEach(breifCahootsDto -> {breifCahootsDto.setImages(getImageUrls(breifCahootsDto.getId()));});
         return BreifV2CahootsListDto.builder().result(breifCahootsList).build();
+    }
+
+    public List<String> getImageUrls(Long id){
+        return pictureRepository.findUrlsByCahootsId(id);
     }
 }

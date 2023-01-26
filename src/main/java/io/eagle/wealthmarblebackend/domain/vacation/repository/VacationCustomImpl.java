@@ -57,7 +57,6 @@ public class VacationCustomImpl implements VacationCustom {
     }
 
     public List<BreifCahootsDto> getVacationsBreif(InfoConditionDto infoConditionDto){
-        // TODO : picture 추가
         // TODO : no limit, offset 검토
         return queryFactory
                 .select(Projections.fields(BreifCahootsDto.class,
@@ -82,7 +81,6 @@ public class VacationCustomImpl implements VacationCustom {
     }
 
     public List<BreifV2CahootsDto> getVacationsBreifV2(InfoConditionDto infoConditionDto){
-        // TODO : picture 추가
         // TODO : no limit, offset 검토
         return queryFactory
                 .select(Projections.fields(BreifV2CahootsDto.class,
