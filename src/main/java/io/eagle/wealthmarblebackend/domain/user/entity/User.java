@@ -2,6 +2,8 @@ package io.eagle.wealthmarblebackend.domain.user.entity;
 
 import io.eagle.wealthmarblebackend.domain.user.entity.type.ProviderType;
 import io.eagle.wealthmarblebackend.domain.user.entity.type.Rank;
+import io.eagle.wealthmarblebackend.domain.user.entity.type.Role;
+import lombok.Builder;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -10,6 +12,7 @@ import javax.persistence.*;
 import java.util.Collection;
 
 @Data
+@Builder
 @Entity
 public class User implements UserDetails {
     @Id
@@ -18,6 +21,8 @@ public class User implements UserDetails {
 
     @Column(unique = true, nullable = false)
     private String nickname; // 추후 카카오 로그인을 구현할 경우 email을 받아오지 못하는 경우가 생겨 해당 이름 수정
+
+    private String email;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -29,6 +34,10 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Rank rank;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Role role;
 
     private String refreshToken;
     private Integer cash;
