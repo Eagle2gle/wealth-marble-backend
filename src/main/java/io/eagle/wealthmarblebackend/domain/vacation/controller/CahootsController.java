@@ -28,9 +28,12 @@ public class CahootsController {
 
     @GetMapping(params = "status=ongoing")
     public BreifCahootsListDto getBreifCahootsInfo(@Valid InfoConditionDto infoConditionDto){
+        System.out.println(infoConditionDto);
         infoConditionDto.setTypes(new VacationStatusType[]{VacationStatusType.CAHOOTS_ONGOING});
         return cahootsService.getBreifList(infoConditionDto);
     }
+
+
 
     @GetMapping(params = "status=ended")
     public BreifCahootsListDto getEndedBreifCahootsInfo(){
@@ -44,5 +47,10 @@ public class CahootsController {
         VacationStatusType[] types = new VacationStatusType[]{VacationStatusType.CAHOOTS_ONGOING};
         InfoConditionDto infoConditionDto = InfoConditionDto.builder().types(types).offset(0).build();
         return cahootsService.getBreifV2List(infoConditionDto);
+    }
+
+    @GetMapping("/recent")
+    public LatestCahootsListDto getlatestCahootsInfo(){
+        return cahootsService.getLatestsList();
     }
 }
