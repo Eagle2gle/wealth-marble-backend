@@ -1,6 +1,8 @@
 package io.eagle.wealthmarblebackend.config;
 
 import io.eagle.wealthmarblebackend.security.jwt.JwtRequestFilter;
+import io.eagle.wealthmarblebackend.security.oauth.CustomOAuth2UserService;
+import io.eagle.wealthmarblebackend.security.oauth.OAuth2SuccessHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,6 +21,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final JwtRequestFilter jwtRequestFilter;
+    private final CustomOAuth2UserService oAuth2UserService;
+    private final OAuth2SuccessHandler oAuth2SuccessHandler;
 
     @Bean
     public WebSecurityCustomizer configure() {
@@ -34,21 +38,19 @@ public class SecurityConfig {
         return httpSecurity
             .csrf().disable()
             .cors().disable()
-            .httpBasic()
+            .httpBasic().disable()
+            .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class) // JWT filter 적용
+            .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)// Spring Security에서 session을 사용하지 않도록 설정
             .and()
                 .authorizeRequests()
                 .antMatchers("/api/v1/admin/**").hasRole("ADMIN")
                 .antMatchers("/api/v1/users/**").hasRole("USER")
                 .antMatchers("/**").permitAll()
             .and()
-                .logout()
-                .logoutUrl("/")
-            .and()
-            .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)  // Spring Security에서 session을 사용하지 않도록 설정
-            .and()
-            .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class) // JWT filter 적용
-            .build();
+            .oauth2Login()
+                .successHandler(oAuth2SuccessHandler)
+                .userInfoEndpoint().userService(oAuth2UserService).and().and().build();
     }
 
     @Bean
