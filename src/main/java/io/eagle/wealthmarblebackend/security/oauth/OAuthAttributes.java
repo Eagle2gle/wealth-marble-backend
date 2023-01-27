@@ -3,6 +3,7 @@ package io.eagle.wealthmarblebackend.security.oauth;
 
 import io.eagle.wealthmarblebackend.domain.user.entity.User;
 import io.eagle.wealthmarblebackend.domain.user.entity.type.ProviderType;
+import io.eagle.wealthmarblebackend.domain.user.entity.type.Ranks;
 import io.eagle.wealthmarblebackend.domain.user.entity.type.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -28,12 +29,12 @@ public class OAuthAttributes {
                                      String userNameAttributeName,
                                      Map<String, Object> attributes) {
 
-        return ofGoogle(userNameAttributeName, attributes, registrationId);
+        return ofGoogle(userNameAttributeName, attributes);
     }
 
-    private static OAuthAttributes ofGoogle(String userNameAttributeName, Map<String, Object> attributes, String registrationId) {
+    private static OAuthAttributes ofGoogle(String userNameAttributeName, Map<String, Object> attributes) {
         return OAuthAttributes.builder()
-            .registrationId(registrationId)
+            .registrationId((String) attributes.get("sub"))
             .email((String) attributes.get("email"))
             .nickname((String) attributes.get("name"))
             .attributes(attributes)
@@ -49,6 +50,7 @@ public class OAuthAttributes {
             .providerId(registrationId)
             .providerType(ProviderType.GOOGLE)
             .role(Role.USER)
+            .ranks(Ranks.NAMJAK)
             .build();
     }
 }
