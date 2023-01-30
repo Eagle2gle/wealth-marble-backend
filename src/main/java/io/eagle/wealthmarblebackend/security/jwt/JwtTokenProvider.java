@@ -115,11 +115,11 @@ public class JwtTokenProvider {
         }
 
         try {
-            String refreshToken = user.getRefreshToken().substring(7);
+            String refreshToken = user.getRefreshToken();
             Jwts.parser().setSigningKey(secretKey).parseClaimsJws(refreshToken);
             return true;
         } catch (ExpiredJwtException e) {
-            user.setRefreshToken("Bearer " + generateRefreshToken(id));
+            user.setRefreshToken(generateRefreshToken(id));
             userRepository.save(user);
             return true;
         } catch (Exception e) {

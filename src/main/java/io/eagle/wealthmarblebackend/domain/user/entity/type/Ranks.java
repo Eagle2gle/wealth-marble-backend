@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public enum Rank {
+public enum Ranks {
 
     NAMJAK("NAMJAK"),
     JAJAK("JAJAK"),
