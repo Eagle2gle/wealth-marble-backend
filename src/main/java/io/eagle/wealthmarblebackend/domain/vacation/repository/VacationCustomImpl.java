@@ -92,7 +92,7 @@ public class VacationCustomImpl implements VacationCustom {
                         vacation.stockPeriod.start.as("stockStart"),
                         vacation.stockPeriod.end.as("stockEnd")))
                 .from(vacation)
-                .where(isInStatus(infoConditionDto.getTypes()), isInDateRange(beforeDays))
+                .where(isInStatus(infoConditionDto.getTypes()), isInEndDateRange(beforeDays))
                 .orderBy(vacation.stockPeriod.end.asc())
                 .limit(this.page)
                 .offset(infoConditionDto.getOffset() * this.page)
@@ -107,7 +107,7 @@ public class VacationCustomImpl implements VacationCustom {
                         vacation.stockPeriod.start.as("stockStart"),
                         vacation.expectedRateOfReturn))
                 .from(vacation)
-                .where(isInStatus(new VacationStatusType[]{VacationStatusType.CAHOOTS_ONGOING}), isInDateRange(recentDays))
+                .where(isInStatus(new VacationStatusType[]{VacationStatusType.CAHOOTS_ONGOING}), isInStartDateRange(recentDays))
                 .orderBy(vacation.stockPeriod.start.desc())
                 .limit(this.page)
                 .fetch();
@@ -122,7 +122,12 @@ public class VacationCustomImpl implements VacationCustom {
         return keyword != null && !keyword.isBlank() ? (vacation.title.contains(keyword).or(vacation.location.contains(keyword))) : null;
     }
 
-    private BooleanExpression isInDateRange(Integer interval){
+    private BooleanExpression isInStartDateRange(Integer interval){
+        LocalDate today = LocalDate.now();
+        return vacation.stockPeriod.start.between(today.minusDays(interval), today);
+    }
+
+    private BooleanExpression isInEndDateRange(Integer interval){
         LocalDate today = LocalDate.now();
         return vacation.stockPeriod.end.between(today, today.plusDays(interval));
     }
