@@ -1,5 +1,6 @@
 package io.eagle.wealthmarblebackend.exception;
 
+import io.eagle.wealthmarblebackend.common.ApiResponse;
 import io.eagle.wealthmarblebackend.exception.error.ErrorCode;
 import io.eagle.wealthmarblebackend.exception.error.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -27,14 +28,14 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     * API 요청 runtime 에러가
     * */
     @ExceptionHandler(ApiException.class)
-    public ResponseEntity<Object> handleCustomException(ApiException e) {
+    public ResponseEntity<ApiResponse<?>> handleCustomException(ApiException e) {
         ErrorCode errorCode = e.getErrorCode();
         log.warn(errorCode.getMessage());
         return handleExceptionInternal(errorCode);
     }
 
     @ExceptionHandler(S3Exception.class)
-    public ResponseEntity<Object> handleS3UploadException(S3Exception e) {
+    public ResponseEntity<ApiResponse<?>> handleS3UploadException(S3Exception e) {
         ErrorCode errorCode = e.getErrorCode();
         log.warn(makeStackTraceToString(e));
         return handleExceptionInternal(errorCode);
@@ -64,7 +65,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
      * Request parameter DTO 검증 에러
      */
     @Override
-    public ResponseEntity<Object> handleBindException(
+    public ResponseEntity handleBindException(
             BindException ex,
             HttpHeaders headers,
             HttpStatus status,
@@ -102,21 +103,21 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
      * 이외 에러
      */
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<Object> handleUnExpectedException(Exception e) {
+    public ResponseEntity<ApiResponse<?>> handleUnExpectedException(Exception e) {
         ErrorCode errorCode = ErrorCode.INTERNAL_SERVER_ERROR;
         log.error(makeStackTraceToString(e));
         return handleExceptionInternal(errorCode);
     }
-    private ResponseEntity<Object> handleExceptionInternal(ErrorCode errorCode) {
+    private ResponseEntity<ApiResponse<?>> handleExceptionInternal(ErrorCode errorCode) {
         return ResponseEntity
                 .status(errorCode.getHttpStatus())
-                .body(ErrorResponse.of(errorCode));
+                .body(ApiResponse.createError(errorCode.getMessage()));
     }
 
-    private ResponseEntity<Object> handleExceptionInternal(ErrorCode errorCode, String message) {
+    private ResponseEntity<ApiResponse<?>> handleExceptionInternal(ErrorCode errorCode, String message) {
         return ResponseEntity
                 .status(errorCode.getHttpStatus())
-                .body(ErrorResponse.of(errorCode, message));
+                .body(ApiResponse.createError(errorCode.getMessage()));
     }
 
     protected String makeBindingErrorMessage(BindingResult bindingResult) {
