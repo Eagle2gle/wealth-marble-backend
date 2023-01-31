@@ -5,6 +5,8 @@ import io.eagle.wealthmarblebackend.domain.vacation.entity.Vacation;
 import io.eagle.wealthmarblebackend.domain.vacation.entity.type.ThemeBuildingType;
 import io.eagle.wealthmarblebackend.domain.vacation.entity.type.ThemeLocationType;
 import io.eagle.wealthmarblebackend.domain.vacation.entity.type.VacationStatusType;
+import io.eagle.wealthmarblebackend.exception.ApiException;
+import io.eagle.wealthmarblebackend.exception.error.ErrorCode;
 import lombok.*;
 
 import javax.validation.constraints.NotBlank;
@@ -72,4 +74,12 @@ public class DetailCahootsDto {
 //                .build();
 //
 //    }
+
+    public DetailCahootsDto checkNull(){
+        if(this.id == null) {
+            throw new ApiException(ErrorCode.VACATION_NOT_FOUND);
+        } else{
+            return this;
+        }
+    }
 }

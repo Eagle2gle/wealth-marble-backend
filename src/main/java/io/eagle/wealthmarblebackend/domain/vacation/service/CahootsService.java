@@ -30,7 +30,7 @@ public class CahootsService {
     }
 
     public DetailCahootsDto getDetail(Long cahootsId) {
-        DetailCahootsDto detailCahootsDto = vacationRepository.getVacationDetail(cahootsId);
+        DetailCahootsDto detailCahootsDto = vacationRepository.getVacationDetail(cahootsId).checkNull();
         detailCahootsDto.setImages(getImageUrls(cahootsId));
         return detailCahootsDto;
     }
