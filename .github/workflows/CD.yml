@@ -4,7 +4,8 @@ on:
   pull_request:
     branches: [ "main", "dev", "deploy-test"]
     paths:
-      - 'core/**', 'api/**'
+      - 'core/**'
+      - 'api/**'
     types:
       - closed
 
