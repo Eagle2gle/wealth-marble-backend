@@ -36,6 +36,7 @@ jobs:
         run: |
           touch ./core/src/main/resources/application-mysql.yml
           echo "${{ secrets.APPLICATION_MYSQL }}" | base64 --decode > ./core/src/main/resources/application-mysql.yml
+          mkdir ./api/src/main/resources
           touch ./api/src/main/resources/application-cloud.yml
           echo "${{ secrets.APPLICATION_CLOUD }}" | base64 --decode > ./api/src/main/resources/application-cloud.yml
           touch ./core/src/main/resources/application-oauth.yml
