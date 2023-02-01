@@ -1,1 +1,6 @@
 rootProject.name = 'wealth-marble-backend'
+include 'core'
+include 'api'
+include 'batch'
+include 'socket'
+
