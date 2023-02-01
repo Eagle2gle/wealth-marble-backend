@@ -52,7 +52,7 @@ jobs:
       - name: 도커 이미지 빌드 및 도커 허브 푸쉬
         run: |
           docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
-          docker build -t wm-api-server ./api/Dockerfile
+          docker build -t wm-api-server ./api
           docker tag wm-api-server ${{ secrets.DOCKERHUB_USERNAME }}/wm-api-server:${GITHUB_SHA::7}
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/wm-api-server:${GITHUB_SHA::7}
 
