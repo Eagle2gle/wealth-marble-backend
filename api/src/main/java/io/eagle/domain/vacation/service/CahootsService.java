@@ -21,12 +21,13 @@ public class CahootsService {
     public void create(CreateCahootsDto createCahootsDto) {
         createCahootsDto.validateCahootsPeriod();
         // TODO : 요청 사용자의 정보 추가
-//        Vacation newVacation = Vacation.builder().createCahootsDto(createCahootsDto).build();
-//        if(!createCahootsDto.isImagesEmpty()) {
-//            List<Picture> pictureList = s3.getUrlsFromS3(createCahootsDto.getImages(), "VACATION");
-//            newVacation.setPictureList(pictureList);
-//        }
-//        vacationRepository.save(newVacation);
+        Vacation newVacation = createCahootsDto.buildVacation();
+        System.out.println(newVacation);
+        if(!createCahootsDto.isImagesEmpty()) {
+            List<Picture> pictureList = s3.getUrlsFromS3(createCahootsDto.getImages(), "VACATION");
+            newVacation.setPictureList(pictureList);
+        }
+        vacationRepository.save(newVacation);
     }
 
     public DetailCahootsDto getDetail(Long cahootsId) {
