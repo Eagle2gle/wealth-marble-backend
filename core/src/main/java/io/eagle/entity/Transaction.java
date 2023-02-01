@@ -16,12 +16,15 @@ public class Transaction extends BaseEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "vacation_id")
     private Vacation vacation;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "buy_order_id")
     private Order buyOrder;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "sell_order_id")
     private Order sellOrder;
 
     @Column(nullable = false)

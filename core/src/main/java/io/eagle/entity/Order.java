@@ -8,6 +8,7 @@ import javax.persistence.*;
 
 @Data
 @Entity
+@Table(name="orders")
 public class Order extends BaseEntity {
 
     @Id
@@ -15,9 +16,11 @@ public class Order extends BaseEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "vacation_id")
     private Vacation vacation;
 
     @Enumerated(EnumType.STRING)
