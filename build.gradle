@@ -1,106 +1,161 @@
-plugins {
-	id 'java'
-	id 'org.springframework.boot' version '2.7.7'
-	id 'io.spring.dependency-management' version '1.1.0'
-	id 'jacoco'
-}
-
-group = 'io.eagle'
-version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '11'
-
-configurations {
-	compileOnly {
-		extendsFrom annotationProcessor
+buildscript {
+	ext {
+		springBootVersion = '2.7.7'
+	}
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		classpath "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
+		classpath "io.spring.gradle:dependency-management-plugin:1.0.11.RELEASE"
 	}
 }
 
-repositories {
-	mavenCentral()
-}
+subprojects {
+	apply plugin: 'java'
+	apply plugin: 'idea'
+	apply plugin: 'org.springframework.boot'
+	apply plugin: 'io.spring.dependency-management'
+	apply plugin: 'jacoco'
 
-dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-batch'
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
-	implementation 'org.springframework.boot:spring-boot-starter-security'
-	implementation 'org.springframework.boot:spring-boot-starter-validation'
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.springframework.boot:spring-boot-starter-websocket'
-	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
-	compileOnly 'org.projectlombok:lombok'
-	developmentOnly 'org.springframework.boot:spring-boot-devtools'
-	runtimeOnly 'com.mysql:mysql-connector-j'
-	annotationProcessor 'org.projectlombok:lombok'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testImplementation 'org.springframework.batch:spring-batch-test'
-	testImplementation 'org.springframework.security:spring-security-test'
+	group 'io.eagle'
+	version '0.0.1-SNAPSHOT'
 
-	implementation group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1'
-	implementation group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.1'
-	implementation "com.querydsl:querydsl-jpa"
-	implementation "com.querydsl:querydsl-core"
-	implementation "com.querydsl:querydsl-collections"
-	annotationProcessor "com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jpa" // querydsl JPAAnnotationProcessor 사용 지정
-	annotationProcessor "jakarta.annotation:jakarta.annotation-api" // java.lang.NoClassDefFoundError (javax.annotation.Generated) 대응 코드
-	annotationProcessor "jakarta.persistence:jakarta.persistence-api" // java.lang.NoClassDefFoundError (javax.annotation.Entity) 대응 코드
-	implementation "org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE"
+	sourceCompatibility = '11'
+//	targetCompatibility = '1.8'
+//	compileJava.options.encoding = 'UTF-8'
 
-}
-
-jacoco {
-	toolVersion = '0.8.8'
-}
-
-tasks.named('test') {
-	useJUnitPlatform()
-	finalizedBy("jacocoTestReport")
-}
-
-tasks.jacocoTestReport {
-	reports {
-		html.enabled true
-		xml.enabled true
+	repositories {
+		mavenCentral()
 	}
 
-	finalizedBy("jacocoTestCoverageVerification")
-}
+	// 하위 모듈에서 공통으로 사용하는 세팅 추가
+	dependencies {
+		implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+		implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+		implementation 'org.springframework.boot:spring-boot-starter-security'
+		implementation 'org.springframework.boot:spring-boot-starter-validation'
+		implementation 'org.springframework.boot:spring-boot-starter-web'
+		implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 
-tasks.jacocoTestCoverageVerification {
-	violationRules {
-		rule {
-			enabled = true
-			element = "CLASS"
+		compileOnly 'org.projectlombok:lombok'
+		developmentOnly 'org.springframework.boot:spring-boot-devtools'
+		runtimeOnly 'com.mysql:mysql-connector-j'
+		annotationProcessor 'org.projectlombok:lombok'
+		testImplementation 'org.springframework.boot:spring-boot-starter-test'
+		testImplementation 'org.springframework.security:spring-security-test'
 
-			limit {
-				counter = 'LINE'
-				value = 'COVEREDRATIO'
-				minimum = 0.80
-			}
+		implementation group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1'
+		implementation group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.1'
+		implementation "com.querydsl:querydsl-jpa"
+		implementation "com.querydsl:querydsl-core"
+		implementation "com.querydsl:querydsl-collections"
+		annotationProcessor "com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jpa" // querydsl JPAAnnotationProcessor 사용 지정
+		annotationProcessor "jakarta.annotation:jakarta.annotation-api" // java.lang.NoClassDefFoundError (javax.annotation.Generated) 대응 코드
+		annotationProcessor "jakarta.persistence:jakarta.persistence-api" // java.lang.NoClassDefFoundError (javax.annotation.Entity) 대응 코드
+	}
 
-			limit {
-				counter = "BRANCH"
-				value = "COVEREDRATIO"
-				minimum = 0.80
+	test {
+		useJUnitPlatform()
+	}
+
+	configurations {
+		compileOnly {
+			extendsFrom annotationProcessor
+		}
+	}
+
+	jacoco {
+		toolVersion = '0.8.8'
+	}
+
+	tasks.named('test') {
+		useJUnitPlatform()
+		finalizedBy("jacocoTestReport")
+	}
+
+	tasks.jacocoTestReport {
+		reports {
+			html.enabled true
+			xml.enabled true
+		}
+
+		finalizedBy("jacocoTestCoverageVerification")
+	}
+
+	tasks.jacocoTestCoverageVerification {
+		violationRules {
+			rule {
+				enabled = true
+				element = "CLASS"
+
+				limit {
+					counter = 'LINE'
+					value = 'COVEREDRATIO'
+					minimum = 0.80
+				}
+
+				limit {
+					counter = "BRANCH"
+					value = "COVEREDRATIO"
+					minimum = 0.80
+				}
 			}
 		}
 	}
-}
 
 // Querydsl 설정부
-def generated = 'src/main/generated'
+	def generated = 'src/main/generated'
 
 // querydsl QClass 파일 생성 위치를 지정
-tasks.withType(JavaCompile) {
-	options.getGeneratedSourceOutputDirectory().set(file(generated))
-}
+	tasks.withType(JavaCompile) {
+		options.getGeneratedSourceOutputDirectory().set(file(generated))
+	}
 
 // java source set 에 querydsl QClass 위치 추가
-sourceSets {
-	main.java.srcDirs += [ generated ]
-}
+	sourceSets {
+		main.java.srcDirs += [ generated ]
+	}
 
 // gradle clean 시에 QClass 디렉토리 삭제
-clean {
-	delete file(generated)
+	clean {
+		delete file(generated)
+	}
+}
+
+
+project(':core'){
+	bootJar { enabled = false }
+	jar { enabled = true }
+
+
+}
+
+project(':api'){
+	bootJar { enabled = true }
+	jar { enabled = false }
+	dependencies {
+		implementation project(':core')
+		implementation 'org.springframework.boot:spring-boot-starter-web'
+		implementation "org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE"
+	}
+}
+
+project(':socket'){
+	bootJar { enabled = true }
+	jar { enabled = false }
+	dependencies {
+		implementation project(':core')
+		implementation 'org.springframework.boot:spring-boot-starter-websocket'
+	}
+}
+
+project(':batch'){
+	bootJar { enabled = true }
+	jar { enabled = false }
+	dependencies {
+		implementation project(':core')
+		implementation 'org.springframework.boot:spring-boot-starter-batch'
+		testImplementation 'org.springframework.batch:spring-batch-test'
+	}
 }
