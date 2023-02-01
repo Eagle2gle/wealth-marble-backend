@@ -18,6 +18,8 @@ import java.util.List;
 
 @Entity
 @Data
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Vacation extends BaseEntity {
 
@@ -72,32 +74,6 @@ public class Vacation extends BaseEntity {
 
     @NotNull
     private Integer expectedRateOfReturn;
-
-//    @Builder
-//    public Vacation(CreateCahootsDto createCahootsDto) {
-//        this.status = VacationStatusType.CAHOOTS_BEFORE;
-//        this.title = createCahootsDto.getTitle();
-//        this.theme = Theme.builder()
-//                        .location(createCahootsDto.getThemeLocation())
-//                        .building(createCahootsDto.getThemeBuilding())
-//                        .build();
-//        this.location = createCahootsDto.getLocation();
-//        this.plan = Plan.builder()
-//                        .expectedMonth(createCahootsDto.getExpectedMonth())
-//                        .expectedTotalCost(createCahootsDto.getExpectedTotalCost() * 10000)
-//                        .build();
-//        this.shortDescription = createCahootsDto.getShortDescription();
-//        this.descritption = createCahootsDto.getDescritption();
-//        this.stockPeriod = Period.builder()
-//                            .start(createCahootsDto.getStockStart())
-//                            .end(createCahootsDto.getStockEnd())
-//                            .build();
-//        this.stock = Stock.builder()
-//                        .price(createCahootsDto.getStockPrice())
-//                        .num(createCahootsDto.getStockNum())
-//                        .build();
-//        this.expectedRateOfReturn = createCahootsDto.getExpectedRateOfReturn();
-//    }
 
     public void setPictureList(List<Picture> pictureList) {
         for(Picture picture : pictureList) {

@@ -1,7 +1,13 @@
 package io.eagle.domain.vacation.dto;
 
+import io.eagle.entity.Vacation;
+import io.eagle.entity.embeded.Period;
+import io.eagle.entity.embeded.Plan;
+import io.eagle.entity.embeded.Stock;
+import io.eagle.entity.embeded.Theme;
 import io.eagle.entity.type.ThemeBuildingType;
 import io.eagle.entity.type.ThemeLocationType;
+import io.eagle.entity.type.VacationStatusType;
 import io.eagle.exception.ApiException;
 import io.eagle.exception.error.ErrorCode;
 import lombok.*;
@@ -80,5 +86,20 @@ public class CreateCahootsDto {
 
     public boolean isImagesEmpty(){
         return images == null || images.isEmpty();
+    }
+
+    public Vacation buildVacation(){
+        return Vacation.builder()
+                .status(VacationStatusType.CAHOOTS_BEFORE)
+                .title(getTitle())
+                .theme(Theme.builder().location(getThemeLocation()).building(getThemeBuilding()).build())
+                .location(getLocation())
+                .plan(Plan.builder().expectedMonth(getExpectedMonth()).expectedTotalCost(getExpectedTotalCost()).build())
+                .shortDescription(getShortDescription())
+                .descritption(getDescritption())
+                .stockPeriod(Period.builder().start(getStockStart()).end(getStockEnd()).build())
+                .stock(Stock.builder().num(getStockNum()).price(getStockPrice()).build())
+                .expectedRateOfReturn(getExpectedRateOfReturn())
+                .build();
     }
 }
