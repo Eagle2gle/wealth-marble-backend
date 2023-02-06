@@ -1,0 +1,16 @@
+spring:
+  profiles:
+    include:
+      - core
+      - mysql
+      - oauth
+
+#  devtools:
+#    restart:
+#      log-condition-evaluation-delta=false:
+logging:
+  level:
+    org:
+      springframework:
+        boot:
+          autoconfigure: INFO
