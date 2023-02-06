@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class MarketController {
     private final KafkaTemplate<String, MessageDto> kafkaTemplate;
 
-    @MessageMapping("/") //   url : "/purchase/"
+    @MessageMapping("/") //   url : "/purchase/" 로 들어오는 정보 처리
     public void buy(MessageDto message){
         // 사용자 잔액 조회
         // 구매
