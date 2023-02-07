@@ -39,4 +39,13 @@ public class InterestService {
         }
         return null;
     }
+
+    public Boolean deleteInterest(InterestDto interestDto) {
+        Interest interest = interestRepository.findByUserAndVacation(interestDto.getUserId(), interestDto.getVacationId());
+        if (interest != null) {
+            interestRepository.delete(interest);
+            return true;
+        }
+        return false;
+    }
 }
