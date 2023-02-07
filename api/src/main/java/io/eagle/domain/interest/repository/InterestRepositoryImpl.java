@@ -3,6 +3,7 @@ package io.eagle.domain.interest.repository;
 import com.querydsl.jpa.JPQLQueryFactory;
 import io.eagle.entity.Interest;
 import io.eagle.entity.User;
+import io.eagle.entity.Vacation;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
@@ -24,6 +25,31 @@ public class InterestRepositoryImpl implements InterestRepositoryCustom {
             .fetchAll()
             .stream()
             .collect(Collectors.toList());
+    }
+
+    @Override
+    public Boolean existsByUser(User user) {
+        return jpqlQueryFactory
+            .selectOne()
+            .from(interest)
+            .where(interest.user.id.eq(user.getId()))
+            .fetchFirst() != null;
+    }
+
+    @Override
+    public Interest findByUserAndVacation(Long userId, Long vacationId) {
+        return jpqlQueryFactory
+            .selectFrom(interest)
+            .where(interest.user.id.eq(userId).and(interest.vacation.id.eq(vacationId)))
+            .fetchOne();
+    }
+
+    @Override
+    public List<Interest> findAllByVacation(Long vacationId) {
+        return jpqlQueryFactory
+            .selectFrom(interest)
+            .where(interest.vacation.id.eq(vacationId))
+            .fetch();
     }
 
 }
