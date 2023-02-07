@@ -27,4 +27,5 @@ application-cloud.yml
 application-oauth.yml
 
 # generated
-core/src/main/generated/
+/src/main/generated/
+/core/src/main/generated/

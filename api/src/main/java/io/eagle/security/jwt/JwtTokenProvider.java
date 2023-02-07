@@ -46,68 +46,37 @@ public class JwtTokenProvider {
         return getClaimFromToken(token, Claims::getId);
     }
 
-    // Token 만료 일자 조회
-    public Date getExpirationDateFromToken(String token) {
-        return getClaimFromToken(token, Claims::getExpiration);
-    }
-
-    // Token 만료 여부 확인
-    public Boolean isTokenExpired(String token) {
-        final Date expiration = getExpirationDateFromToken(token);
-        return expiration.before(new Date());
+    // accessToken, refreshToken 동시 생성
+    public String generateTokenSet(String providerId, Map<String, Object> claims) {
+        saveRefreshToken(providerId);
+        return generateAccessToken(providerId, claims);
     }
 
     // access token 생성
-    public String generateAccessToken(String id, Map<String, Object> claims) {
-        return doGenerateAccesssToken(id, claims);
-    }
-
-    private String doGenerateAccesssToken(String id, Map<String, Object> claims) {
-        String accessToken = Jwts.builder()
+    private String generateAccessToken(String providerId, Map<String, Object> claims) {
+        return Jwts.builder()
             .setClaims(claims)
-            .setId(id)
+            .setId(providerId)
             .setIssuedAt(new Date(System.currentTimeMillis()))
             .setExpiration(new Date(System.currentTimeMillis() + TOKEN_VALID_TIME))
             .signWith(SignatureAlgorithm.HS512, secretKey)
             .compact();
-        return accessToken;
     }
 
     // id로 refreshToken 생성
-    public String generateRefreshToken(String id) {
-        return doGenerateRefreshToken(id);
-    }
-
-    private String doGenerateRefreshToken(String id) {
-        String refreshToken = Jwts.builder()
-            .setId(id)
+    private String generateRefreshToken(String providerId) {
+        return Jwts.builder()
+            .setId(providerId)
             .setIssuedAt(new Date(System.currentTimeMillis()))
-            .setExpiration(new Date(System.currentTimeMillis() + TOKEN_VALID_TIME * 24 *7))
+            .setExpiration(new Date(System.currentTimeMillis() + TOKEN_VALID_TIME * 24 * 7))
             .signWith(SignatureAlgorithm.HS512, secretKey)
             .compact();
-        return refreshToken;
-    }
-
-    // accessToken, refreshToken 동시 생성
-    public Map<String, String> generateTokenSet(String id, Map<String, Object> claims) {
-        return doGenerateTokenSet(id, claims);
-    }
-
-    private Map<String, String> doGenerateTokenSet(String id, Map<String, Object> claims) {
-        Map<String, String> tokens = new HashMap<String, String>();
-
-        String accessToken = doGenerateAccesssToken(id, claims);
-        String refreshToken = doGenerateRefreshToken(id);
-
-        tokens.put("accessToken", accessToken);
-        tokens.put("refreshToken", refreshToken);
-        return tokens;
     }
 
     // JWT refreshToken 만료체크 후 재발급
-    public Boolean reGenerateRefreshToken(String id) throws Exception {
-        // id 즉, nickname 으로 User 조회
-        User user = userRepository.findByNickname(id).orElse(null);
+    public Boolean reGenerateRefreshToken(String providerId) throws Exception {
+        // id 즉, providerId 으로 User 조회
+        User user = userRepository.findUserByProviderId(providerId).orElse(null);
 
         // User가 존재하지 않거나 refresh 토큰이 존재하지 않을 경우
         if (user == null || user.getRefreshToken() == null) {
@@ -119,12 +88,20 @@ public class JwtTokenProvider {
             Jwts.parser().setSigningKey(secretKey).parseClaimsJws(refreshToken);
             return true;
         } catch (ExpiredJwtException e) {
-            user.setRefreshToken(generateRefreshToken(id));
+            user.setRefreshToken(generateRefreshToken(providerId));
             userRepository.save(user);
             return true;
         } catch (Exception e) {
             e.printStackTrace();
             return false;
+        }
+    }
+
+    private void saveRefreshToken(String providerId) {
+        User user = userRepository.findUserByProviderId(providerId).orElse(null);
+        if (user != null) {
+            user.setRefreshToken(generateRefreshToken(providerId));
+            userRepository.save(user);
         }
     }
 

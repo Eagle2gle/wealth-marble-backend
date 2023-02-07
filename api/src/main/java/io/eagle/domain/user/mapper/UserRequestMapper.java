@@ -12,6 +12,7 @@ public class UserRequestMapper {
     public CreateUserDto toCreateUserDto(OAuth2User oAuth2User) {
         Map<String, Object> attributes = oAuth2User.getAttributes();
         return CreateUserDto.builder()
+            .providerId((String) attributes.get("sub"))
             .email((String) attributes.get("email"))
             .nickname((String) attributes.get("name"))
             .build();
