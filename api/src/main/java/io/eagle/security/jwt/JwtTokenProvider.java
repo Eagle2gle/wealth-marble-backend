@@ -47,16 +47,16 @@ public class JwtTokenProvider {
     }
 
     // accessToken, refreshToken 동시 생성
-    public String generateTokenSet(String nickname, Map<String, Object> claims) {
-        saveRefreshToken(nickname);
-        return generateAccessToken(nickname, claims);
+    public String generateTokenSet(String providerId, Map<String, Object> claims) {
+        saveRefreshToken(providerId);
+        return generateAccessToken(providerId, claims);
     }
 
     // access token 생성
-    private String generateAccessToken(String nickname, Map<String, Object> claims) {
+    private String generateAccessToken(String providerId, Map<String, Object> claims) {
         return Jwts.builder()
             .setClaims(claims)
-            .setId(nickname)
+            .setId(providerId)
             .setIssuedAt(new Date(System.currentTimeMillis()))
             .setExpiration(new Date(System.currentTimeMillis() + TOKEN_VALID_TIME))
             .signWith(SignatureAlgorithm.HS512, secretKey)
@@ -64,9 +64,9 @@ public class JwtTokenProvider {
     }
 
     // id로 refreshToken 생성
-    private String generateRefreshToken(String nickname) {
+    private String generateRefreshToken(String providerId) {
         return Jwts.builder()
-            .setId(nickname)
+            .setId(providerId)
             .setIssuedAt(new Date(System.currentTimeMillis()))
             .setExpiration(new Date(System.currentTimeMillis() + TOKEN_VALID_TIME * 24 * 7))
             .signWith(SignatureAlgorithm.HS512, secretKey)
@@ -74,9 +74,9 @@ public class JwtTokenProvider {
     }
 
     // JWT refreshToken 만료체크 후 재발급
-    public Boolean reGenerateRefreshToken(String nickname) throws Exception {
-        // id 즉, nickname 으로 User 조회
-        User user = userRepository.findByNickname(nickname).orElse(null);
+    public Boolean reGenerateRefreshToken(String providerId) throws Exception {
+        // id 즉, providerId 으로 User 조회
+        User user = userRepository.findUserByProviderId(providerId).orElse(null);
 
         // User가 존재하지 않거나 refresh 토큰이 존재하지 않을 경우
         if (user == null || user.getRefreshToken() == null) {
@@ -88,7 +88,7 @@ public class JwtTokenProvider {
             Jwts.parser().setSigningKey(secretKey).parseClaimsJws(refreshToken);
             return true;
         } catch (ExpiredJwtException e) {
-            user.setRefreshToken(generateRefreshToken(nickname));
+            user.setRefreshToken(generateRefreshToken(providerId));
             userRepository.save(user);
             return true;
         } catch (Exception e) {
@@ -97,10 +97,10 @@ public class JwtTokenProvider {
         }
     }
 
-    private void saveRefreshToken(String nickname) {
-        User user = userRepository.findByNickname(nickname).orElse(null);
+    private void saveRefreshToken(String providerId) {
+        User user = userRepository.findUserByProviderId(providerId).orElse(null);
         if (user != null) {
-            user.setRefreshToken(generateRefreshToken(nickname));
+            user.setRefreshToken(generateRefreshToken(providerId));
             userRepository.save(user);
         }
     }
