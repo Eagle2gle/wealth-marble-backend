@@ -1,7 +1,9 @@
 package io.eagle.domain.interest.service;
 
 import io.eagle.domain.interest.dto.InterestDto;
+import io.eagle.domain.interest.dto.InterestInfoDto;
 import io.eagle.domain.interest.repository.InterestRepository;
+import io.eagle.domain.user.repository.UserRepository;
 import io.eagle.entity.Interest;
 import io.eagle.entity.User;
 import lombok.RequiredArgsConstructor;
@@ -16,8 +18,8 @@ public class InterestService {
 
     private final InterestRepository interestRepository;
 
-    public List<InterestDto> getAllInterest(User user) {
-        return interestRepository.findAllByUser(user).stream().map(interest -> new InterestDto(interest)).collect(Collectors.toList());
+    public List<InterestInfoDto> getAllInterest(User user) {
+        return interestRepository.findAllByUser(user).stream().map(interest -> new InterestInfoDto(interest.getVacation())).collect(Collectors.toList());
     }
-
+    
 }
