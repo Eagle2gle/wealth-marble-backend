@@ -1,6 +1,7 @@
 package io.eagle.security.oauth;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.eagle.common.ApiResponse;
 import io.eagle.domain.user.dto.CreateUserDto;
 import io.eagle.domain.user.mapper.UserRequestMapper;
 import io.eagle.security.jwt.JwtTokenProvider;
@@ -17,7 +18,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Map;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -26,6 +26,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final UserRequestMapper userRequestMapper;
+    private ObjectMapper mapper = new ObjectMapper();
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
@@ -35,13 +36,11 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         Claims claims = Jwts.claims().setSubject(createUserDto.getNickname());
         claims.put("role", "USER");
 
-        Map<String, String> token = jwtTokenProvider.generateTokenSet(createUserDto.getNickname(), claims);
-        writeTokenResponse(response, token);
-    }
+        String accessToken = jwtTokenProvider.generateTokenSet(createUserDto.getNickname(), claims);
 
-    private void writeTokenResponse(HttpServletResponse response, Map<String, String> token) throws IOException {
-        String accessToken = token.get("accessToken");
-        response.setContentType("text/html;charset=UTF-8");
-        response.addHeader("Authorization", "Bearer " + accessToken);
+        response.setContentType("application/json");
+        response.setCharacterEncoding("utf-8");
+        response.getWriter().write(mapper.writeValueAsString(ApiResponse.createSuccess(accessToken)));
+        response.sendRedirect("http://localhost:5000/login/oauth");
     }
 }
