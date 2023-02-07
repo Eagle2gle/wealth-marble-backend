@@ -27,4 +27,13 @@ public class TransactionRepositoryImpl implements TransactionRepositoryCustom{
             .collect(Collectors.toList());
     }
 
+    @Override
+    public Transaction findByVacation(Long vacationId) {
+        return jpqlQueryFactory
+            .selectFrom(transaction)
+            .where(transaction.vacation.id.eq(vacationId))
+            .orderBy(transaction.createdAt.desc())
+            .fetchOne();
+    }
+
 }
