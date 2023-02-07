@@ -33,10 +33,10 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
         CreateUserDto createUserDto = userRequestMapper.toCreateUserDto(oAuth2User);
 
-        Claims claims = Jwts.claims().setSubject(createUserDto.getNickname());
+        Claims claims = Jwts.claims().setSubject(createUserDto.getProviderId());
         claims.put("role", "USER");
 
-        String accessToken = jwtTokenProvider.generateTokenSet(createUserDto.getNickname(), claims);
+        String accessToken = jwtTokenProvider.generateTokenSet(createUserDto.getProviderId(), claims);
 
         response.setContentType("application/json");
         response.setCharacterEncoding("utf-8");
