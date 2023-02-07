@@ -39,7 +39,6 @@ public class SecurityConfig {
             .csrf().disable()
             .cors().disable()
             .httpBasic().disable()
-            .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class) // JWT filter 적용
             .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)// Spring Security에서 session을 사용하지 않도록 설정
             .and()
@@ -48,6 +47,7 @@ public class SecurityConfig {
                 .antMatchers("/api/v1/users/**").hasRole("USER")
                 .antMatchers("/**").permitAll()
             .and()
+            .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class) // JWT filter 적용
             .oauth2Login()
                 .successHandler(oAuth2SuccessHandler)
                 .userInfoEndpoint().userService(oAuth2UserService).and().and().build();
