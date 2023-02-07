@@ -31,8 +31,16 @@ public class InterestRepositoryImpl implements InterestRepositoryCustom {
         return jpqlQueryFactory
             .selectOne()
             .from(interest)
-            .where(interest.id.eq(user.getId()))
+            .where(interest.user.id.eq(user.getId()))
             .fetchFirst() != null;
+    }
+
+    @Override
+    public Interest findByUserAndVacation(Long userId, Long vacationId) {
+        return jpqlQueryFactory
+            .selectFrom(interest)
+            .where(interest.user.id.eq(userId).and(interest.vacation.id.eq(vacationId)))
+            .fetchOne();
     }
 
 
