@@ -33,40 +33,51 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        // Local Storage 사용
-        final String token = request.getHeader("Authorization");
+        String token = request.getHeader("Authorization");
+        String jwtToken = getJwtToken(token);
+        String userId = getUserIdFromToken(jwtToken);
 
-        String jwtToken = null;
-        String userId = null;
+        if (userId != null) {
+            if (validateAuthentication(jwtToken)) {
+                assignAuthenticationUser(userId);
+            }
+            generateRefreshToken(userId);
+        }
+        filterChain.doFilter(request, response);
+    }
 
+    private String getJwtToken(String token) {
         if (token != null && token.startsWith("Bearer ")) {
-            jwtToken = token.substring(7);
-
-            try {
-                userId = jwtTokenProvider.getUsernameFromToken(jwtToken);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            return token.substring(7);
         }
+        return null;
+    }
 
-        if (userId != null && jwtTokenProvider.validateToken(jwtToken) && SecurityContextHolder.getContext().getAuthentication() == null) {
-            User user = (User) userDetailsService.loadUserByUsername(userId);
-            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                user, null, user.getAuthorities()
-            );
-            SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+    private String getUserIdFromToken(String jwtToken) {
+        if (jwtToken != null) {
+            return jwtTokenProvider.getUsernameFromToken(jwtToken);
         }
+        return null;
+    }
 
-        // Access Token 인증 후 refresh Token 재발급
+    private void generateRefreshToken(String userId) {
         try {
-            if (userId != null) {
-                jwtTokenProvider.reGenerateRefreshToken(userId);
-            }
+            jwtTokenProvider.reGenerateRefreshToken(userId);
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
 
-        filterChain.doFilter(request, response);
+    private Boolean validateAuthentication(String jwtToken) {
+        return jwtTokenProvider.validateToken(jwtToken) && SecurityContextHolder.getContext().getAuthentication() == null;
+    }
+
+    private void assignAuthenticationUser(String userId) {
+        User user = (User) userDetailsService.loadUserByUsername(userId);
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+            user, null, user.getAuthorities()
+        );
+        SecurityContextHolder.getContext().setAuthentication(authenticationToken);
     }
 
     @Override
