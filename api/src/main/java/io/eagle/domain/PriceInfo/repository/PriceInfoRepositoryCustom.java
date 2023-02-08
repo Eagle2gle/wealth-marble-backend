@@ -6,5 +6,5 @@ import io.eagle.domain.PriceInfo.dto.ChartResponseDto;
 import java.util.List;
 
 public interface PriceInfoRepositoryCustom {
-    List<ChartResponseDto> findAllByDateOrderByCreatedAt(ChartRequestDto chartRequestDto);
+    List<ChartResponseDto> findAllByVacationOrderByCreatedAt(Long vacationId, ChartRequestDto chartRequestDto);
 }

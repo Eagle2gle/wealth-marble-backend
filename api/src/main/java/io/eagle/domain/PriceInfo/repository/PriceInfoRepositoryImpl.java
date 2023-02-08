@@ -21,14 +21,14 @@ public class PriceInfoRepositoryImpl implements PriceInfoRepositoryCustom {
     private final JPQLQueryFactory jpqlQueryFactory;
 
     @Override
-    public List<ChartResponseDto> findAllByDateOrderByCreatedAt(ChartRequestDto chartRequestDto) {
+    public List<ChartResponseDto> findAllByVacationOrderByCreatedAt(Long vacationId, ChartRequestDto chartRequestDto) {
         DateTemplate<LocalDateTime> formattedDate = Expressions.dateTemplate(LocalDateTime.class, "DATE_FORMAT({0}, {1})", priceInfo.createdAt, "%Y-%m-%d");
         DateTemplate<LocalDateTime> beforeDate = Expressions.dateTemplate(LocalDateTime.class, "DATE_FORMAT({0}, {1})", chartRequestDto.getStartDate(), "%Y-%m-%d");
         DateTemplate<LocalDateTime> afterDate = Expressions.dateTemplate(LocalDateTime.class, "DATE_FORMAT({0}, {1})", chartRequestDto.getEndDate(), "%Y-%m-%d");
         return jpqlQueryFactory
             .select(new QChartResponseDto(priceInfo.createdAt, priceInfo.standardPrice, priceInfo.transactionAmount))
             .from(priceInfo)
-            .where(formattedDate.between(beforeDate, afterDate))
+            .where(priceInfo.vacation.id.eq(vacationId).and(formattedDate.between(beforeDate, afterDate)))
             .orderBy(new OrderSpecifier(
                 Order.DESC,
                 priceInfo.createdAt
