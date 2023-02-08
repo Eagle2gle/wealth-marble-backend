@@ -8,8 +8,10 @@ import com.querydsl.jpa.JPQLQueryFactory;
 import io.eagle.domain.PriceInfo.dto.ChartRequestDto;
 import io.eagle.domain.PriceInfo.dto.ChartResponseDto;
 import io.eagle.domain.PriceInfo.dto.QChartResponseDto;
+import io.eagle.entity.PriceInfo;
 import lombok.RequiredArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -34,5 +36,15 @@ public class PriceInfoRepositoryImpl implements PriceInfoRepositoryCustom {
                 priceInfo.createdAt
             ))
             .fetch();
+    }
+
+    @Override
+    public PriceInfo getYesterdayPriceInfo() {
+        DateTemplate<LocalDateTime> formattedDate = Expressions.dateTemplate(LocalDateTime.class, "DATE_FORMAT({0}, {1})", priceInfo.createdAt, "%Y-%m-%d");
+        DateTemplate<LocalDateTime> yesterday = Expressions.dateTemplate(LocalDateTime.class, "DATE_FORMAT({0}, {1})", LocalDate.now().minusDays(1), "%Y-%m-%d");
+        return jpqlQueryFactory
+            .selectFrom(priceInfo)
+            .where(formattedDate.eq(yesterday))
+            .fetchOne();
     }
 }
