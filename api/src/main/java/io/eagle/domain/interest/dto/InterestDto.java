@@ -1,24 +1,21 @@
 package io.eagle.domain.interest.dto;
 
 import io.eagle.entity.Interest;
+import io.eagle.entity.User;
+import io.eagle.entity.Vacation;
 import lombok.Getter;
 import lombok.Setter;
+
+import javax.validation.constraints.NotNull;
 
 @Getter
 @Setter
 public class InterestDto {
 
+    @NotNull
     private Long userId;
+
+    @NotNull
     private Long vacationId;
-
-    public InterestDto(Long userId, Long vacationId) {
-        this.userId = userId;
-        this.vacationId = vacationId;
-    }
-
-    public InterestDto(Interest interest) {
-        this.userId = interest.getUser().getId();
-        this.vacationId = interest.getVacation().getId();
-    }
 
 }

@@ -19,4 +19,9 @@ public class Interest extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Vacation vacation;
+
+    public Interest(User user, Vacation vacation) {
+        this.user = user;
+        this.vacation = vacation;
+    }
 }
