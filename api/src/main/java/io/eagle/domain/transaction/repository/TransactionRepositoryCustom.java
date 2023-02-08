@@ -8,6 +8,6 @@ import java.util.List;
 public interface TransactionRepositoryCustom {
 
     List<Transaction> findAllByOrder(Order order);
-
+    Transaction findByVacation(Long vacationId);
 
 }

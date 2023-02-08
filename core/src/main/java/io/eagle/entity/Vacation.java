@@ -27,10 +27,9 @@ public class Vacation extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // TODO : FK 추가
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "admin_id")
-//    private User user;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @NotNull
     @Enumerated(EnumType.STRING)

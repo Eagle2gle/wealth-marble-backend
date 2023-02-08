@@ -8,7 +8,7 @@ import javax.persistence.*;
 @Data
 @Entity
 @Builder
-public class Interest {
+public class Interest extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

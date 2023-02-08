@@ -3,6 +3,7 @@ package io.eagle.domain.interest.repository;
 import com.querydsl.jpa.JPQLQueryFactory;
 import io.eagle.entity.Interest;
 import io.eagle.entity.User;
+import io.eagle.entity.Vacation;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
@@ -43,5 +44,12 @@ public class InterestRepositoryImpl implements InterestRepositoryCustom {
             .fetchOne();
     }
 
+    @Override
+    public List<Interest> findAllByVacation(Long vacationId) {
+        return jpqlQueryFactory
+            .selectFrom(interest)
+            .where(interest.vacation.id.eq(vacationId))
+            .fetch();
+    }
 
 }

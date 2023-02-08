@@ -33,8 +33,6 @@ public class CahootsController {
         return ApiResponse.createSuccess(cahootsService.getBreifList(infoConditionDto));
     }
 
-
-
     @GetMapping(params = "status=ended")
     public ApiResponse getEndedBreifCahootsInfo(){
         VacationStatusType[] types = new VacationStatusType[]{VacationStatusType.CAHOOTS_CLOSE, VacationStatusType.CAHOOTS_OPEN};
