@@ -49,7 +49,7 @@ public class CreateCahootsDto {
 
     @NotBlank
     @Size(min = 5, max = 4000, message = "휴가지 아이디어 상세 소개를 5자이상 4000자 이하로 작성해주세요.")
-    private final String descritption;
+    private final String description;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private final LocalDate stockStart;
@@ -96,7 +96,7 @@ public class CreateCahootsDto {
                 .location(getLocation())
                 .plan(Plan.builder().expectedMonth(getExpectedMonth()).expectedTotalCost(getExpectedTotalCost()).build())
                 .shortDescription(getShortDescription())
-                .descritption(getDescritption())
+                .description(getDescription())
                 .stockPeriod(Period.builder().start(getStockStart()).end(getStockEnd()).build())
                 .stock(Stock.builder().num(getStockNum()).price(getStockPrice()).build())
                 .expectedRateOfReturn(getExpectedRateOfReturn())

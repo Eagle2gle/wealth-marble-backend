@@ -57,7 +57,7 @@ public class Vacation extends BaseEntity {
 
     @NotNull
     @Length(min = 5, max = 4000)
-    private String descritption;
+    private String description;
 
     @Embedded
     private Period stockPeriod;
