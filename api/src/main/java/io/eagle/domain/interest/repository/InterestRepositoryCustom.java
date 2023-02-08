@@ -8,5 +8,7 @@ import java.util.List;
 public interface InterestRepositoryCustom {
 
     List<Interest> findAllByUser(User user);
+    Boolean existsByUser(User user);
+    Interest findByUserAndVacation(Long userId, Long vacationId);
 
 }

@@ -26,4 +26,22 @@ public class InterestRepositoryImpl implements InterestRepositoryCustom {
             .collect(Collectors.toList());
     }
 
+    @Override
+    public Boolean existsByUser(User user) {
+        return jpqlQueryFactory
+            .selectOne()
+            .from(interest)
+            .where(interest.user.id.eq(user.getId()))
+            .fetchFirst() != null;
+    }
+
+    @Override
+    public Interest findByUserAndVacation(Long userId, Long vacationId) {
+        return jpqlQueryFactory
+            .selectFrom(interest)
+            .where(interest.user.id.eq(userId).and(interest.vacation.id.eq(vacationId)))
+            .fetchOne();
+    }
+
+
 }
