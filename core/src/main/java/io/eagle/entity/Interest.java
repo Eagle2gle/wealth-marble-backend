@@ -1,13 +1,11 @@
 package io.eagle.entity;
 
-import lombok.Builder;
 import lombok.Data;
 
 import javax.persistence.*;
 
 @Data
 @Entity
-@Builder
 public class Interest extends BaseEntity {
 
     @Id
