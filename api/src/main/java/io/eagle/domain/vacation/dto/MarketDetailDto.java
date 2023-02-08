@@ -21,7 +21,7 @@ public class MarketDetailDto {
     private Integer expectedRateOfReturn;
     @NotNull
     private Integer price;
-    private String picture;
+    private List<String> pictures;
     private List<Long> userIds;
 
 }
