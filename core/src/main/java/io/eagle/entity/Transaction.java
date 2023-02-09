@@ -2,12 +2,15 @@ package io.eagle.entity;
 
 import io.eagle.entity.BaseEntity;
 import io.eagle.entity.Order;
-import lombok.Data;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.format.DateTimeFormatter;
 
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 public class Transaction extends BaseEntity {
 
@@ -16,8 +19,11 @@ public class Transaction extends BaseEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "vacation_id")
+    @JoinColumn(name = "vacation_id", insertable = false, updatable = false) // id만으로 repository.save 가능하도록 옵션 설정
     private Vacation vacation;
+
+    @Column(name="vacation_id") // id만으로 repository.save 가능
+    private Long vacationId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "buy_order_id")
