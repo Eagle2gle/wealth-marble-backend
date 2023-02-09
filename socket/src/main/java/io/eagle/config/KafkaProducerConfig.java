@@ -2,7 +2,7 @@ package io.eagle.config;
 
 import com.google.common.collect.ImmutableMap;
 import io.eagle.common.KafkaConstants;
-import io.eagle.domain.market.dto.MessageDto;
+import io.eagle.domain.order.dto.BroadcastMessageDto;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.context.annotation.Bean;
@@ -20,7 +20,7 @@ import java.util.Map;
 public class KafkaProducerConfig {
 
     @Bean
-    public ProducerFactory<String, MessageDto> producerFactory() {
+    public ProducerFactory<String, BroadcastMessageDto> producerFactory() {
         return new DefaultKafkaProducerFactory<>(kafkaProducerConfiguration());
     }
 
@@ -35,7 +35,7 @@ public class KafkaProducerConfig {
     }
 
     @Bean
-    public KafkaTemplate<String, MessageDto> kafkaTemplate() {
+    public KafkaTemplate<String, BroadcastMessageDto> kafkaTemplate() {
         return new KafkaTemplate<>(producerFactory());
     }
 }

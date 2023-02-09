@@ -2,7 +2,8 @@ package io.eagle.config;
 
 import com.google.common.collect.ImmutableMap;
 import io.eagle.common.KafkaConstants;
-import io.eagle.domain.market.dto.MessageDto;
+import io.eagle.domain.order.dto.BroadcastMessageDto;
+import io.eagle.domain.order.dto.MessageDto;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
@@ -12,6 +13,7 @@ import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
+import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 
 import java.util.Map;
@@ -21,20 +23,20 @@ import java.util.Map;
 public class KafkaConsumerConfig {
 
     @Bean
-    ConcurrentKafkaListenerContainerFactory<String, MessageDto> kafkaListenerContainerFactory() {
-        ConcurrentKafkaListenerContainerFactory<String, MessageDto> factory = new ConcurrentKafkaListenerContainerFactory<>();
+    ConcurrentKafkaListenerContainerFactory<String, BroadcastMessageDto> kafkaListenerContainerFactory() {
+        ConcurrentKafkaListenerContainerFactory<String, BroadcastMessageDto> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory());
         return factory;
     }
 
     @Bean
-    public ConsumerFactory<String, MessageDto> consumerFactory() {
-        return new DefaultKafkaConsumerFactory<>(consumerConfigurations(), new StringDeserializer(), new JsonDeserializer<>(MessageDto.class));
+    public ConsumerFactory<String, BroadcastMessageDto> consumerFactory() {
+        return new DefaultKafkaConsumerFactory<>(consumerConfigurations(), new StringDeserializer(), new ErrorHandlingDeserializer(new JsonDeserializer<>(BroadcastMessageDto.class)));
     }
 
     @Bean
     public Map<String, Object> consumerConfigurations() {
-        JsonDeserializer<MessageDto> deserializer = new JsonDeserializer<>(MessageDto.class);
+        JsonDeserializer<BroadcastMessageDto> deserializer = new JsonDeserializer<>(BroadcastMessageDto.class);
         deserializer.setRemoveTypeHeaders(false);
         deserializer.addTrustedPackages("*");
         deserializer.setUseTypeMapperForKey(true);
