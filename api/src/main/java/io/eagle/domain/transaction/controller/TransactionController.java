@@ -14,7 +14,7 @@ public class TransactionController {
 
     private final TransactionService transactionService;
 
-    @GetMapping("/transactions/me")
+    @GetMapping("/auth/transactions/me")
     public ResponseEntity getTransactionHistoryByMine() {
         Long userId = 1L;
         return ResponseEntity.ok(transactionService.getMineTransaction(userId));
