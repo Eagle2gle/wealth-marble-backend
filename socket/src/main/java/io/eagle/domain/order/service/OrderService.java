@@ -29,6 +29,7 @@ public class OrderService {
     @Transactional
     public BroadcastMessageDto purchaseMarket(MessageDto message){
         verifyMessage(message);
+        // TODO : 사용자 정보 요청에서 가져오기
         Long userId = 1L;
         User user = userRepository.findById(userId).orElseThrow(()-> new SocketException("존재하지 않는 사용자입니다."));
         verifyUserCash(user.getCash(), message); // 사용자 잔여 캐쉬 확인 (사려는 가격보다 부족하면 에러)
@@ -126,6 +127,6 @@ public class OrderService {
 
     private void verifyLeftAmount(Integer request, Integer waiting, Integer real){
         log.error("{} - {} = {}", request, waiting, real);
-        if(waiting > 0 && Math.abs(request- waiting) != real) throw new SocketException("거래가 올바르지 않습니다. 서버를 확인해주세요");
+        if((request > waiting  && real > 0) || (request <= waiting && (waiting- request) != real)) throw new SocketException("거래가 올바르지 않습니다. 서버를 확인해주세요");
     }
 }
