@@ -1,4 +1,4 @@
-package io.eagle.domain.user.dto;
+package io.eagle.security.dto;
 
 import lombok.Builder;
 import lombok.Getter;

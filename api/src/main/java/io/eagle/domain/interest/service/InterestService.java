@@ -3,7 +3,7 @@ package io.eagle.domain.interest.service;
 import io.eagle.domain.interest.dto.InterestDto;
 import io.eagle.domain.interest.dto.InterestInfoDto;
 import io.eagle.domain.interest.repository.InterestRepository;
-import io.eagle.domain.user.repository.UserRepository;
+import io.eagle.repository.UserRepository;
 import io.eagle.domain.vacation.repository.VacationRepository;
 import io.eagle.entity.Interest;
 import io.eagle.entity.User;

@@ -1,7 +1,7 @@
 package io.eagle.security.oauth;
 
 import io.eagle.entity.User;
-import io.eagle.domain.user.repository.UserRepository;
+import io.eagle.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;

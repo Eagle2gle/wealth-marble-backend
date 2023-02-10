@@ -1,6 +1,6 @@
-package io.eagle.domain.user.mapper;
+package io.eagle.security.mapper;
 
-import io.eagle.domain.user.dto.CreateUserDto;
+import io.eagle.security.dto.CreateUserDto;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Component;
 

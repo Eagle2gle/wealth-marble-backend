@@ -3,7 +3,7 @@ package io.eagle.domain.PriceInfo.repository;
 import io.eagle.config.TestConfig;
 import io.eagle.domain.PriceInfo.dto.ChartRequestDto;
 import io.eagle.domain.PriceInfo.dto.ChartResponseDto;
-import io.eagle.domain.user.repository.UserRepository;
+import io.eagle.repository.UserRepository;
 import io.eagle.domain.vacation.repository.VacationRepository;
 import io.eagle.entity.PriceInfo;
 import io.eagle.entity.User;

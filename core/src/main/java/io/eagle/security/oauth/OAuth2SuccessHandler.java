@@ -1,10 +1,9 @@
 package io.eagle.security.oauth;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.eagle.common.ApiResponse;
-import io.eagle.domain.user.dto.CreateUserDto;
-import io.eagle.domain.user.mapper.UserRequestMapper;
+import io.eagle.security.dto.CreateUserDto;
 import io.eagle.security.jwt.JwtTokenProvider;
+import io.eagle.security.mapper.UserRequestMapper;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
@@ -40,7 +39,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
         response.setContentType("application/json");
         response.setCharacterEncoding("utf-8");
-        response.getWriter().write(mapper.writeValueAsString(ApiResponse.createSuccess(accessToken)));
-        response.sendRedirect("http://localhost:5000/login/oauth");
+        response.getWriter().write(mapper.writeValueAsString(accessToken));
+        // response.sendRedirect("http://localhost:5000/login/oauth");
     }
 }
