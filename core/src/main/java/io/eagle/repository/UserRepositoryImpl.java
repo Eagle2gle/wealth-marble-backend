@@ -1,4 +1,4 @@
-package io.eagle.domain.user.repository;
+package io.eagle.repository;
 
 import com.querydsl.jpa.JPQLQueryFactory;
 import io.eagle.entity.User;

@@ -1,6 +1,6 @@
 package io.eagle.domain.user.service;
 
-import io.eagle.domain.user.repository.UserRepository;
+import io.eagle.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

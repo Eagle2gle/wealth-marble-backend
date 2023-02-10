@@ -4,7 +4,7 @@ import io.eagle.domain.order.repository.OrderRepository;
 import io.eagle.domain.transaction.dto.UserTransactionInfoDto;
 import io.eagle.domain.transaction.repository.TransactionRepository;
 import io.eagle.entity.User;
-import io.eagle.domain.user.repository.UserRepository;
+import io.eagle.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

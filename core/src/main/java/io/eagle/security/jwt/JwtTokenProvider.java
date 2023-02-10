@@ -1,7 +1,7 @@
 package io.eagle.security.jwt;
 
 import io.eagle.entity.User;
-import io.eagle.domain.user.repository.UserRepository;
+import io.eagle.repository.UserRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
