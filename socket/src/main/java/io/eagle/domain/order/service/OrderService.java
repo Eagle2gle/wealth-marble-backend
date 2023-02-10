@@ -40,7 +40,7 @@ public class OrderService {
         // TODO : 한번에 전체를 가져오지 않고 부분적으로 가져와 처리 후 모자라면 다시 그다음 리스트를 가져오도록 하기
         List<Order> sellingOrders = orderRepository.findAllByVacation(message.getMarketId(), OrderType.SELL, message.getPrice());
         Integer sellingOrderAmount = sellingOrders.stream().mapToInt(Order::getAmount).sum();
-        System.out.println(sellingOrderAmount);
+        log.debug("waiting order : {}ea",sellingOrderAmount);
         Order doneOrder = message.buildOrder(user, sellingOrderAmount, OrderStatus.DONE);
         Order leftOrder = message.buildOrder(user, 0, OrderStatus.ONGOING);
         leftOrder.setAmount(message.getAmount() - sellingOrderAmount);
@@ -60,7 +60,6 @@ public class OrderService {
         //   해당 가격의 수량 확인해서 전달
         Integer leftAmount = orderRepository.getCurrentOrderAmount(message.getMarketId(),message.getPrice(), message.getOrderType()).orElse(0);
         verifyLeftAmount(message.getAmount(), sellingOrderAmount, leftAmount);
-        System.out.println(leftAmount);
         return BroadcastMessageDto.builder()
                 .marketId(message.getMarketId())
                 .price(message.getPrice())

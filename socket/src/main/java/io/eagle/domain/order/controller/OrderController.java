@@ -24,7 +24,6 @@ public class OrderController {
     @MessageMapping("/purchase") //   url : "order/purchase" 로 들어오는 정보 처리
     public void purchase(MessageDto message){
         BroadcastMessageDto broadcastMessageDto = orderService.purchaseMarket(message);
-        System.out.println(broadcastMessageDto);
         log.info("[STOMP Producer] user purchase market {} price : {}, amount : {}, left : {}",message.getMarketId(),message.getPrice(), message.getAmount(), broadcastMessageDto.getAmount());
         kafkaTemplate.send(KafkaConstants.KAFKA_TOPIC, broadcastMessageDto);
     }
