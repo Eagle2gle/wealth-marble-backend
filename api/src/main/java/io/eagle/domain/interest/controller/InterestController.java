@@ -21,18 +21,18 @@ public class InterestController {
         return ApiResponse.createSuccess("hello interest");
     }
 
-    @GetMapping("/interests/me/interest")
+    @GetMapping("/auth/interests/me")
     public ApiResponse getAllUserInterests(@AuthenticationPrincipal User user) {
         return ApiResponse.createSuccess(interestService.getAllInterest(user));
     }
 
-    @PostMapping("/interests")
+    @PostMapping("/auth/interests")
     public ApiResponse createInterest(@RequestBody InterestDto interestDto) {
         Interest interest = interestService.createInterest(interestDto);
         return interest != null ? ApiResponse.createSuccess(interest) : ApiResponse.createError("해당 유저나 휴가 정보가 존재하지 않습니다.");
     }
 
-    @DeleteMapping("/interests")
+    @DeleteMapping("/auth/interests")
     public ApiResponse deleteInterest(@RequestBody InterestDto interestDto) {
         Boolean isSuccessDelete = interestService.deleteInterest(interestDto);
         return isSuccessDelete ? ApiResponse.createSuccessWithNoContent() : ApiResponse.createError("삭제에 실패하였습니다.");
