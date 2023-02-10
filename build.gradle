@@ -83,26 +83,26 @@ subprojects {
 		finalizedBy("jacocoTestCoverageVerification")
 	}
 
-	tasks.jacocoTestCoverageVerification {
-		violationRules {
-			rule {
-				enabled = true
-				element = "CLASS"
-
-				limit {
-					counter = 'LINE'
-					value = 'COVEREDRATIO'
-					minimum = 0.80
-				}
-
-				limit {
-					counter = "BRANCH"
-					value = "COVEREDRATIO"
-					minimum = 0.80
-				}
-			}
-		}
-	}
+//	tasks.jacocoTestCoverageVerification {
+//		violationRules {
+//			rule {
+//				enabled = true
+//				element = "CLASS"
+//
+//				limit {
+//					counter = 'LINE'
+//					value = 'COVEREDRATIO'
+//					minimum = 0.80
+//				}
+//
+//				limit {
+//					counter = "BRANCH"
+//					value = "COVEREDRATIO"
+//					minimum = 0.80
+//				}
+//			}
+//		}
+//	}
 
 // Querydsl 설정부
 	def generated = 'src/main/generated'

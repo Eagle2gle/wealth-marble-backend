@@ -43,7 +43,7 @@ public class SecurityConfig {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)// Spring Security에서 session을 사용하지 않도록 설정
             .and()
                 .authorizeRequests()
-                .antMatchers("/api/v1/users/**").hasRole("USER")
+                .antMatchers("/api/auth/**").hasRole("USER")
                 .antMatchers("/**").permitAll()
             .and()
             .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class) // JWT filter 적용

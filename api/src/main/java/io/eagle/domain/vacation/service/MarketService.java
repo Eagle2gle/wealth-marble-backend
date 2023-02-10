@@ -26,7 +26,7 @@ public class MarketService {
         Vacation vacation = vacationRepository.findById(vacationId).orElse(null);
         if (vacation != null) {
             Transaction transaction = transactionRepository.findByVacation(vacationId);
-            String picture = pictureRepository.findUrlsByCahootsId(vacationId).get(0);
+            List<String> pictures = pictureRepository.findUrlsByCahootsId(vacationId);
             List<Long> userIds = interestRepository.findAllByVacation(vacationId)
                 .stream()
                 .map(interest -> interest.getUser().getId())
@@ -38,7 +38,7 @@ public class MarketService {
                 .shortDescription(vacation.getShortDescription())
                 .expectedRateOfReturn(vacation.getExpectedRateOfReturn())
                 .price(transaction.getPrice())
-                .picture(picture)
+                .pictures(pictures)
                 .userIds(userIds)
                 .build();
         }
