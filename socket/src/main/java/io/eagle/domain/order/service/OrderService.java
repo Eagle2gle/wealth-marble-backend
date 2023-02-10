@@ -43,13 +43,6 @@ public class OrderService {
         Integer sellingOrderAmount = sellingOrders.stream().mapToInt(Order::getAmount).sum();
         log.debug("waiting order : {}ea",sellingOrderAmount);
         Order doneOrder = message.buildOrder(user, sellingOrderAmount, OrderStatus.DONE);
-        Order leftOrder = message.buildOrder(user, 0, OrderStatus.ONGOING);
-        leftOrder.setAmount(message.getAmount() - sellingOrderAmount);
-
-        if( message.getAmount() > sellingOrderAmount ) { // 나와있는 매도 물량 없어 전부 대기
-            orderRepository.save(leftOrder);
-        }
-
         if(sellingOrderAmount > 0) { // 실 거래 가능
             orderRepository.save(doneOrder);
             Integer requestAmount = doneOrder.getAmount();
@@ -58,6 +51,11 @@ public class OrderService {
                 requestAmount -= processOrdering(OrderType.BUY, requestAmount, doneOrder, sellingOrder);
             }
         }
+
+        if( message.getAmount() > sellingOrderAmount ) { // 나와있는 매도 물량 부족해 일부 요청 수량은 ongoing으로
+            processLeftOrder(message, user, sellingOrderAmount);
+        }
+
         //   해당 가격의 수량 확인해서 전달
         TotalMountDto leftAmount = orderRepository.getCurrentOrderAmount(message.getMarketId(),message.getPrice(), message.getOrderType());
         log.debug(leftAmount.toString());
@@ -108,6 +106,11 @@ public class OrderService {
 
 
         return BroadcastMessageDto.builder().build();
+    }
+
+    private void processLeftOrder(MessageDto message,User user, Integer sellingOrderAmount){
+        Order leftOrder = message.buildOrder(user, message.getAmount() - sellingOrderAmount, OrderStatus.ONGOING);
+        orderRepository.save(leftOrder);
     }
 
     public Order splitDoneOrder(Order order, Integer amount){
