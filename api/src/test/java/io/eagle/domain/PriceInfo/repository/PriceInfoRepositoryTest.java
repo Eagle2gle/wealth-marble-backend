@@ -42,6 +42,36 @@ public class PriceInfoRepositoryTest {
     @Autowired
     private UserRepository userRepository;
 
+    @Test
+    @Order(1)
+    @DisplayName("특정_Vacation의_PriceInfo_조회")
+    void findAllByVacationOrderByCreatedAtTest() {
+        // given
+        User user = userRepository.save(createUser());
+        Vacation vacation = vacationRepository.save(createVacation(user));
+        PriceInfo priceInfo = priceInfoRepository.save(createPriceInfo(vacation));
+
+        // when
+        List<ChartResponseDto> result = priceInfoRepository.findAllByVacationOrderByCreatedAt(vacation.getId(), createChartRequestDto());
+
+        // then
+        ChartResponseDto res = result.get(0);
+        assertEquals(res.getTransactionAmount(), priceInfo.getTransactionAmount());
+        assertEquals(res.getPrice(), priceInfo.getStandardPrice());
+        assertEquals(res.getDate(), priceInfo.getCreatedAt());
+    }
+
+    @Test
+    @Order(2)
+    @DisplayName("어제_요소_PriceInfo_조회")
+    void getYesterdayPriceInfoTest() {
+        // when
+        PriceInfo priceInfo = priceInfoRepository.getYesterdayPriceInfo();
+
+        // then
+        assertNull(priceInfo);
+    }
+
     PriceInfo createPriceInfo(Vacation vacation) {
         return PriceInfo
             .builder()
