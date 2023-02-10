@@ -1,21 +1,20 @@
 package io.eagle.domain.order.repository;
 
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPQLQueryFactory;
+import io.eagle.domain.order.dto.TotalMountDto;
 import io.eagle.entity.Order;
 import io.eagle.entity.User;
 import io.eagle.entity.type.OrderStatus;
 import io.eagle.entity.type.OrderType;
-import io.eagle.entity.type.VacationStatusType;
 import lombok.RequiredArgsConstructor;
 
-import javax.swing.text.html.Option;
 import java.util.List;
-import java.util.Optional;
+
 import java.util.stream.Collectors;
 
 import static io.eagle.entity.QOrder.order;
-import static io.eagle.entity.QVacation.vacation;
 
 @RequiredArgsConstructor
 public class OrderRepositoryImpl implements OrderRepositoryCustom {
@@ -43,15 +42,15 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom {
                 .fetch();
     }
 
-    public Optional<Integer> getCurrentOrderAmount(Long vacationId, Integer price, OrderType type) {
-        return Optional.ofNullable(jpqlQueryFactory
-                .select(order.amount.sum())
+    public TotalMountDto getCurrentOrderAmount(Long vacationId, Integer price, OrderType type) {
+        return jpqlQueryFactory
+                .select(Projections.fields(TotalMountDto.class,order.orderType.as("type"), order.amount.sum().as("amount")))
                 .from(order)
                 .where(order.vacation.id.eq(vacationId),
                         isEqualPrice(price),
-                        isEqualType(type).not(),
                         isOngoing())
-                .fetchOne());
+                .groupBy(order.orderType)
+                .fetchOne();
 
     }
 

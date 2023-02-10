@@ -2,6 +2,7 @@ package io.eagle.domain.order.service;
 
 import io.eagle.domain.order.dto.MessageDto;
 import io.eagle.domain.order.dto.BroadcastMessageDto;
+import io.eagle.domain.order.dto.TotalMountDto;
 import io.eagle.domain.order.repository.OrderRepository;
 import io.eagle.domain.transaction.repository.TransactionRepository;
 import io.eagle.entity.Order;
@@ -58,12 +59,13 @@ public class OrderService {
             }
         }
         //   해당 가격의 수량 확인해서 전달
-        Integer leftAmount = orderRepository.getCurrentOrderAmount(message.getMarketId(),message.getPrice(), message.getOrderType()).orElse(0);
-        verifyLeftAmount(message.getAmount(), sellingOrderAmount, leftAmount);
+        TotalMountDto leftAmount = orderRepository.getCurrentOrderAmount(message.getMarketId(),message.getPrice(), message.getOrderType());
+        log.debug(leftAmount.toString());
         return BroadcastMessageDto.builder()
                 .marketId(message.getMarketId())
                 .price(message.getPrice())
-                .amount(leftAmount)
+                .amount(leftAmount.getAmount())
+                .orderType(leftAmount.getType())
                 .build();
     }
 
@@ -124,8 +126,4 @@ public class OrderService {
         return List.of(a,b,c).stream().min(Integer::compare).orElse(0);
     }
 
-    private void verifyLeftAmount(Integer request, Integer waiting, Integer real){
-        log.error("{} - {} = {}", request, waiting, real);
-        if((request > waiting  && real > 0) || (request <= waiting && (waiting- request) != real)) throw new SocketException("거래가 올바르지 않습니다. 서버를 확인해주세요");
-    }
 }
