@@ -55,7 +55,7 @@ public class OrderService {
             Integer requestAmount = doneOrder.getAmount();
             for(Order sellingOrder: sellingOrders){ // 매도 별로 하나 씩 transaction 생성
                 if(requestAmount <= 0) break;
-                requestAmount -= createTransaction(OrderType.BUY, requestAmount, doneOrder, sellingOrder);
+                requestAmount -= processOrdering(OrderType.BUY, requestAmount, doneOrder, sellingOrder);
             }
         }
         //   해당 가격의 수량 확인해서 전달
@@ -84,7 +84,7 @@ public class OrderService {
         Integer leftCash = user.getCash() - (message.getAmount() * message.getPrice());
         user.setCash(leftCash);
     }
-    private Integer createTransaction(OrderType type, Integer requestAmount, Order purchaseOrder, Order saleOrder){
+    private Integer processOrdering(OrderType type, Integer requestAmount, Order purchaseOrder, Order saleOrder){
         Integer transactionAmount = getMin(requestAmount, purchaseOrder.getAmount(), saleOrder.getAmount());
         Order waitingOrder = (type.equals(OrderType.BUY) ? saleOrder : purchaseOrder);
         Order doneOrder;
@@ -96,15 +96,11 @@ public class OrderService {
             doneOrder = waitingOrder;
         }
 
-        // transaction 생성
-        Transaction transaction = Transaction.builder()
-                .vacationId(saleOrder.getVacationId())
-                .buyOrder((doneOrder.getOrderType().equals(OrderType.BUY) ? doneOrder : purchaseOrder))
-                .sellOrder((doneOrder.getOrderType().equals(OrderType.SELL) ? doneOrder : saleOrder))
-                .amount(transactionAmount)
-                .price(saleOrder.getPrice())
-                .build();
-        transactionRepository.save(transaction);
+        createTransaction(
+                (doneOrder.getOrderType().equals(OrderType.BUY) ? doneOrder : purchaseOrder),
+                (doneOrder.getOrderType().equals(OrderType.SELL) ? doneOrder : saleOrder),
+                transactionAmount
+        ); // transaction 생성
         return transactionAmount;
     }
 
@@ -126,4 +122,15 @@ public class OrderService {
         return List.of(a,b,c).stream().min(Integer::compare).orElse(0);
     }
 
+    private void createTransaction(Order purchaseOrder, Order saleOrder, Integer transactionAmount){
+        // transaction 생성
+        Transaction transaction = Transaction.builder()
+                .vacationId(saleOrder.getVacationId())
+                .buyOrder(purchaseOrder)
+                .sellOrder(saleOrder)
+                .amount(transactionAmount)
+                .price(saleOrder.getPrice())
+                .build();
+        transactionRepository.save(transaction);
+    }
 }
