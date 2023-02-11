@@ -3,7 +3,8 @@ package io.eagle.domain.vacation.service;
 import io.eagle.domain.interest.repository.InterestRepository;
 import io.eagle.domain.picture.repository.PictureRepository;
 import io.eagle.domain.transaction.repository.TransactionRepository;
-import io.eagle.domain.vacation.dto.MarketDetailDto;
+import io.eagle.domain.vacation.dto.response.MarketDetailDto;
+import io.eagle.domain.vacation.dto.response.MarketInfoDto;
 import io.eagle.domain.vacation.repository.VacationRepository;
 import io.eagle.entity.Transaction;
 import io.eagle.entity.Vacation;
@@ -41,6 +42,15 @@ public class MarketService {
                 .pictures(pictures)
                 .userIds(userIds)
                 .build();
+        }
+        return null;
+    }
+
+    public MarketInfoDto getVacationInfo(Long vacationId) {
+        Vacation vacation = vacationRepository.findById(vacationId).orElse(null);
+        if (vacation != null) {
+            List<String> pictures = pictureRepository.findUrlsByCahootsId(vacationId);
+            return new MarketInfoDto(vacation, pictures);
         }
         return null;
     }

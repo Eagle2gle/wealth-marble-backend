@@ -20,4 +20,9 @@ public class MarketController {
         return ApiResponse.createSuccess(marketService.getOne(vacationId));
     }
 
+    @GetMapping("/markets/info/{vacationId}")
+    public ApiResponse getInfo(@PathVariable("vacationId") Long vacationId) {
+        return ApiResponse.createSuccess(marketService.getVacationInfo(vacationId));
+    }
+
 }
