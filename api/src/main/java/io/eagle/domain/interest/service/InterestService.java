@@ -31,13 +31,9 @@ public class InterestService {
     }
 
     public Interest createInterest(InterestDto interestDto) {
-        User user = userRepository.findUserById(interestDto.getUserId()).orElse(null);
-        Vacation vacation = vacationRepository.findById(interestDto.getVacationId()).orElse(null);
-
-        if (user != null && vacation != null) {
-            return interestRepository.save(new Interest(user, vacation));
-        }
-        return null;
+        User user = userRepository.getReferenceById(interestDto.getUserId());
+        Vacation vacation = vacationRepository.getReferenceById(interestDto.getVacationId());
+        return interestRepository.save(new Interest(user, vacation));
     }
 
     public Boolean deleteInterest(InterestDto interestDto) {

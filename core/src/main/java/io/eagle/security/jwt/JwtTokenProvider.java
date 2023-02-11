@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import java.util.Base64;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -44,6 +43,10 @@ public class JwtTokenProvider {
     // Token에서 사용자 정보 조회
     public String getUsernameFromToken(String token) {
         return getClaimFromToken(token, Claims::getId);
+    }
+
+    public Long getUserIdFromToken(String token) {
+        return (Long) getAllClaimsFromToken(token).get("id");
     }
 
     // accessToken, refreshToken 동시 생성

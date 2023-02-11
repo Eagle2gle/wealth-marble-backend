@@ -1,6 +1,8 @@
 package io.eagle.security.oauth;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.eagle.entity.User;
+import io.eagle.repository.UserRepository;
 import io.eagle.security.dto.CreateUserDto;
 import io.eagle.security.jwt.JwtTokenProvider;
 import io.eagle.security.mapper.UserRequestMapper;
@@ -25,6 +27,8 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final UserRequestMapper userRequestMapper;
+    private final UserRepository userRepository;
+
     private ObjectMapper mapper = new ObjectMapper();
 
     @Override
@@ -32,14 +36,18 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
         CreateUserDto createUserDto = userRequestMapper.toCreateUserDto(oAuth2User);
 
-        Claims claims = Jwts.claims().setSubject(createUserDto.getProviderId());
-        claims.put("role", "USER");
+        User user = userRepository.findUserByProviderId(createUserDto.getProviderId()).orElse(null);
+        if (user != null) {
+            Claims claims = Jwts.claims().setSubject(createUserDto.getProviderId());
+            claims.put("role", "ROLE_USER");
+            claims.put("id", user.getId());
 
-        String accessToken = jwtTokenProvider.generateTokenSet(createUserDto.getProviderId(), claims);
+            String accessToken = jwtTokenProvider.generateTokenSet(createUserDto.getProviderId(), claims);
 
-        response.setContentType("application/json");
-        response.setCharacterEncoding("utf-8");
-        response.getWriter().write(mapper.writeValueAsString(accessToken));
-        // response.sendRedirect("http://localhost:5000/login/oauth");
+            response.setContentType("application/json");
+            response.setCharacterEncoding("utf-8");
+            response.getWriter().write(mapper.writeValueAsString(accessToken));
+            // response.sendRedirect("http://localhost:5000/login/oauth");
+        }
     }
 }
