@@ -11,7 +11,10 @@ import io.eagle.entity.Vacation;
 import io.eagle.entity.type.OrderType;
 import io.eagle.repository.UserRepository;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -20,10 +23,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 @DataJpaTest
 @Import(TestConfig.class)
 @Transactional
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@TestInstance(Lifecycle.PER_CLASS)
 public class TransactionRepositoryTest {
 
     @Autowired
@@ -62,6 +68,21 @@ public class TransactionRepositoryTest {
 
         transaction = testUtil.createTransaction(vacation, buyOrder, sellOrder);
         transactionRepository.save(transaction);
+    }
+
+    @Test
+    @org.junit.jupiter.api.Order(1)
+    @DisplayName("Order로_조회_테스트")
+    void findAllByOrder() {
+        // when
+        List<Transaction> transactions = transactionRepository.findAllByOrder(buyOrder);
+
+        // then
+        Transaction findTransaction = transactions.get(0);
+        assertNotNull(transactions);
+        assertEquals(transaction.getBuyOrder().getId(), findTransaction.getBuyOrder().getId());
+        assertEquals(transaction.getId(), findTransaction.getId());
+        assertEquals(transaction.getVacationId(), findTransaction.getVacationId());
     }
 
 }
