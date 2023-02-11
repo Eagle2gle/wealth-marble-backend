@@ -2,7 +2,7 @@ package io.eagle.config;
 
 import com.google.common.collect.ImmutableMap;
 import io.eagle.common.KafkaConstants;
-import io.eagle.domain.order.dto.BroadcastMessageDto;
+import io.eagle.domain.order.dto.response.BroadcastMessageDto;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.context.annotation.Bean;

@@ -1,7 +1,7 @@
 package io.eagle.domain.order.consumer;
 
 import io.eagle.common.KafkaConstants;
-import io.eagle.domain.order.dto.BroadcastMessageDto;
+import io.eagle.domain.order.dto.response.BroadcastMessageDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.messaging.simp.SimpMessagingTemplate;

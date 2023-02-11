@@ -1,4 +1,4 @@
-package io.eagle.domain.order.dto;
+package io.eagle.domain.order.dto.request;
 
 import io.eagle.entity.Order;
 import io.eagle.entity.User;
@@ -16,6 +16,8 @@ public class MessageDto {
     private Integer price;
     private Integer amount;
     private OrderType orderType;
+
+    private Long requesterId;
 
     public Order buildOrder(User user, Vacation vacation, Integer existingAmount, OrderStatus status){
         return Order.builder()
