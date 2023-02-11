@@ -3,6 +3,8 @@ package io.eagle.domain.transaction.repository;
 import io.eagle.common.TestUtil;
 import io.eagle.config.TestConfig;
 import io.eagle.domain.order.repository.OrderRepository;
+import io.eagle.domain.transaction.dto.TransactionRequestDto;
+import io.eagle.domain.transaction.dto.TransactionResponseDto;
 import io.eagle.domain.vacation.repository.VacationRepository;
 import io.eagle.entity.Order;
 import io.eagle.entity.Transaction;
@@ -16,8 +18,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -96,6 +100,30 @@ public class TransactionRepositoryTest {
         assertNotNull(findTransaction);
         assertEquals(findTransaction.getId(), transaction.getId());
         assertEquals(findTransaction.getVacation().getId(), transaction.getVacation().getId());
+    }
+
+    @Test
+    @org.junit.jupiter.api.Order(3)
+    @DisplayName("특정_위치에_존재하는_page_조회")
+    @Transactional
+    void findByVacationOrderByCreatedAtDesc() {
+        // given
+        createObject();
+
+        // when
+        PageRequest page = PageRequest.of(0, 20);
+        TransactionRequestDto requestDto = TransactionRequestDto.builder()
+            .vacationId(vacation.getId())
+            .startDate(LocalDate.now().minusDays(1))
+            .endDate(LocalDate.now())
+            .build();
+        List<TransactionResponseDto> responseDtos = transactionRepository.findByVacationOrderByCreatedAtDesc(page, requestDto);
+
+        // then
+        TransactionResponseDto responseDto = responseDtos.get(0);
+        assertNotNull(responseDtos);
+        assertEquals(responseDto.getAmount(), transaction.getAmount());
+        assertEquals(responseDto.getPrice(), transaction.getPrice());
     }
 
 }
