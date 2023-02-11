@@ -5,13 +5,14 @@ import io.eagle.domain.order.dto.BroadcastMessageDto;
 import io.eagle.domain.order.dto.TotalMountDto;
 import io.eagle.domain.order.repository.OrderRepository;
 import io.eagle.domain.transaction.repository.TransactionRepository;
+import io.eagle.domain.vacation.repository.VacationRepository;
 import io.eagle.entity.Order;
 import io.eagle.entity.Transaction;
 import io.eagle.entity.User;
 import io.eagle.entity.type.OrderStatus;
 import io.eagle.entity.type.OrderType;
 import io.eagle.exception.SocketException;
-import io.eagle.user.repository.UserRepository;
+import io.eagle.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -26,6 +27,7 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final UserRepository userRepository;
     private final TransactionRepository transactionRepository;
+    private final VacationRepository vacationRepository;
 
     @Transactional
     public BroadcastMessageDto purchaseMarket(MessageDto message){
@@ -42,7 +44,7 @@ public class OrderService {
         List<Order> sellingOrders = orderRepository.findAllByVacation(message.getMarketId(), OrderType.SELL, message.getPrice());
         Integer sellingOrderAmount = sellingOrders.stream().mapToInt(Order::getAmount).sum();
         log.debug("waiting order : {}ea",sellingOrderAmount);
-        Order doneOrder = message.buildOrder(user, sellingOrderAmount, OrderStatus.DONE);
+        Order doneOrder = message.buildOrder(user, vacationRepository.getReferenceById(message.getMarketId()),sellingOrderAmount, OrderStatus.DONE);
         if(sellingOrderAmount > 0) { // 실 거래 가능
             orderRepository.save(doneOrder);
             Integer requestAmount = doneOrder.getAmount();
@@ -109,7 +111,7 @@ public class OrderService {
     }
 
     private void processLeftOrder(MessageDto message,User user, Integer sellingOrderAmount){
-        Order leftOrder = message.buildOrder(user, message.getAmount() - sellingOrderAmount, OrderStatus.ONGOING);
+        Order leftOrder = message.buildOrder(user, vacationRepository.getReferenceById(message.getMarketId()),message.getAmount() - sellingOrderAmount, OrderStatus.ONGOING);
         orderRepository.save(leftOrder);
     }
 
@@ -128,7 +130,8 @@ public class OrderService {
     private void createTransaction(Order purchaseOrder, Order saleOrder, Integer transactionAmount){
         // transaction 생성
         Transaction transaction = Transaction.builder()
-                .vacationId(saleOrder.getVacationId())
+                .vacation(vacationRepository.getReferenceById(saleOrder.getVacation().getId()))
+//                .vacationId(saleOrder.getVacationId())
                 .buyOrder(purchaseOrder)
                 .sellOrder(saleOrder)
                 .amount(transactionAmount)

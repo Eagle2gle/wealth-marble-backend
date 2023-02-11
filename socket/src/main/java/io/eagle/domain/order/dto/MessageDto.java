@@ -5,9 +5,11 @@ import io.eagle.entity.User;
 import io.eagle.entity.Vacation;
 import io.eagle.entity.type.OrderStatus;
 import io.eagle.entity.type.OrderType;
+import lombok.Builder;
 import lombok.Data;
 
 @Data
+@Builder
 public class MessageDto {
 
     private Long marketId;
@@ -15,14 +17,15 @@ public class MessageDto {
     private Integer amount;
     private OrderType orderType;
 
-    public Order buildOrder(User user, Integer existingAmount, OrderStatus status){
+    public Order buildOrder(User user, Vacation vacation, Integer existingAmount, OrderStatus status){
         return Order.builder()
                 .amount(Math.min(this.getAmount(), existingAmount))
                 .status(status)
                 .orderType(this.getOrderType())
                 .price(this.getPrice())
                 .user(user)
-                .vacationId(this.getMarketId())
+                .vacation(vacation)
+//                .vacationId(this.getMarketId())
                 .build();
     }
 }
