@@ -26,6 +26,7 @@ public class TestUtil {
                 .build()
             )
             .location("부산")
+                .country("대한민국")
             .plan(Plan.builder()
                 .expectedMonth(12)
                 .expectedTotalCost(30000L)

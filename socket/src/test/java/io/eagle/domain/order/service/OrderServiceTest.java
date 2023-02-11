@@ -1,8 +1,7 @@
 package io.eagle.domain.order.service;
 
 import io.eagle.common.TestUtil;
-import io.eagle.config.TestConfig;
-import io.eagle.domain.order.dto.MessageDto;
+import io.eagle.domain.order.dto.request.MessageDto;
 import io.eagle.domain.order.repository.OrderRepository;
 import io.eagle.domain.transaction.repository.TransactionRepository;
 import io.eagle.domain.vacation.repository.VacationRepository;
@@ -10,6 +9,7 @@ import io.eagle.entity.Order;
 import io.eagle.entity.Transaction;
 import io.eagle.entity.User;
 import io.eagle.entity.Vacation;
+import io.eagle.entity.type.OrderStatus;
 import io.eagle.entity.type.OrderType;
 import io.eagle.entity.type.VacationStatusType;
 import io.eagle.repository.UserRepository;
@@ -18,20 +18,18 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.context.annotation.Import;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.junit.Assert.fail;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@DataJpaTest
-@Import(TestConfig.class)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@SpringBootTest
 public class OrderServiceTest {
 
     @Autowired
@@ -54,8 +52,8 @@ public class OrderServiceTest {
     User buyer;
     User seller;
     Vacation vacation;
-    List<Order> buyOrders = new ArrayList<Order>();
-    List<Order> sellOrders = new ArrayList<Order>();
+    List<Order> buyOrderList = new ArrayList<Order>();
+    List<Order> sellOrderList = new ArrayList<Order>();
     Transaction transaction;
 
     void createObject() {
@@ -75,20 +73,118 @@ public class OrderServiceTest {
     @DisplayName("매수 요청. (매수 수량 < 매도 수량)")
     @org.junit.jupiter.api.Order(1)
     @Transactional
-    void findAllByOrder() {
+    void purchaseOrder1() {
         // given
         createObject();
-        sellOrders.add(orderRepository.save(testUtil.createOrder(seller, vacation, 1719, 5, OrderType.SELL)));
-        sellOrders.add(orderRepository.save(testUtil.createOrder(seller, vacation, 1719, 7, OrderType.SELL)));
-        sellOrders.add(orderRepository.save(testUtil.createOrder(seller, vacation, 1780, 3, OrderType.SELL)));
+        sellOrderList.add(orderRepository.save(testUtil.createOrder(seller, vacation, 1719, 5, OrderType.SELL)));
+        sellOrderList.add(orderRepository.save(testUtil.createOrder(seller, vacation, 1719, 7, OrderType.SELL)));
+        sellOrderList.add(orderRepository.save(testUtil.createOrder(owner, vacation, 1780, 3, OrderType.SELL)));
 
         // when
-        MessageDto message = MessageDto.builder().marketId(vacation.getId()).price(1719).amount(6).build();
+        MessageDto message = MessageDto.builder()
+                .marketId(vacation.getId()).price(1719).amount(6)
+                .requesterId(buyer.getId()).build();
         orderService.purchaseMarket(message);
 
         // then
-//        Order buyOrder = orderRepository.findAllByUser(userRepository.getReferenceById(1L));
-//        transaction = transactionRepository.findOne();
-//        assertEquals(transaction, findTransaction.getId());
+        List<Order> buyOrders = orderRepository.findAllByUser(buyer);
+        assertEquals(buyOrders.size(), 1);
+        for(Order order : buyOrders){
+            assertEquals(order.getUser().getId() , buyer.getId());
+            assertEquals(order.getVacation().getId(), message.getMarketId());
+            assertEquals(order.getOrderType(), OrderType.BUY);
+            assertEquals(order.getPrice(), message.getPrice());
+            assertEquals(order.getStatus(), OrderStatus.DONE);
+        }
+
+        List<Order> sellOrders = orderRepository.findAllByUser(seller);
+        Order doneSplitOrder;
+        assertEquals(sellOrders.size(), 3);
+        for(Order order : sellOrders){
+            assertEquals(order.getPrice(),1719);
+            if(order.getId().equals(sellOrderList.get(0).getId())){ // amount 5
+                assertEquals(order.getAmount(),5);
+                assertEquals(order.getStatus(), OrderStatus.DONE);
+            } else if(order.getId().equals(sellOrderList.get(1).getId())) { // amount 7 -> 6
+                assertEquals(order.getAmount(),6);
+                assertEquals(order.getStatus(), OrderStatus.ONGOING);
+            } else{
+                doneSplitOrder = order;
+                assertEquals(order.getAmount(),1);
+                assertEquals(order.getStatus(), OrderStatus.DONE);
+            }
+        }
+
+        List<Transaction> transactionList = transactionRepository.findByPrice(1719);
+        assertEquals(transactionList.size(), 2);
+        for(Transaction transaction : transactionList){
+            assertEquals(transaction.getBuyOrder().getId(), buyOrders.get(0).getId());
+            if(transaction.getAmount() == 5){
+                assertEquals(transaction.getSellOrder().getId(), sellOrderList.get(0).getId());
+            } else if (transaction.getAmount() == 1){
+                assertEquals(transaction.getVacation().getId(), sellOrders.get(1).getVacation().getId());
+            } else{
+                fail();
+            }
+        }
+
+    }
+
+    @Test
+    @DisplayName("매수 요청. (매수 수량 > 매도 수량)")
+    @org.junit.jupiter.api.Order(2)
+    @Transactional
+    void purchaseOrder2() {
+        // given
+        createObject();
+        sellOrderList.add(orderRepository.save(testUtil.createOrder(seller, vacation, 1719, 5, OrderType.SELL)));
+        sellOrderList.add(orderRepository.save(testUtil.createOrder(seller, vacation, 1719, 7, OrderType.SELL)));
+        sellOrderList.add(orderRepository.save(testUtil.createOrder(owner, vacation, 1780, 3, OrderType.SELL)));
+
+        // when
+        MessageDto message = MessageDto.builder()
+                .marketId(vacation.getId()).price(1719).amount(15)
+                .requesterId(buyer.getId()).build();
+        orderService.purchaseMarket(message);
+
+        // then
+        List<Order> buyOrders = orderRepository.findAllByUser(buyer);
+        assertEquals(buyOrders.size(), 2);
+        for(Order order : buyOrders){
+            assertEquals(order.getUser().getId() , buyer.getId());
+            assertEquals(order.getVacation().getId(), message.getMarketId());
+            assertEquals(order.getOrderType(), OrderType.BUY);
+            assertEquals(order.getPrice(), message.getPrice());
+            if(order.getAmount() == 12){
+                assertEquals(order.getStatus(), OrderStatus.DONE);
+            } else if(order.getAmount() == 3){
+                assertEquals(order.getStatus(), OrderStatus.ONGOING);
+            } else{
+                fail();
+            }
+
+        }
+
+        List<Order> sellOrders = orderRepository.findAllByUser(seller);
+        assertEquals(sellOrders.size(), 2);
+        for(Order order : sellOrders){
+            assertEquals(order.getPrice(),1719);
+            assertEquals(order.getStatus(), OrderStatus.DONE);
+            assertEquals(order.getVacation().getId(), message.getMarketId());
+        }
+
+        List<Transaction> transactionList = transactionRepository.findByPrice(1719);
+        assertEquals(transactionList.size(), 2);
+        for(Transaction transaction : transactionList){
+            assertEquals(transaction.getBuyOrder().getId(), buyOrders.get(0).getId());
+            if(transaction.getAmount() == 5){
+                assertEquals(transaction.getVacation().getId(), sellOrders.get(0).getVacation().getId());
+            } else if (transaction.getAmount() == 7){
+                assertEquals(transaction.getVacation().getId(), sellOrders.get(1).getVacation().getId());
+            } else{
+                fail();
+            }
+        }
+
     }
 }

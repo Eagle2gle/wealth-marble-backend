@@ -1,7 +1,7 @@
 package io.eagle.domain.order.service;
 
-import io.eagle.domain.order.dto.MessageDto;
-import io.eagle.domain.order.dto.BroadcastMessageDto;
+import io.eagle.domain.order.dto.request.MessageDto;
+import io.eagle.domain.order.dto.response.BroadcastMessageDto;
 import io.eagle.domain.order.dto.TotalMountDto;
 import io.eagle.domain.order.repository.OrderRepository;
 import io.eagle.domain.transaction.repository.TransactionRepository;
@@ -32,9 +32,7 @@ public class OrderService {
     @Transactional
     public BroadcastMessageDto purchaseMarket(MessageDto message){
         verifyMessage(message);
-        // TODO : 사용자 정보 요청에서 가져오기
-        Long userId = 1L;
-        User user = userRepository.findById(userId).orElseThrow(()-> new SocketException("존재하지 않는 사용자입니다."));
+        User user = userRepository.findById(message.getRequesterId()).orElseThrow(()-> new SocketException("존재하지 않는 사용자입니다."));
         verifyUserCash(user.getCash(), message); // 사용자 잔여 캐쉬 확인 (사려는 가격보다 부족하면 에러)
         subtractUserCash(user, message);
 
