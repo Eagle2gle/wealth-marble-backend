@@ -19,11 +19,11 @@ public class Transaction extends BaseEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "vacation_id", insertable = false, updatable = false) // id만으로 repository.save 가능하도록 옵션 설정
+    @JoinColumn(name = "vacation_id") // id만으로 repository.save 가능하도록 옵션 설정
     private Vacation vacation;
-
-    @Column(name="vacation_id") // id만으로 repository.save 가능
-    private Long vacationId;
+//
+//    @Column(name="vacation_id") // id만으로 repository.save 가능
+//    private Long vacationId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "buy_order_id")
