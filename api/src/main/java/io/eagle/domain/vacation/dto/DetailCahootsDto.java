@@ -32,7 +32,7 @@ public class DetailCahootsDto {
     private String shortDescription;
 
     @NotBlank
-    private String descritption;
+    private String description;
 
     private VacationStatusType status;
 
