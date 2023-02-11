@@ -1,5 +1,7 @@
 package io.eagle.security.jwt;
 
+import io.eagle.auth.AuthDetails;
+import io.eagle.auth.AuthService;
 import io.eagle.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -22,7 +24,7 @@ import java.util.List;
 public class JwtRequestFilter extends OncePerRequestFilter {
 
     private final JwtTokenProvider jwtTokenProvider;
-    private final UserDetailsService userDetailsService;
+    private final AuthService authService;
 
     // 인증에서 제외할 URL
     private static final List<String> EXCLUDE_URL = Collections.unmodifiableList(
@@ -35,13 +37,14 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String token = request.getHeader("Authorization");
         String jwtToken = getJwtToken(token);
-        String userId = getUserIdFromToken(jwtToken);
+        String providerId = getProviderIdFromToken(jwtToken);
+        Long userId = getUserIdFromToken(jwtToken);
 
-        if (userId != null) {
+        if (providerId != null) {
             if (validateAuthentication(jwtToken)) {
                 assignAuthenticationUser(userId);
             }
-            generateRefreshToken(userId);
+            generateRefreshToken(providerId);
         }
         filterChain.doFilter(request, response);
     }
@@ -53,16 +56,23 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         return null;
     }
 
-    private String getUserIdFromToken(String jwtToken) {
+    private String getProviderIdFromToken(String jwtToken) {
         if (jwtToken != null) {
             return jwtTokenProvider.getUsernameFromToken(jwtToken);
         }
         return null;
     }
 
-    private void generateRefreshToken(String userId) {
+    private Long getUserIdFromToken(String jwtToken) {
+        if (jwtToken != null) {
+            return jwtTokenProvider.getUserIdFromToken(jwtToken);
+        }
+        return null;
+    }
+
+    private void generateRefreshToken(String providerId) {
         try {
-            jwtTokenProvider.reGenerateRefreshToken(userId);
+            jwtTokenProvider.reGenerateRefreshToken(providerId);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -72,10 +82,10 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         return jwtTokenProvider.validateToken(jwtToken) && SecurityContextHolder.getContext().getAuthentication() == null;
     }
 
-    private void assignAuthenticationUser(String userId) {
-        User user = (User) userDetailsService.loadUserByUsername(userId);
+    private void assignAuthenticationUser(Long userId) {
+        AuthDetails authDetails = (AuthDetails) authService.loadUserByUsername(userId.toString());
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-            user, null, user.getAuthorities()
+            authDetails, null, authDetails.getAuthorities()
         );
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
     }
