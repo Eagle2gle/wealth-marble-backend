@@ -45,6 +45,9 @@ public class Vacation extends BaseEntity {
     // TODO : hashtag
 //    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
 //    private Set<Hashtag> hashtagList;
+
+    @NotNull
+    private String country;
     @NotNull
     private String location;
 

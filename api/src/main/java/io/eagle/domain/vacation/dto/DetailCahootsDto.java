@@ -22,6 +22,7 @@ public class DetailCahootsDto {
 
     private ThemeBuildingType themeBuilding;
 
+    private String country;
     private String location;
 
     private Integer expectedMonth;
