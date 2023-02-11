@@ -10,10 +10,7 @@ import io.eagle.entity.User;
 import io.eagle.entity.Vacation;
 import io.eagle.entity.type.OrderType;
 import io.eagle.repository.UserRepository;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -27,7 +24,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 @Import(TestConfig.class)
-@Transactional
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @TestInstance(Lifecycle.PER_CLASS)
 public class TransactionRepositoryTest {
@@ -44,6 +40,7 @@ public class TransactionRepositoryTest {
     @Autowired
     private OrderRepository orderRepository;
 
+    User owner;
     User buyer;
     User seller;
     Vacation vacation;
@@ -51,20 +48,16 @@ public class TransactionRepositoryTest {
     Order sellOrder;
     Transaction transaction;
 
-    @BeforeAll
     void createObject() {
         TestUtil testUtil = new TestUtil();
-        User owner = testUtil.createUser("owner", "owner@email.com");
+        owner = testUtil.createUser("owner", "owner@email.com");
         buyer = testUtil.createUser("buyer", "buyer@email.com");
         seller = testUtil.createUser("seller", "seller@email.com");
         userRepository.saveAll(List.of(owner, buyer, seller));
 
-        vacation = testUtil.createVacation(owner);
-        vacationRepository.save(vacation);
-
-        buyOrder = testUtil.createOrder(buyer, vacation, OrderType.BUY);
-        sellOrder = testUtil.createOrder(seller, vacation, OrderType.SELL);
-        orderRepository.saveAll(List.of(buyOrder, sellOrder));
+        vacation = vacationRepository.save(testUtil.createVacation(owner));
+        buyOrder = orderRepository.save(testUtil.createOrder(buyer, vacation, OrderType.BUY));
+        sellOrder = orderRepository.save(testUtil.createOrder(seller, vacation, OrderType.SELL));
 
         transaction = testUtil.createTransaction(vacation, buyOrder, sellOrder);
         transactionRepository.save(transaction);
@@ -72,17 +65,37 @@ public class TransactionRepositoryTest {
 
     @Test
     @org.junit.jupiter.api.Order(1)
-    @DisplayName("Order로_조회_테스트")
+    @DisplayName("Order로_조회")
+    @Transactional
     void findAllByOrder() {
+        // given
+        createObject();
+
         // when
         List<Transaction> transactions = transactionRepository.findAllByOrder(buyOrder);
 
         // then
         Transaction findTransaction = transactions.get(0);
         assertNotNull(transactions);
-        assertEquals(transaction.getBuyOrder().getId(), findTransaction.getBuyOrder().getId());
         assertEquals(transaction.getId(), findTransaction.getId());
-        assertEquals(transaction.getVacationId(), findTransaction.getVacationId());
+        assertEquals(transaction.getBuyOrder().getId(), findTransaction.getBuyOrder().getId());
+    }
+
+    @Test
+    @org.junit.jupiter.api.Order(2)
+    @DisplayName("Vacation으로_조회")
+    @Transactional
+    void findByVacation() {
+        // given
+        createObject();
+
+        // when
+        Transaction findTransaction = transactionRepository.findByVacation(vacation.getId());
+
+        // then
+        assertNotNull(findTransaction);
+        assertEquals(findTransaction.getId(), transaction.getId());
+        assertEquals(findTransaction.getVacation().getId(), transaction.getVacation().getId());
     }
 
 }
