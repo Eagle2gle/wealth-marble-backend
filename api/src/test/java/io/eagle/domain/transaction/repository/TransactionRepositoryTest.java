@@ -68,7 +68,6 @@ public class TransactionRepositoryTest {
     }
 
     @Test
-    @org.junit.jupiter.api.Order(1)
     @DisplayName("Order로_조회")
     @Transactional
     void findAllByOrder() {
@@ -86,7 +85,6 @@ public class TransactionRepositoryTest {
     }
 
     @Test
-    @org.junit.jupiter.api.Order(2)
     @DisplayName("Vacation으로_조회")
     @Transactional
     void findByVacation() {
@@ -103,7 +101,6 @@ public class TransactionRepositoryTest {
     }
 
     @Test
-    @org.junit.jupiter.api.Order(3)
     @DisplayName("특정_위치에_존재하는_page_조회")
     @Transactional
     void findByVacationOrderByCreatedAtDesc() {
