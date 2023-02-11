@@ -25,11 +25,8 @@ public class Order extends BaseEntity {
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "vacation_id", insertable = false, updatable = false) // id만으로 repository.save 가능하도록 옵션 설정
+    @JoinColumn(name = "vacation_id")
     private Vacation vacation;
-
-    @Column(name="vacation_id") // id만으로 repository.save 가능
-    private Long vacationId;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -48,7 +45,8 @@ public class Order extends BaseEntity {
     public Order deepCopy(){
         return Order.builder()
                 .status(getStatus())
-                .vacationId(getVacationId())
+                .vacation(getVacation())
+//                .vacationId(getVacationId())
                 .price(getPrice())
                 .user(getUser())
                 .orderType(getOrderType())
