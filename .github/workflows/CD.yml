@@ -84,5 +84,5 @@ jobs:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
         uses: Ilshidur/action-discord@master
         with:
-          args: 'Deploy ${{ job.status }} - wealth marble'
+          args: 'Deploy ${{ job.status }} [${{ github.event.pull_request.title }}] - wealth marble'
         if: always()
