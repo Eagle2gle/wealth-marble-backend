@@ -1,5 +1,6 @@
 package io.eagle.domain.interest.controller;
 
+import io.eagle.auth.AuthDetails;
 import io.eagle.common.ApiResponse;
 import io.eagle.domain.interest.dto.InterestDto;
 import io.eagle.domain.interest.service.InterestService;
@@ -22,8 +23,8 @@ public class InterestController {
     }
 
     @GetMapping("/auth/interests/me")
-    public ApiResponse getAllUserInterests(@AuthenticationPrincipal User user) {
-        return ApiResponse.createSuccess(interestService.getAllInterest(user));
+    public ApiResponse getAllUserInterests(@AuthenticationPrincipal AuthDetails authDetails) {
+        return ApiResponse.createSuccess(interestService.getAllInterest(authDetails.getUser()));
     }
 
     @PostMapping("/auth/interests")
