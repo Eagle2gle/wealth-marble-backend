@@ -1,4 +1,4 @@
-package io.eagle.domain.order.dto;
+package io.eagle.domain.order.dto.response;
 
 import io.eagle.entity.type.OrderType;
 import lombok.*;
