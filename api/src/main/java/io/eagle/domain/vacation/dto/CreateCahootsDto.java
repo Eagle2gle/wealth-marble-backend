@@ -33,6 +33,8 @@ public class CreateCahootsDto {
 
     private final ThemeBuildingType themeBuilding;
 
+    @NotBlank(message = "휴가지 나라를 확인해주세요.")
+    private final String country;
     @NotBlank(message = "휴가지 위치를 확인해주세요.")
     private final String location;
 
@@ -94,6 +96,7 @@ public class CreateCahootsDto {
                 .title(getTitle())
                 .theme(Theme.builder().location(getThemeLocation()).building(getThemeBuilding()).build())
                 .location(getLocation())
+                .country(getCountry())
                 .plan(Plan.builder().expectedMonth(getExpectedMonth()).expectedTotalCost(getExpectedTotalCost()).build())
                 .shortDescription(getShortDescription())
                 .description(getDescription())
