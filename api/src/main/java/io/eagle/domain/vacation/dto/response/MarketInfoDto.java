@@ -1,4 +1,4 @@
-package io.eagle.domain.vacation.dto;
+package io.eagle.domain.vacation.dto.response;
 
 import io.eagle.entity.Picture;
 import io.eagle.entity.Vacation;
@@ -15,10 +15,10 @@ public class MarketInfoDto {
     private String description;
     private List<String> pictures;
 
-    public MarketInfoDto(Vacation vacation) {
+    public MarketInfoDto(Vacation vacation, List<String> pictures) {
         this.title = vacation.getTitle();
         this.location = vacation.getLocation();
         this.description = vacation.getDescription();
-        this.pictures = vacation.getPictureList() != null ? vacation.getPictureList().stream().map(Picture::getUrl).collect(Collectors.toList()) : null;
+        this.pictures = pictures;
     }
 }
