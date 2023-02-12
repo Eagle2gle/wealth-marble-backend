@@ -126,7 +126,7 @@ public class OrderService {
     }
 
     private void createTransaction(Order purchaseOrder, Order saleOrder, Integer transactionAmount){
-        // transaction 생성
+        // transaction 생성.
         Transaction transaction = Transaction.builder()
                 .vacation(vacationRepository.getReferenceById(saleOrder.getVacation().getId()))
 //                .vacationId(saleOrder.getVacationId())
