@@ -7,7 +7,9 @@ import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
@@ -22,6 +24,8 @@ import java.util.Map;
 @EnableKafka
 public class KafkaConsumerConfig {
 
+    @Value("${kafka.broker.address}")
+    String BROKER;
 
     @Bean
     ConcurrentKafkaListenerContainerFactory<String, BroadcastMessageDto> kafkaListenerContainerFactory() {
@@ -43,7 +47,7 @@ public class KafkaConsumerConfig {
         deserializer.setUseTypeMapperForKey(true);
 
         return ImmutableMap.<String, Object>builder()
-                .put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, KafkaConstants.BROKER)
+                .put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, BROKER)
                 .put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringSerializer.class)
                 .put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class)
                 .put(ConsumerConfig.GROUP_ID_CONFIG, KafkaConstants.GROUP_ID)
