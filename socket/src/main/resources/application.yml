@@ -16,13 +16,19 @@ logging:
         boot:
           autoconfigure: INFO
 ---
-spring.config.activate.on-profile: dev
+spring:
+  config:
+    activate:
+      on-profile: dev
 kafka:
   broker:
     address:
         "localhost:29092"
 ---
-spring.config.activate.on-profile: prod
+spring:
+  config:
+    activate:
+      on-profile: prod
 kafka:
   broker:
     address:
