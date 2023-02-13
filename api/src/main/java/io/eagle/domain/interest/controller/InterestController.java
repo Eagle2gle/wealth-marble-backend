@@ -5,8 +5,9 @@ import io.eagle.common.ApiResponse;
 import io.eagle.domain.interest.dto.InterestDto;
 import io.eagle.domain.interest.service.InterestService;
 import io.eagle.entity.Interest;
-import io.eagle.entity.User;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,8 +24,13 @@ public class InterestController {
     }
 
     @GetMapping("/auth/interests/me")
-    public ApiResponse getAllUserInterests(@AuthenticationPrincipal AuthDetails authDetails) {
-        return ApiResponse.createSuccess(interestService.getAllInterest(authDetails.getUser()));
+    public ApiResponse getAllUserInterests(
+        @AuthenticationPrincipal AuthDetails authDetails,
+        @RequestParam(defaultValue = "10", required = false) Integer size,
+        @RequestParam(defaultValue = "0", required = false) Integer page
+    ) {
+        Pageable pageable = PageRequest.of(page, size);
+        return ApiResponse.createSuccess(interestService.getAllInterest(authDetails.getUser(), pageable));
     }
 
     @PostMapping("/auth/interests")
