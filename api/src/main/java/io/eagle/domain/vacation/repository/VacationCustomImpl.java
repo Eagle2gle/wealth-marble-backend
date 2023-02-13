@@ -5,9 +5,11 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPQLQueryFactory;
 import io.eagle.domain.vacation.dto.*;
+import io.eagle.entity.Vacation;
 import io.eagle.entity.type.VacationStatusType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -109,6 +111,16 @@ public class VacationCustomImpl implements VacationCustom {
                 .orderBy(vacation.stockPeriod.start.desc())
                 .limit(this.page)
                 .fetch();
+    }
+
+    @Override
+    public List<Vacation> findAllMarkets(Pageable pageable) {
+        return queryFactory
+            .selectFrom(vacation)
+            .where(vacation.status.eq(VacationStatusType.MARKET_ONGOING))
+            .offset(pageable.getOffset())
+            .limit(pageable.getPageSize())
+            .fetch();
     }
 
     private BooleanExpression isInStatus(VacationStatusType[] statusTypes){
