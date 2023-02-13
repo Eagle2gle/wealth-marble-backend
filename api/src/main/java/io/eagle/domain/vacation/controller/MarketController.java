@@ -3,10 +3,9 @@ package io.eagle.domain.vacation.controller;
 import io.eagle.common.ApiResponse;
 import io.eagle.domain.vacation.service.MarketService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api")
@@ -14,6 +13,15 @@ import org.springframework.web.bind.annotation.RestController;
 public class MarketController {
 
     private final MarketService marketService;
+
+    @GetMapping("/markets")
+    public ApiResponse getAllMarkets(
+        @RequestParam(value = "page", defaultValue = "0") Integer page,
+        @RequestParam(value = "size", defaultValue = "10") Integer size
+    ) {
+        Pageable pageable = PageRequest.of(page, size);
+        return ApiResponse.createSuccess(marketService.getAllMarkets(pageable));
+    }
 
     @GetMapping("/markets/{vacationId}")
     public ApiResponse getOne(@PathVariable("vacationId") Long vacationId) {
