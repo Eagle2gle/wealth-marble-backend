@@ -5,11 +5,9 @@ import io.eagle.entity.User;
 import io.eagle.entity.Vacation;
 import io.eagle.entity.type.OrderStatus;
 import io.eagle.entity.type.OrderType;
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 
 @Data
-@Builder
 public class MessageDto {
 
     private Long marketId;

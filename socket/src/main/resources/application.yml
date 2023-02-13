@@ -1,5 +1,6 @@
 spring:
   profiles:
+    active: dev
     include:
       - core
       - mysql
@@ -14,3 +15,15 @@ logging:
       springframework:
         boot:
           autoconfigure: INFO
+---
+spring.config.activate.on-profile: dev
+kafka:
+  broker:
+    address:
+        "localhost:29092"
+---
+spring.config.activate.on-profile: prod
+kafka:
+  broker:
+    address:
+      "ubuntu_kafka_1:29092"
