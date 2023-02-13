@@ -7,6 +7,7 @@ import io.eagle.domain.vacation.dto.response.MarketDetailDto;
 import io.eagle.domain.vacation.dto.response.MarketInfoDto;
 import io.eagle.domain.vacation.dto.response.MarketListDto;
 import io.eagle.domain.vacation.repository.VacationRepository;
+import io.eagle.entity.Picture;
 import io.eagle.entity.PriceInfo;
 import io.eagle.entity.Transaction;
 import io.eagle.entity.Vacation;
@@ -34,16 +35,17 @@ public class MarketService {
     public List<MarketListDto> getAllMarkets(Pageable pageable) {
         return vacationRepository.findAllMarkets(pageable).stream().map(vacation -> {
             PriceInfo priceInfo = vacation.getPriceInfos() != null ? vacation.getPriceInfos().get(0) : null;
+            Picture picture = vacation.getPictureList() != null ? vacation.getPictureList().get(0) : null;
             PriceStatus priceStatus = getPriceStatus(Optional.ofNullable(priceInfo));
             return MarketListDto
                 .builder()
                 .country(vacation.getCountry())
-                .picture(vacation.getPictureList().get(0).getUrl())
+                .shortDescription(vacation.getShortDescription())
+                .picture(Objects.requireNonNull(picture).getUrl())
                 .price(Objects.requireNonNull(priceInfo).getStandardPrice())
                 .priceStatus(priceStatus)
                 .build();
         }).collect(Collectors.toList());
-
     }
 
     public MarketDetailDto getOne(Long vacationId) {
