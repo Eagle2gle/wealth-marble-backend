@@ -14,4 +14,5 @@ public final class KafkaConstants {
     public void setBROKER(String broker){
         KafkaConstants.BROKER = broker;
     }
+
 }
