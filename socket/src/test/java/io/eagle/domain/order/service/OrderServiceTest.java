@@ -68,6 +68,15 @@ public class OrderServiceTest {
 
     }
 
+    MessageDto createMessage(Long vacationId, Long requesterId, Integer price, Integer amount){
+        MessageDto message = new MessageDto();
+        message.setPrice(price);
+        message.setAmount(amount);
+        message.setMarketId(vacationId);
+        message.setRequesterId(requesterId);
+        return message;
+    }
+
 
     @Test
     @DisplayName("매수 요청. (매수 수량 < 매도 수량)")
@@ -81,9 +90,7 @@ public class OrderServiceTest {
         sellOrderList.add(orderRepository.save(testUtil.createOrder(owner, vacation, 1780, 3, OrderType.SELL)));
 
         // when
-        MessageDto message = MessageDto.builder()
-                .marketId(vacation.getId()).price(1719).amount(6)
-                .requesterId(buyer.getId()).build();
+        MessageDto message = createMessage(vacation.getId(), buyer.getId(), 1719, 6);
         orderService.purchaseMarket(message);
 
         // then
@@ -142,9 +149,7 @@ public class OrderServiceTest {
         sellOrderList.add(orderRepository.save(testUtil.createOrder(owner, vacation, 1780, 3, OrderType.SELL)));
 
         // when
-        MessageDto message = MessageDto.builder()
-                .marketId(vacation.getId()).price(1719).amount(15)
-                .requesterId(buyer.getId()).build();
+        MessageDto message = createMessage(vacation.getId(), buyer.getId(), 1719, 15);
         orderService.purchaseMarket(message);
 
         // then
