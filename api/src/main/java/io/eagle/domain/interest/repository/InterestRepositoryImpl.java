@@ -1,13 +1,14 @@
 package io.eagle.domain.interest.repository;
 
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.JPQLQueryFactory;
 import io.eagle.entity.Interest;
 import io.eagle.entity.User;
-import io.eagle.entity.Vacation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static io.eagle.entity.QInterest.*;
 
@@ -17,14 +18,15 @@ public class InterestRepositoryImpl implements InterestRepositoryCustom {
     private final JPQLQueryFactory jpqlQueryFactory;
 
     @Override
-    public List<Interest> findAllByUser(User user) {
+    public List<Interest> findInterestByUser(User user, Pageable pageable) {
         return jpqlQueryFactory
             .selectFrom(interest)
             .leftJoin(interest.user)
             .where(interest.user.id.eq(user.getId()))
-            .fetchAll()
-            .stream()
-            .collect(Collectors.toList());
+            .offset(pageable.getOffset())
+            .limit(pageable.getPageSize())
+            .orderBy(Expressions.dateTemplate(LocalDateTime.class, "DATE_FORMAT({0}, {1})", interest.createdAt, "%Y-%m-%d").desc())
+            .fetch();
     }
 
     @Override
