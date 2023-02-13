@@ -5,23 +5,46 @@ import io.eagle.domain.picture.repository.PictureRepository;
 import io.eagle.domain.transaction.repository.TransactionRepository;
 import io.eagle.domain.vacation.dto.response.MarketDetailDto;
 import io.eagle.domain.vacation.dto.response.MarketInfoDto;
+import io.eagle.domain.vacation.dto.response.MarketListDto;
 import io.eagle.domain.vacation.repository.VacationRepository;
+import io.eagle.entity.PriceInfo;
 import io.eagle.entity.Transaction;
 import io.eagle.entity.Vacation;
+import io.eagle.entity.type.PriceStatus;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class MarketService {
 
     private final VacationRepository vacationRepository;
     private final TransactionRepository transactionRepository;
     private final PictureRepository pictureRepository;
     private final InterestRepository interestRepository;
+
+    public List<MarketListDto> getAllMarkets(Pageable pageable) {
+        return vacationRepository.findAllMarkets(pageable).stream().map(vacation -> {
+            PriceInfo priceInfo = vacation.getPriceInfos() != null ? vacation.getPriceInfos().get(0) : null;
+            PriceStatus priceStatus = getPriceStatus(Optional.ofNullable(priceInfo));
+            return MarketListDto
+                .builder()
+                .country(vacation.getCountry())
+                .picture(vacation.getPictureList().get(0).getUrl())
+                .price(Objects.requireNonNull(priceInfo).getStandardPrice())
+                .priceStatus(priceStatus)
+                .build();
+        }).collect(Collectors.toList());
+
+    }
 
     public MarketDetailDto getOne(Long vacationId) {
         Vacation vacation = vacationRepository.findById(vacationId).orElse(null);
@@ -53,6 +76,23 @@ public class MarketService {
             return new MarketInfoDto(vacation, pictures);
         }
         return null;
+    }
+
+    private PriceStatus getPriceStatus(Optional<PriceInfo> priceInfo) {
+        if (priceInfo.isEmpty()) {
+            return PriceStatus.SAME;
+        }
+
+        Integer startPrice = priceInfo.get().getStartPrice();
+        Integer standardPrice = priceInfo.get().getStandardPrice();
+
+        if (startPrice > standardPrice) {
+            return PriceStatus.DOWN;
+        } else if (startPrice.equals(standardPrice)) {
+            return PriceStatus.SAME;
+        } else {
+            return PriceStatus.UP;
+        }
     }
 
 }
