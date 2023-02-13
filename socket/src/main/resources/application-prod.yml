@@ -1,4 +1,4 @@
 kafka:
   broker:
     address:
-      "ubuntu_kafka_1:29092"
+      "kafka:9092"
