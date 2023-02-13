@@ -1,3 +1,3 @@
 FROM eclipse-temurin:11-alpine
 COPY ./build/libs/socket-0.0.1-SNAPSHOT.jar app.jar
-ENTRYPOINT ["java", "-jar","-Dspring.profiles.active=prod", "app.jar"]
+ENTRYPOINT ["java", "-Dspring.profiles.active=prod", "-jar", "app.jar"]
