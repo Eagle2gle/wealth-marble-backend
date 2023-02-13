@@ -1,0 +1,9 @@
+spring:
+  profiles:
+    include:
+      - core
+      - mysql
+      - oauth
+  batch:
+    jdbc:
+      initialize-schema: embedded
