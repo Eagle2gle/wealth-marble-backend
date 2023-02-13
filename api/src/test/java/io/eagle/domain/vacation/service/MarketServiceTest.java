@@ -8,6 +8,7 @@ import io.eagle.domain.vacation.dto.response.MarketInfoDto;
 import io.eagle.domain.vacation.dto.response.MarketListDto;
 import io.eagle.domain.vacation.repository.VacationRepository;
 import io.eagle.entity.Picture;
+import io.eagle.entity.PriceInfo;
 import io.eagle.entity.User;
 import io.eagle.entity.Vacation;
 import io.eagle.entity.type.PriceStatus;
@@ -71,11 +72,23 @@ public class MarketServiceTest {
         User user = testUtil.createUser("anonymous", "anonymous@email.com");
         Vacation vacation = testUtil.createVacation(user);
         Pageable pageable = PageRequest.of(0, 10);
+        PriceInfo priceInfo = PriceInfo
+            .builder()
+            .vacation(vacation)
+            .startPrice(1000)
+            .lowPrice(100)
+            .highPrice(10000)
+            .standardPrice(5000)
+            .transactionMoney(50000)
+            .transactionAmount(10)
+            .build();
         Picture picture = new Picture("test@rul", "test-type", vacation);
+        vacation.setPictureList(List.of(picture));
+        vacation.setPriceInfos(List.of(priceInfo));
         MarketListDto marketListDto = MarketListDto
             .builder()
-            .priceStatus(PriceStatus.SAME)
-            .price(10000)
+            .priceStatus(PriceStatus.UP)
+            .price(5000)
             .country(vacation.getCountry())
             .shortDescription(vacation.getShortDescription())
             .picture(picture.getUrl())
@@ -89,6 +102,8 @@ public class MarketServiceTest {
         // then
         assertEquals(market.getCountry(), marketListDto.getCountry());
         assertEquals(market.getShortDescription(), marketListDto.getShortDescription());
+        assertEquals(market.getPrice(), marketListDto.getPrice());
+        assertEquals(market.getPriceStatus(), marketListDto.getPriceStatus());
     }
 
 }
