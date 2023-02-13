@@ -1,4 +1,4 @@
 kafka:
   broker:
     address:
-      "kafka:9092"
+      "kafka:29092"
