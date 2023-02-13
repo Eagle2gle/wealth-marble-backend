@@ -74,6 +74,10 @@ public class Vacation extends BaseEntity {
     @OneToMany(mappedBy="vacation", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ContestParticipation> historyList;
 
+    @OneToMany(mappedBy = "vacation", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OrderBy("createdAt desc")
+    private List<PriceInfo> priceInfos;
+
     @NotNull
     private Integer expectedRateOfReturn;
 
@@ -82,6 +86,13 @@ public class Vacation extends BaseEntity {
             picture.setVacation(this);
         }
         this.pictureList = pictureList;
+    }
+
+    public void setPriceInfos(List<PriceInfo> priceInfos) {
+        for (PriceInfo priceInfo: priceInfos) {
+            priceInfo.setVacation(this);
+        }
+        this.priceInfos = priceInfos;
     }
 
 }
