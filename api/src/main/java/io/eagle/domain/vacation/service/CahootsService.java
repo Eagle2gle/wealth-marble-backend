@@ -4,9 +4,11 @@ import io.eagle.domain.interest.repository.InterestRepository;
 import io.eagle.domain.picture.S3;
 import io.eagle.domain.vacation.dto.request.CreateCahootsDto;
 import io.eagle.domain.vacation.dto.response.*;
+import io.eagle.entity.Interest;
 import io.eagle.entity.Picture;
 import io.eagle.domain.picture.repository.PictureRepository;
 import io.eagle.domain.vacation.dto.*;
+import io.eagle.entity.User;
 import io.eagle.entity.Vacation;
 import io.eagle.domain.vacation.repository.VacationRepository;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +21,7 @@ public class CahootsService {
 
     private final VacationRepository vacationRepository;
     private final PictureRepository pictureRepository;
+    private final InterestRepository interestRepository;
 
     private final S3 s3;
 
@@ -36,6 +39,11 @@ public class CahootsService {
 
     public DetailCahootsDto getDetail(Long cahootsId) {
         DetailCahootsDto detailCahootsDto = vacationRepository.getVacationDetail(cahootsId).checkNull();
+        List<Interest> interests = interestRepository.findByVacation(vacationRepository.getReferenceById(cahootsId));
+        detailCahootsDto.setInterestCount(interests.size());
+        // TODO : 사용자 정보 추가
+        Long userId = 1L;
+        detailCahootsDto.setIsInterest(interests.stream().map(Interest::getUser).map(User::getId).anyMatch(id -> id.equals(userId)));
         detailCahootsDto.setImages(getImageUrls(cahootsId));
         return detailCahootsDto;
     }

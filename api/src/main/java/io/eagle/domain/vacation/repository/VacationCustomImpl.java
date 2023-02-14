@@ -69,6 +69,7 @@ public class VacationCustomImpl implements VacationCustom {
     public List<Long> findVacationIdByUserInterested(Long userId) {
         return queryFactory.select(vacation.id).from(interest).innerJoin(interest.vacation, vacation).on(interest.user.id.eq(userId)).fetch();
     }
+
     public List<BreifCahootsDto> getVacationsBreif(InfoConditionDto infoConditionDto){
         // TODO : no limit, offset 검토
         return queryFactory

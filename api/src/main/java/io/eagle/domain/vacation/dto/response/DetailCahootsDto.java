@@ -53,6 +53,10 @@ public class DetailCahootsDto {
 
     private List<String> images;
 
+    private Integer interestCount;
+
+    private Boolean isInterest;
+
 //    public static DetailCahootsDto toDto(Vacation vacation, Integer competitionRate) {
 //        return DetailCahootsDto.builder()
 //                .id(vacation.getId())
