@@ -81,7 +81,7 @@ public class VacationCustomImpl implements VacationCustom {
                 .groupBy(vacation.id)
                 .orderBy(contestParticipation.stocks.sum().desc())
                 .limit(this.page)
-                .offset(infoConditionDto.getOffset() * this.page)
+                .offset(infoConditionDto.getPage() * this.page)
                 .fetch();
 
     }
@@ -99,7 +99,7 @@ public class VacationCustomImpl implements VacationCustom {
                 .where(isInStatus(infoConditionDto.getTypes()), isInEndDateRange(beforeDays))
                 .orderBy(vacation.stockPeriod.end.asc())
                 .limit(this.page)
-                .offset(infoConditionDto.getOffset() * this.page)
+                .offset(infoConditionDto.getPage() * this.page)
                 .fetch();
     }
 

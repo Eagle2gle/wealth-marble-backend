@@ -37,14 +37,14 @@ public class CahootsController {
     @GetMapping(params = "status=ended")
     public ApiResponse getEndedBreifCahootsInfo(){
         VacationStatusType[] types = new VacationStatusType[]{VacationStatusType.CAHOOTS_CLOSE, VacationStatusType.CAHOOTS_OPEN};
-        InfoConditionDto infoConditionDto = InfoConditionDto.builder().types(types).offset(0).build();
+        InfoConditionDto infoConditionDto = InfoConditionDto.builder().types(types).page(0).build();
         return ApiResponse.createSuccess(cahootsService.getBreifList(infoConditionDto));
     }
 
     @GetMapping(params = "status=ending-soon")
     public ApiResponse getEndedSoonBreifCahootsInfo(){
         VacationStatusType[] types = new VacationStatusType[]{VacationStatusType.CAHOOTS_ONGOING};
-        InfoConditionDto infoConditionDto = InfoConditionDto.builder().types(types).offset(0).build();
+        InfoConditionDto infoConditionDto = InfoConditionDto.builder().types(types).page(0).build();
         return ApiResponse.createSuccess(cahootsService.getBreifV2List(infoConditionDto));
     }
 

@@ -10,7 +10,7 @@ import javax.validation.constraints.Min;
 @Builder
 public class InfoConditionDto {
     private VacationStatusType[] types;
-    @Min(value = 0, message = "offset은 0 이상이어야합니다.")
-    private Integer offset;
+    @Min(value = 0, message = "page는 0 이상이어야합니다.")
+    private Integer page;
     private String keyword;
 }
