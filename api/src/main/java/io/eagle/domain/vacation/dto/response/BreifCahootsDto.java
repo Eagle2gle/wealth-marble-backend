@@ -27,7 +27,8 @@ public class BreifCahootsDto {
 
     // TODO : hashtag
 
-    // TODO : picture url
     private List<String> images;
+
+    private Boolean isInterest;
 
 }
