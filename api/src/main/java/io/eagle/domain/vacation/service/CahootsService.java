@@ -42,6 +42,7 @@ public class CahootsService {
 
     public BreifCahootsListDto getBreifList(InfoConditionDto infoConditionDto){
         List<BreifCahootsDto> breifCahootsList = vacationRepository.getVacationsBreif(infoConditionDto);
+        // TODO : 사용자 정보 추가
         List<Long> myInterestVacation = vacationRepository.findVacationIdByUserInterested(1L);
         breifCahootsList.forEach(breifCahootsDto -> {
             breifCahootsDto.setImages(getImageUrls(breifCahootsDto.getId()));
