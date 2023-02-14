@@ -1,4 +1,4 @@
-package io.eagle.domain.vacation.dto;
+package io.eagle.domain.vacation.dto.response;
 
 import io.eagle.entity.type.VacationStatusType;
 import lombok.Data;
@@ -9,25 +9,15 @@ import java.util.List;
 
 @Data
 @NoArgsConstructor
-public class BreifCahootsDto {
+public class BreifV2CahootsDto {
     private Long id;
     private String title;
-    private String location;
     private VacationStatusType status;
 
     private LocalDate stockStart;
 
     private LocalDate stockEnd;
 
-    private Long stockPrice;
-
-    private Integer stockNum;
-
-    private Integer competitionRate;
-
-    // TODO : hashtag
-
-    // TODO : picture url
     private List<String> images;
 
 }

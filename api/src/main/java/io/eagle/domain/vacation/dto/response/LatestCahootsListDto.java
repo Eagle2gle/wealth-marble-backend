@@ -1,4 +1,4 @@
-package io.eagle.domain.vacation.dto;
+package io.eagle.domain.vacation.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
