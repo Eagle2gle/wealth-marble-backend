@@ -1,8 +1,10 @@
 package io.eagle.domain.vacation.repository;
 
+import com.querydsl.core.Tuple;
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.JPQLQueryFactory;
 import io.eagle.domain.vacation.dto.*;
 import io.eagle.domain.vacation.dto.response.BreifCahootsDto;
@@ -14,11 +16,13 @@ import io.eagle.entity.type.VacationStatusType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.parameters.P;
 
 import java.time.LocalDate;
 import java.util.List;
 
 import static io.eagle.entity.QContestParticipation.contestParticipation;
+import static io.eagle.entity.QInterest.interest;
 import static io.eagle.entity.QVacation.vacation;
 
 @RequiredArgsConstructor
@@ -62,6 +66,9 @@ public class VacationCustomImpl implements VacationCustom {
                 .fetchOne();
     }
 
+    public List<Long> findVacationIdByUserInterested(Long userId) {
+        return queryFactory.select(vacation.id).from(interest).innerJoin(interest.vacation, vacation).on(interest.user.id.eq(userId)).fetch();
+    }
     public List<BreifCahootsDto> getVacationsBreif(InfoConditionDto infoConditionDto){
         // TODO : no limit, offset 검토
         return queryFactory
@@ -74,7 +81,8 @@ public class VacationCustomImpl implements VacationCustom {
                         vacation.stock.num.as("stockNum"),
                         vacation.stockPeriod.start.as("stockStart"),
                         vacation.stockPeriod.end.as("stockEnd"),
-                        ExpressionUtils.as((contestParticipation.stocks.sum().coalesce(0).multiply(100).divide(vacation.stock.num)),"competitionRate")))
+                        ExpressionUtils.as((contestParticipation.stocks.sum().coalesce(0).multiply(100).divide(vacation.stock.num)),"competitionRate")
+                ))
                 .from(vacation)
                 .leftJoin(vacation.historyList, contestParticipation)
                 .where(isInStatus(infoConditionDto.getTypes()), hasKeyword(infoConditionDto.getKeyword()))

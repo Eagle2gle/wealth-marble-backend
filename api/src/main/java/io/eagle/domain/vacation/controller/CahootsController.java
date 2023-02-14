@@ -29,7 +29,6 @@ public class CahootsController {
 
     @GetMapping(params = "status=ongoing")
     public ApiResponse getBreifCahootsInfo(@Valid InfoConditionDto infoConditionDto){
-        System.out.println(infoConditionDto);
         infoConditionDto.setTypes(new VacationStatusType[]{VacationStatusType.CAHOOTS_ONGOING});
         return ApiResponse.createSuccess(cahootsService.getBreifList(infoConditionDto));
     }

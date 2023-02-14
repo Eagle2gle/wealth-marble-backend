@@ -1,5 +1,6 @@
 package io.eagle.domain.vacation.service;
 
+import io.eagle.domain.interest.repository.InterestRepository;
 import io.eagle.domain.picture.S3;
 import io.eagle.domain.vacation.dto.request.CreateCahootsDto;
 import io.eagle.domain.vacation.dto.response.*;
@@ -18,6 +19,7 @@ public class CahootsService {
 
     private final VacationRepository vacationRepository;
     private final PictureRepository pictureRepository;
+
     private final S3 s3;
 
     public void create(CreateCahootsDto createCahootsDto) {
@@ -40,7 +42,11 @@ public class CahootsService {
 
     public BreifCahootsListDto getBreifList(InfoConditionDto infoConditionDto){
         List<BreifCahootsDto> breifCahootsList = vacationRepository.getVacationsBreif(infoConditionDto);
-        breifCahootsList.forEach(breifCahootsDto -> {breifCahootsDto.setImages(getImageUrls(breifCahootsDto.getId()));});
+        List<Long> myInterestVacation = vacationRepository.findVacationIdByUserInterested(1L);
+        breifCahootsList.forEach(breifCahootsDto -> {
+            breifCahootsDto.setImages(getImageUrls(breifCahootsDto.getId()));
+            breifCahootsDto.setIsInterest(myInterestVacation.contains(breifCahootsDto.getId()));
+        });
         return BreifCahootsListDto.builder().result(breifCahootsList).build();
     }
 

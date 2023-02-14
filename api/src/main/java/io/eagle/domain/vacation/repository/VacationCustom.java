@@ -12,6 +12,8 @@ import java.util.List;
 
 public interface VacationCustom {
     DetailCahootsDto getVacationDetail(Long cahootsId);
+
+    List<Long> findVacationIdByUserInterested(Long userId);
     List<BreifCahootsDto> getVacationsBreif(InfoConditionDto infoConditionDto);
     List<BreifV2CahootsDto> getVacationsBreifV2(InfoConditionDto infoConditionDto);
     List<LatestCahootsDto> findLatestVacations();
