@@ -1,4 +1,4 @@
-package io.eagle.domain.vacation.dto;
+package io.eagle.domain.vacation.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,6 +9,6 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @Builder
-public class BreifV2CahootsListDto {
-    List<BreifV2CahootsDto> result;
+public class BreifCahootsListDto {
+    List<BreifCahootsDto> result;
 }

@@ -2,6 +2,7 @@ package io.eagle.domain.vacation.controller;
 
 import io.eagle.common.ApiResponse;
 import io.eagle.domain.vacation.dto.*;
+import io.eagle.domain.vacation.dto.request.CreateCahootsDto;
 import io.eagle.entity.type.VacationStatusType;
 import io.eagle.domain.vacation.service.CahootsService;
 import lombok.RequiredArgsConstructor;

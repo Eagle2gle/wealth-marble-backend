@@ -1,4 +1,4 @@
-package io.eagle.domain.vacation.dto;
+package io.eagle.domain.vacation.dto.request;
 
 import io.eagle.entity.Vacation;
 import io.eagle.entity.embeded.Period;

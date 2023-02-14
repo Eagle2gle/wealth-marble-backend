@@ -1,7 +1,7 @@
 //package io.eagle.domain.vacation.service;
 //
 //
-//import io.eagle.domain.vacation.dto.CreateCahootsDto;
+//import io.eagle.domain.vacation.dto.request.CreateCahootsDto;
 //import io.eagle.entity.type.ThemeBuildingType;
 //import io.eagle.entity.type.ThemeLocationType;
 //import io.eagle.domain.vacation.repository.VacationRepository;
