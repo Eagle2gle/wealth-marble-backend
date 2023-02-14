@@ -9,6 +9,7 @@ import io.eagle.entity.Interest;
 import io.eagle.entity.User;
 import io.eagle.entity.Vacation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,8 +23,8 @@ public class InterestService {
     private final UserRepository userRepository;
     private final VacationRepository vacationRepository;
 
-    public List<InterestInfoDto> getAllInterest(User user) {
-        return interestRepository.findAllByUser(user).stream().map(interest -> new InterestInfoDto(interest.getVacation())).collect(Collectors.toList());
+    public List<InterestInfoDto> getAllInterest(User user, Pageable pageable) {
+        return interestRepository.findInterestByUser(user, pageable).stream().map(interest -> new InterestInfoDto(interest.getVacation())).collect(Collectors.toList());
     }
 
     public Boolean isUserInterest(User user) {

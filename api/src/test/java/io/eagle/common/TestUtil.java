@@ -1,9 +1,6 @@
 package io.eagle.common;
 
-import io.eagle.entity.Order;
-import io.eagle.entity.Transaction;
-import io.eagle.entity.User;
-import io.eagle.entity.Vacation;
+import io.eagle.entity.*;
 import io.eagle.entity.embeded.Period;
 import io.eagle.entity.embeded.Plan;
 import io.eagle.entity.embeded.Stock;
@@ -25,6 +22,7 @@ public class TestUtil {
                 .location(ThemeLocationType.BEACH)
                 .build()
             )
+            .country("대한민국")
             .location("부산")
             .plan(Plan.builder()
                 .expectedMonth(12)
@@ -77,6 +75,13 @@ public class TestUtil {
             .sellOrder(sellOrder)
             .price(100)
             .amount(100)
+            .build();
+    }
+
+    public Interest createInterest(User user, Vacation vacation) {
+        return Interest.builder()
+            .user(user)
+            .vacation(vacation)
             .build();
     }
 }
