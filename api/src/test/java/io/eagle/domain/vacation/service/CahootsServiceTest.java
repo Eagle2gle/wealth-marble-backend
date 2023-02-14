@@ -3,30 +3,19 @@ package io.eagle.domain.vacation.service;
 import io.eagle.common.TestUtil;
 import io.eagle.domain.ContestParticipation.repository.ContestParticipationRepository;
 import io.eagle.domain.interest.repository.InterestRepository;
-import io.eagle.domain.order.repository.OrderRepository;
-import io.eagle.domain.picture.repository.PictureRepository;
-import io.eagle.domain.transaction.repository.TransactionRepository;
 import io.eagle.domain.vacation.dto.response.DetailCahootsDto;
-import io.eagle.domain.vacation.dto.response.MarketInfoDto;
-import io.eagle.domain.vacation.dto.response.MarketListDto;
 import io.eagle.domain.vacation.repository.VacationRepository;
 import io.eagle.entity.*;
-import io.eagle.entity.type.PriceStatus;
 import io.eagle.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
