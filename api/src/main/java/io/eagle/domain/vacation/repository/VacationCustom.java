@@ -1,10 +1,7 @@
 package io.eagle.domain.vacation.repository;
 
 import io.eagle.domain.vacation.dto.*;
-import io.eagle.domain.vacation.dto.response.BreifCahootsDto;
-import io.eagle.domain.vacation.dto.response.BreifV2CahootsDto;
-import io.eagle.domain.vacation.dto.response.DetailCahootsDto;
-import io.eagle.domain.vacation.dto.response.LatestCahootsDto;
+import io.eagle.domain.vacation.dto.response.*;
 import io.eagle.entity.Vacation;
 import org.springframework.data.domain.Pageable;
 
@@ -18,4 +15,6 @@ public interface VacationCustom {
     List<BreifV2CahootsDto> getVacationsBreifV2(InfoConditionDto infoConditionDto);
     List<LatestCahootsDto> findLatestVacations();
     List<Vacation> findAllMarkets(Pageable pageable);
+
+    ImminentInfoDto findByImminentEndVacation();
 }

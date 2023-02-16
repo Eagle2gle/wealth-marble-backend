@@ -7,10 +7,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.JPQLQueryFactory;
 import io.eagle.domain.vacation.dto.*;
-import io.eagle.domain.vacation.dto.response.BreifCahootsDto;
-import io.eagle.domain.vacation.dto.response.BreifV2CahootsDto;
-import io.eagle.domain.vacation.dto.response.DetailCahootsDto;
-import io.eagle.domain.vacation.dto.response.LatestCahootsDto;
+import io.eagle.domain.vacation.dto.response.*;
 import io.eagle.entity.Vacation;
 import io.eagle.entity.type.VacationStatusType;
 import lombok.RequiredArgsConstructor;
@@ -110,6 +107,20 @@ public class VacationCustomImpl implements VacationCustom {
                 .limit(this.page)
                 .offset(infoConditionDto.getPage() * this.page)
                 .fetch();
+    }
+
+    public ImminentInfoDto findByImminentEndVacation(){
+        return queryFactory.select(Projections.fields(ImminentInfoDto.class,
+                        vacation.id,
+                        vacation.title,
+                        ExpressionUtils.as((contestParticipation.stocks.sum().coalesce(0).multiply(100).divide(vacation.stock.num)), "competitionRate")
+                ))
+                .from(vacation)
+                .leftJoin(vacation.historyList, contestParticipation)
+                .where(vacation.status.eq(VacationStatusType.CAHOOTS_ONGOING))
+                .groupBy(vacation.id)
+                .orderBy(vacation.stockPeriod.end.asc())
+                .fetchFirst();
     }
 
     public List<LatestCahootsDto> findLatestVacations(){
