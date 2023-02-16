@@ -3,6 +3,7 @@ package io.eagle.domain.vacation.controller;
 import io.eagle.common.ApiResponse;
 import io.eagle.domain.vacation.dto.*;
 import io.eagle.domain.vacation.dto.request.CreateCahootsDto;
+import io.eagle.domain.vacation.dto.response.ImminentInfoDto;
 import io.eagle.entity.type.VacationStatusType;
 import io.eagle.domain.vacation.service.CahootsService;
 import lombok.RequiredArgsConstructor;
@@ -45,6 +46,13 @@ public class CahootsController {
         VacationStatusType[] types = new VacationStatusType[]{VacationStatusType.CAHOOTS_ONGOING};
         InfoConditionDto infoConditionDto = InfoConditionDto.builder().types(types).page(0).build();
         return ApiResponse.createSuccess(cahootsService.getBreifV2List(infoConditionDto));
+    }
+
+    @GetMapping(value= "/one", params = "status=ending-soon")
+    public ApiResponse getMostImminentEndedSoon(){
+        ImminentInfoDto mostImminentCahoots = cahootsService.getMostImminentCahoots();
+        System.out.println(mostImminentCahoots.toString());
+        return ApiResponse.createSuccess(mostImminentCahoots);
     }
 
     @GetMapping("/recent")
