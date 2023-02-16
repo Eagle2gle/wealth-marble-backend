@@ -50,9 +50,7 @@ public class CahootsController {
 
     @GetMapping(value= "/one", params = "status=ending-soon")
     public ApiResponse getMostImminentEndedSoon(){
-        ImminentInfoDto mostImminentCahoots = cahootsService.getMostImminentCahoots();
-        System.out.println(mostImminentCahoots.toString());
-        return ApiResponse.createSuccess(mostImminentCahoots);
+        return ApiResponse.createSuccess(cahootsService.getMostImminentCahoots());
     }
 
     @GetMapping("/recent")
