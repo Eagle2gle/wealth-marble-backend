@@ -105,7 +105,18 @@ public class VacationJobConfiguration {
             .build();
     }
 
-
+    @Bean(ORDER_FAIL_STEP + "_reader")
+    @StepScope
+    public JpaCursorItemReader<Vacation> orderFailItemReader() {
+        HashMap<String, Object> parameters = new HashMap<>();
+        parameters.put("end", LocalDate.now().minusDays(1L));
+        parameters.put("status", VacationStatusType.CAHOOTS_CLOSE);
+        return new JpaCursorItemReaderBuilder<Vacation>()
+            .queryString("SELECT v FROM Vacation v WHERE status = :status and end = :end")
+            .entityManagerFactory(entityManagerFactory)
+            .name(FAILED_VACATION_READER)
+            .build();
+    }
 
 
 }
