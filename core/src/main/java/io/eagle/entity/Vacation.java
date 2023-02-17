@@ -1,5 +1,6 @@
 package io.eagle.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import io.eagle.entity.BaseEntity;
 import io.eagle.entity.ContestParticipation;
 import io.eagle.entity.Picture;
@@ -74,6 +75,7 @@ public class Vacation extends BaseEntity {
     @OneToMany(mappedBy="vacation", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ContestParticipation> historyList;
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "vacation", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @OrderBy("createdAt desc")
     private List<PriceInfo> priceInfos;
