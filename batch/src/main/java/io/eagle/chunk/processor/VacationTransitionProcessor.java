@@ -21,7 +21,23 @@ public class VacationTransitionProcessor implements ItemProcessor<Vacation, Vaca
 
     @Override
     public Vacation process(Vacation vacation) throws Exception {
-        return null;
+        return this.isParticipationSuccess(vacation);
+    }
+
+    private Vacation isParticipationSuccess(Vacation vacation) {
+        List<OrderHistoryVO> histories = this.findAllOrderByVacation(vacation.getId());
+        Integer totalAmount = this.calculateOrderAmount(histories);
+
+        if (totalAmount >= vacation.getStock().getNum()) {
+            vacation.setStatus(VacationStatusType.MARKET_ONGOING);
+            return vacation;
+        }
+        vacation.setStatus(VacationStatusType.CAHOOTS_CLOSE);
+        return vacation;
+    }
+
+    private Integer calculateOrderAmount(List<OrderHistoryVO> historyVOS) {
+        return historyVOS.stream().mapToInt(OrderHistoryVO::getAmount).sum();
     }
 
     private List<OrderHistoryVO> findAllOrderByVacation(Long vacationId) {
