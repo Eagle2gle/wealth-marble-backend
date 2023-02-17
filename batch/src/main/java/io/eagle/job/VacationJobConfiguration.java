@@ -1,9 +1,12 @@
 package io.eagle.job;
 
-import io.eagle.chunk.processor.OrderFailProcessor;
+import io.eagle.chunk.processor.OrderTransitionProcessor;
+import io.eagle.chunk.processor.TransactionAssignProcessor;
 import io.eagle.chunk.processor.VacationTransitionProcessor;
-import io.eagle.chunk.writer.OrderFailItemWriter;
+import io.eagle.chunk.writer.OrderTransitionItemWriter;
+import io.eagle.chunk.writer.TransactionAssignItemWriter;
 import io.eagle.entity.Order;
+import io.eagle.entity.Transaction;
 import io.eagle.entity.Vacation;
 import io.eagle.entity.type.VacationStatusType;
 import io.eagle.listener.CustomJobExecutionListener;
@@ -17,7 +20,6 @@ import org.springframework.batch.core.configuration.annotation.StepBuilderFactor
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.item.ItemProcessor;
-import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.database.JpaCursorItemReader;
 import org.springframework.batch.item.database.JpaItemWriter;
 import org.springframework.batch.item.database.builder.JpaCursorItemReaderBuilder;
@@ -37,10 +39,11 @@ public class VacationJobConfiguration {
 
     public static final String VACATION_JOB = "vacationTransitionJob";
     public static final String VACATION_TRANSITION_STEP = "vacationTransitionStep";
-    public static final String ORDER_FAIL_STEP = "orderFailStep";
-    public static final String ORDER_SUCCESS_STEP = "orderSuccessStep";
+    public static final String ORDER_TRANSITION = "orderTransition";
+    public static final String TRANSACTION_ASSIGN = "transactionAssign";
     public static final String EXPIRED_VACATION_PAGE_READER = "vacationJpaPagingItemReader";
-    public static final String FAILED_VACATION_READER = "failedVacationReader";
+    public static final String ORDER_TRANSITION_READER = "orderTransitionReader";
+    public static final String TRANSACTION_ASSIGN_READER = "transactionAssignReader";
 
     private final JobBuilderFactory jobBuilderFactory;
     private final StepBuilderFactory stepBuilderFactory;
@@ -55,6 +58,8 @@ public class VacationJobConfiguration {
             .incrementer(new RunIdIncrementer())
             .listener(new CustomJobExecutionListener())
             .start(vacationTransitionStep())
+            .next(orderTransitionStep())
+            .next(transactionAssignStep())
             .build();
     }
 
@@ -100,41 +105,77 @@ public class VacationJobConfiguration {
 
     @Bean
     @JobScope
-    public Step orderFailJob() {
-        return stepBuilderFactory.get(ORDER_FAIL_STEP + "_job")
+    public Step orderTransitionStep() {
+        return stepBuilderFactory.get(ORDER_TRANSITION + "_step")
             .<Vacation, List<Order>>chunk(chunkSize)
-            .reader(orderFailItemReader())
-            .processor(orderFailItemProcessor())
-            .writer(orderFailItemWriter())
+            .reader(orderTransitionItemReader())
+            .processor(orderTransitionItemProcessor())
+            .writer(orderTransitionItemWriter())
             .build();
     }
 
-    @Bean(ORDER_FAIL_STEP + "_reader")
+    @Bean(ORDER_TRANSITION + "_reader")
     @StepScope
-    public JpaCursorItemReader<Vacation> orderFailItemReader() {
+    public JpaCursorItemReader<Vacation> orderTransitionItemReader() {
         HashMap<String, Object> parameters = new HashMap<>();
         parameters.put("end", LocalDate.now().minusDays(1L));
-        parameters.put("status", VacationStatusType.CAHOOTS_CLOSE);
+        return new JpaCursorItemReaderBuilder<Vacation>()
+            .queryString("SELECT v FROM Vacation v WHERE end = :end")
+            .entityManagerFactory(entityManagerFactory)
+            .name(ORDER_TRANSITION_READER)
+            .build();
+    }
+
+    @Bean(ORDER_TRANSITION + "_processor")
+    @StepScope
+    public ItemProcessor<Vacation, List<Order>> orderTransitionItemProcessor() {
+        return new OrderTransitionProcessor(dataSource);
+    }
+
+    @Bean(ORDER_TRANSITION + "_writer")
+    @StepScope
+    public OrderTransitionItemWriter orderTransitionItemWriter() {
+        JpaItemWriter<Order> jpaItemWriter = new JpaItemWriter();
+        jpaItemWriter.setEntityManagerFactory(entityManagerFactory);
+        return new OrderTransitionItemWriter(jpaItemWriter);
+    }
+
+    @Bean
+    @JobScope
+    public Step transactionAssignStep() {
+        return stepBuilderFactory.get(TRANSACTION_ASSIGN + "_step")
+            .<Vacation, List<Transaction>>chunk(chunkSize)
+            .reader(transactionAssignItemReader())
+            .processor(transactionAssignItemProcessor())
+            .writer(transactionAssignItemWriter())
+            .build();
+    }
+
+    @Bean(TRANSACTION_ASSIGN + "_reader")
+    @StepScope
+    public JpaCursorItemReader<Vacation> transactionAssignItemReader() {
+        HashMap<String, Object> parameters = new HashMap<>();
+        parameters.put("status", VacationStatusType.MARKET_ONGOING);
+        parameters.put("end", LocalDate.now().minusDays(1L));
         return new JpaCursorItemReaderBuilder<Vacation>()
             .queryString("SELECT v FROM Vacation v WHERE status = :status and end = :end")
             .entityManagerFactory(entityManagerFactory)
-            .name(FAILED_VACATION_READER)
+            .name(TRANSACTION_ASSIGN_READER)
             .build();
     }
 
-    @Bean(ORDER_FAIL_STEP + "_processor")
+    @Bean(TRANSACTION_ASSIGN + "_processor")
     @StepScope
-    public ItemProcessor<Vacation, List<Order>> orderFailItemProcessor() {
-        return new OrderFailProcessor(dataSource);
+    public ItemProcessor<Vacation, List<Transaction>> transactionAssignItemProcessor() {
+        return new TransactionAssignProcessor(dataSource);
     }
 
-    @Bean(ORDER_FAIL_STEP + "_writer")
+    @Bean(TRANSACTION_ASSIGN + "_writer")
     @StepScope
-    public OrderFailItemWriter orderFailItemWriter() {
-        JpaItemWriter<Order> jpaItemWriter = new JpaItemWriter();
+    public TransactionAssignItemWriter transactionAssignItemWriter() {
+        JpaItemWriter<Transaction> jpaItemWriter = new JpaItemWriter();
         jpaItemWriter.setEntityManagerFactory(entityManagerFactory);
-        return new OrderFailItemWriter(jpaItemWriter);
+        return new TransactionAssignItemWriter(jpaItemWriter);
     }
-
 
 }
