@@ -2,6 +2,7 @@ package io.eagle.job;
 
 import io.eagle.chunk.processor.OrderFailProcessor;
 import io.eagle.chunk.processor.VacationTransitionProcessor;
+import io.eagle.chunk.writer.OrderFailItemWriter;
 import io.eagle.entity.Order;
 import io.eagle.entity.Vacation;
 import io.eagle.entity.type.VacationStatusType;
@@ -16,6 +17,7 @@ import org.springframework.batch.core.configuration.annotation.StepBuilderFactor
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.item.ItemProcessor;
+import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.database.JpaCursorItemReader;
 import org.springframework.batch.item.database.JpaItemWriter;
 import org.springframework.batch.item.database.builder.JpaCursorItemReaderBuilder;
@@ -103,7 +105,7 @@ public class VacationJobConfiguration {
             .<Vacation, List<Order>>chunk(chunkSize)
             .reader(orderFailItemReader())
             .processor(orderFailItemProcessor())
-            .writer()
+            .writer(orderFailItemWriter())
             .build();
     }
 
@@ -124,6 +126,14 @@ public class VacationJobConfiguration {
     @StepScope
     public ItemProcessor<Vacation, List<Order>> orderFailItemProcessor() {
         return new OrderFailProcessor(dataSource);
+    }
+
+    @Bean(ORDER_FAIL_STEP + "_writer")
+    @StepScope
+    public OrderFailItemWriter orderFailItemWriter() {
+        JpaItemWriter<Order> jpaItemWriter = new JpaItemWriter();
+        jpaItemWriter.setEntityManagerFactory(entityManagerFactory);
+        return new OrderFailItemWriter(jpaItemWriter);
     }
 
 
