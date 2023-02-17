@@ -2,7 +2,10 @@ package io.eagle.job;
 
 import io.eagle.chunk.processor.VacationTransitionProcessor;
 import io.eagle.entity.Vacation;
+import io.eagle.entity.type.VacationStatusType;
 import io.eagle.listener.CustomJobExecutionListener;
+import io.eagle.listener.CustomStepExecutionListener;
+import io.eagle.rowmapper.VacationMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -13,13 +16,19 @@ import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.database.JdbcCursorItemReader;
+import org.springframework.batch.item.database.JpaCursorItemReader;
+import org.springframework.batch.item.database.JpaItemWriter;
 import org.springframework.batch.item.database.builder.JdbcCursorItemReaderBuilder;
+import org.springframework.batch.item.database.builder.JpaCursorItemReaderBuilder;
+import org.springframework.batch.item.database.builder.JpaItemWriterBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
+import java.time.LocalDate;
+import java.util.HashMap;
 
 @Configuration
 @RequiredArgsConstructor
@@ -51,17 +60,22 @@ public class VacationJobConfiguration {
         return stepBuilderFactory.get(VACATION_TRANSITION_STEP)
             .<Vacation, Vacation>chunk(chunkSize)
             .reader(vacationPagingItemReader())
+            .processor(vacationItemProcessor())
+            .writer(vacationJpaItemWriter())
+            .listener(new CustomStepExecutionListener())
             .build();
     }
 
     @Bean(VACATION_TRANSITION_STEP + "_reader")
     @StepScope
-    public JdbcCursorItemReader<Vacation> vacationPagingItemReader() {
-        return new JdbcCursorItemReaderBuilder<Vacation>()
-            .sql("SELECT v FROM Vacation v WHERE DATE(v.stockPeriod.end) = SUBDATE(CURDATE(), 1) and v.status = io.eagle.entity.type.VacationStatusType.CAHOOTS_ONGOING")
-            .rowMapper(new BeanPropertyRowMapper<>(Vacation.class))
-            .fetchSize(chunkSize)
-            .dataSource(dataSource)
+    public JpaCursorItemReader<Vacation> vacationPagingItemReader() {
+        HashMap<String, Object> parameters = new HashMap<>();
+        parameters.put("end", LocalDate.now().minusDays(1L));
+        parameters.put("status", VacationStatusType.CAHOOTS_ONGOING);
+        return new JpaCursorItemReaderBuilder<Vacation>()
+            .entityManagerFactory(entityManagerFactory)
+            .queryString("SELECT v FROM Vacation v WHERE status = :status and stockPeriod.end = :end")
+            .parameterValues(parameters)
             .name(EXPIRED_VACATION_PAGE_READER)
             .build();
     }
@@ -70,6 +84,14 @@ public class VacationJobConfiguration {
     @StepScope
     public ItemProcessor<Vacation, Vacation> vacationItemProcessor() {
         return new VacationTransitionProcessor(dataSource);
+    }
+
+    @Bean(VACATION_TRANSITION_STEP + "_writer")
+    @StepScope
+    public JpaItemWriter<Vacation> vacationJpaItemWriter() {
+        return new JpaItemWriterBuilder<Vacation>()
+            .entityManagerFactory(entityManagerFactory)
+            .build();
     }
 
 
