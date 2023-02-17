@@ -1,5 +1,6 @@
 package io.eagle.job;
 
+import io.eagle.chunk.processor.OrderFailProcessor;
 import io.eagle.chunk.processor.VacationTransitionProcessor;
 import io.eagle.entity.Order;
 import io.eagle.entity.Vacation;
@@ -26,6 +27,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 import java.time.LocalDate;
 import java.util.HashMap;
+import java.util.List;
 
 @Configuration
 @RequiredArgsConstructor
@@ -98,9 +100,9 @@ public class VacationJobConfiguration {
     @JobScope
     public Step orderFailJob() {
         return stepBuilderFactory.get(ORDER_FAIL_STEP + "_job")
-            .<Vacation, Order>chunk(chunkSize)
-            .reader()
-            .processor()
+            .<Vacation, List<Order>>chunk(chunkSize)
+            .reader(orderFailItemReader())
+            .processor(orderFailItemProcessor())
             .writer()
             .build();
     }
@@ -116,6 +118,12 @@ public class VacationJobConfiguration {
             .entityManagerFactory(entityManagerFactory)
             .name(FAILED_VACATION_READER)
             .build();
+    }
+
+    @Bean(ORDER_FAIL_STEP + "_processor")
+    @StepScope
+    public ItemProcessor<Vacation, List<Order>> orderFailItemProcessor() {
+        return new OrderFailProcessor(dataSource);
     }
 
 
