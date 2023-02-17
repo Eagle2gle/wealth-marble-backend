@@ -1,5 +1,6 @@
 package io.eagle.job;
 
+import io.eagle.chunk.processor.VacationTransitionProcessor;
 import io.eagle.entity.Vacation;
 import io.eagle.listener.CustomJobExecutionListener;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +11,7 @@ import org.springframework.batch.core.configuration.annotation.JobScope;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
+import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.database.JdbcCursorItemReader;
 import org.springframework.batch.item.database.builder.JdbcCursorItemReaderBuilder;
 import org.springframework.context.annotation.Bean;
@@ -29,8 +31,8 @@ public class VacationJobConfiguration {
 
     private final JobBuilderFactory jobBuilderFactory;
     private final StepBuilderFactory stepBuilderFactory;
-    private final EntityManagerFactory entityManagerFactory;
     private final DataSource dataSource;
+    private final EntityManagerFactory entityManagerFactory;
 
     private final int chunkSize = 10;
 
@@ -52,7 +54,7 @@ public class VacationJobConfiguration {
             .build();
     }
 
-    @Bean(VACATION_TRANSITION_STEP)
+    @Bean(VACATION_TRANSITION_STEP + "_reader")
     @StepScope
     public JdbcCursorItemReader<Vacation> vacationPagingItemReader() {
         return new JdbcCursorItemReaderBuilder<Vacation>()
@@ -63,5 +65,12 @@ public class VacationJobConfiguration {
             .name(EXPIRED_VACATION_PAGE_READER)
             .build();
     }
+
+    @Bean(VACATION_TRANSITION_STEP + "_processor")
+    @StepScope
+    public ItemProcessor<Vacation, Vacation> vacationItemProcessor() {
+        return new VacationTransitionProcessor(dataSource);
+    }
+
 
 }
