@@ -6,11 +6,11 @@ import org.springframework.batch.item.database.JpaItemWriter;
 
 import java.util.List;
 
-public class OrderFailItemWriter implements ItemWriter<List<Order>> {
+public class OrderTransitionItemWriter implements ItemWriter<List<Order>> {
 
     private JpaItemWriter<Order> jpaItemWriter;
 
-    public OrderFailItemWriter(JpaItemWriter<Order> jpaItemWriter) {
+    public OrderTransitionItemWriter(JpaItemWriter<Order> jpaItemWriter) {
         this.jpaItemWriter = jpaItemWriter;
     }
 
