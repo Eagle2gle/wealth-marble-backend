@@ -1,7 +1,6 @@
 package io.eagle.chunk.processor;
 
 import io.eagle.domain.order.vo.OrderHistoryVO;
-import io.eagle.entity.Order;
 import io.eagle.entity.Vacation;
 import io.eagle.entity.type.VacationStatusType;
 import io.eagle.rowmapper.OrderHistoryVORowMapper;
