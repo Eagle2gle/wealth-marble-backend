@@ -46,7 +46,6 @@ public class Order extends BaseEntity {
         return Order.builder()
                 .status(getStatus())
                 .vacation(getVacation())
-//                .vacationId(getVacationId())
                 .price(getPrice())
                 .user(getUser())
                 .orderType(getOrderType())
