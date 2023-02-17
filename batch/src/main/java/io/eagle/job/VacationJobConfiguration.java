@@ -43,7 +43,7 @@ public class VacationJobConfiguration {
             .build();
     }
 
-    @Bean
+    @Bean(VACATION_JOB)
     @JobScope
     public Step vacationTransitionStep() {
         return stepBuilderFactory.get(VACATION_TRANSITION_STEP)
@@ -52,11 +52,11 @@ public class VacationJobConfiguration {
             .build();
     }
 
-    @Bean
+    @Bean(VACATION_TRANSITION_STEP)
     @StepScope
     public JdbcCursorItemReader<Vacation> vacationPagingItemReader() {
         return new JdbcCursorItemReaderBuilder<Vacation>()
-            .sql("SELECT v FROM Vacation v WHERE v.stockPeriod.end < NOW()")
+            .sql("SELECT v FROM Vacation v WHERE DATE(v.stockPeriod.end) = CURDATE() and v.status = io.eagle.entity.type.VacationStatusType.CAHOOTS_ONGOING")
             .rowMapper(new BeanPropertyRowMapper<>(Vacation.class))
             .fetchSize(chunkSize)
             .dataSource(dataSource)
