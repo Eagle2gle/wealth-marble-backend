@@ -65,8 +65,8 @@ public class CahootsService {
         return BreifV2CahootsListDto.builder().result(breifCahootsList).build();
     }
 
-    public ImminentInfoDto getMostImminentCahoots(){
-        return vacationRepository.findByImminentEndVacation();
+    public ImminentInfoListDto getMostImminentCahoots(){
+        return ImminentInfoListDto.builder().result(vacationRepository.findByImminentEndVacation()).build();
     }
 
     public LatestCahootsListDto getLatestsList(){
