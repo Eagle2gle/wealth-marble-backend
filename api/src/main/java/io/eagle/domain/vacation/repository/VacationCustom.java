@@ -16,5 +16,5 @@ public interface VacationCustom {
     List<LatestCahootsDto> findLatestVacations();
     List<Vacation> findAllMarkets(Pageable pageable);
 
-    ImminentInfoDto findByImminentEndVacation();
+    List<ImminentInfoDto> findByImminentEndVacation();
 }

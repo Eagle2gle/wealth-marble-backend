@@ -48,7 +48,7 @@ public class CahootsController {
         return ApiResponse.createSuccess(cahootsService.getBreifV2List(infoConditionDto));
     }
 
-    @GetMapping(value= "/one", params = "status=ending-soon")
+    @GetMapping(value= "/mini", params = "status=ending-soon")
     public ApiResponse getMostImminentEndedSoon(){
         return ApiResponse.createSuccess(cahootsService.getMostImminentCahoots());
     }

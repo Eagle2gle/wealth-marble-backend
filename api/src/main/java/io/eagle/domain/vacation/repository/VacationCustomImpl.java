@@ -109,7 +109,7 @@ public class VacationCustomImpl implements VacationCustom {
                 .fetch();
     }
 
-    public ImminentInfoDto findByImminentEndVacation(){
+    public List<ImminentInfoDto> findByImminentEndVacation(){
         return queryFactory.select(Projections.fields(ImminentInfoDto.class,
                         vacation.id,
                         vacation.title,
@@ -120,7 +120,8 @@ public class VacationCustomImpl implements VacationCustom {
                 .where(vacation.status.eq(VacationStatusType.CAHOOTS_ONGOING))
                 .groupBy(vacation.id)
                 .orderBy(vacation.stockPeriod.end.asc())
-                .fetchFirst();
+                .limit(this.page)
+                .fetch();
     }
 
     public List<LatestCahootsDto> findLatestVacations(){
