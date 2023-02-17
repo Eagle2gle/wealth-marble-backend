@@ -56,7 +56,7 @@ public class VacationJobConfiguration {
     @StepScope
     public JdbcCursorItemReader<Vacation> vacationPagingItemReader() {
         return new JdbcCursorItemReaderBuilder<Vacation>()
-            .sql("SELECT v FROM Vacation v WHERE DATE(v.stockPeriod.end) = CURDATE() and v.status = io.eagle.entity.type.VacationStatusType.CAHOOTS_ONGOING")
+            .sql("SELECT v FROM Vacation v WHERE DATE(v.stockPeriod.end) = SUBDATE(CURDATE(), 1) and v.status = io.eagle.entity.type.VacationStatusType.CAHOOTS_ONGOING")
             .rowMapper(new BeanPropertyRowMapper<>(Vacation.class))
             .fetchSize(chunkSize)
             .dataSource(dataSource)
