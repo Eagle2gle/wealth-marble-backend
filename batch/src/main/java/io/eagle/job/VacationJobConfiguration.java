@@ -111,6 +111,7 @@ public class VacationJobConfiguration {
             .reader(orderTransitionItemReader())
             .processor(orderTransitionItemProcessor())
             .writer(orderTransitionItemWriter())
+            .listener(new CustomStepExecutionListener())
             .build();
     }
 
@@ -120,8 +121,9 @@ public class VacationJobConfiguration {
         HashMap<String, Object> parameters = new HashMap<>();
         parameters.put("end", LocalDate.now().minusDays(1L));
         return new JpaCursorItemReaderBuilder<Vacation>()
-            .queryString("SELECT v FROM Vacation v WHERE end = :end")
+            .queryString("SELECT v FROM Vacation v WHERE stockPeriod.end = :end")
             .entityManagerFactory(entityManagerFactory)
+            .parameterValues(parameters)
             .name(ORDER_TRANSITION_READER)
             .build();
     }
@@ -148,6 +150,7 @@ public class VacationJobConfiguration {
             .reader(transactionAssignItemReader())
             .processor(transactionAssignItemProcessor())
             .writer(transactionAssignItemWriter())
+            .listener(new CustomStepExecutionListener())
             .build();
     }
 
@@ -158,8 +161,9 @@ public class VacationJobConfiguration {
         parameters.put("status", VacationStatusType.MARKET_ONGOING);
         parameters.put("end", LocalDate.now().minusDays(1L));
         return new JpaCursorItemReaderBuilder<Vacation>()
-            .queryString("SELECT v FROM Vacation v WHERE status = :status and end = :end")
+            .queryString("SELECT v FROM Vacation v WHERE status = :status and stockPeriod.end = :end")
             .entityManagerFactory(entityManagerFactory)
+            .parameterValues(parameters)
             .name(TRANSACTION_ASSIGN_READER)
             .build();
     }
