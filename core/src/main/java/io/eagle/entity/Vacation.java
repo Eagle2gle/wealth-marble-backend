@@ -1,5 +1,6 @@
 package io.eagle.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.eagle.entity.BaseEntity;
 import io.eagle.entity.ContestParticipation;
 import io.eagle.entity.Picture;
@@ -17,7 +18,8 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Entity
-@Data
+@Getter
+@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -74,6 +76,7 @@ public class Vacation extends BaseEntity {
     @OneToMany(mappedBy="vacation", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ContestParticipation> historyList;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "vacation", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @OrderBy("createdAt desc")
     private List<PriceInfo> priceInfos;
