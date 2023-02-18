@@ -19,7 +19,7 @@ public class VacationJobRunner extends JobRunner{
     @Override
     protected void doRun(ApplicationArguments args) {
         JobDetail jobDetail = buildJobDetail(VacationSchJob.class, "vacationJob", "batch", new HashMap());
-        Trigger trigger = buildJobTrigger("0 09 * * * 0");
+        Trigger trigger = buildJobTrigger("0 0 9 * * ?");
 
         try{
             scheduler.scheduleJob(jobDetail, trigger);
