@@ -1,10 +1,12 @@
 package io.eagle.chunk.processor;
 
 import io.eagle.domain.order.vo.OrderHistoryVO;
+import io.eagle.entity.ContestParticipation;
 import io.eagle.entity.Vacation;
 import io.eagle.entity.type.VacationStatusType;
 import io.eagle.rowmapper.OrderHistoryVORowMapper;
 import org.springframework.batch.item.ItemProcessor;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.sql.DataSource;
@@ -24,8 +26,8 @@ public class VacationTransitionProcessor implements ItemProcessor<Vacation, Vaca
     }
 
     private Vacation isParticipationSuccess(Vacation vacation) {
-        List<OrderHistoryVO> histories = this.findAllOrderByVacation(vacation.getId());
-        Integer totalAmount = this.calculateOrderAmount(histories);
+        List<ContestParticipation> contestParticipations = this.findAllContestParticipationByVacation(vacation.getId());
+        Integer totalAmount = this.calculateContestParticipationAmount(contestParticipations);
 
         if (totalAmount >= vacation.getStock().getNum()) {
             vacation.setStatus(VacationStatusType.MARKET_ONGOING);
@@ -35,14 +37,14 @@ public class VacationTransitionProcessor implements ItemProcessor<Vacation, Vaca
         return vacation;
     }
 
-    private Integer calculateOrderAmount(List<OrderHistoryVO> historyVOS) {
-        return historyVOS.stream().mapToInt(OrderHistoryVO::getAmount).sum();
+    private Integer calculateContestParticipationAmount(List<ContestParticipation> contestParticipations) {
+        return contestParticipations.stream().mapToInt(ContestParticipation::getStocks).sum();
     }
 
-    private List<OrderHistoryVO> findAllOrderByVacation(Long vacationId) {
+    private List<ContestParticipation> findAllContestParticipationByVacation(Long vacationId) {
         return jdbcTemplate.query(
-            "select * from orders where vacation_id = ?",
-            new OrderHistoryVORowMapper(),
+            "select * from contest_participation where vacation_id = ?",
+            new BeanPropertyRowMapper<>(ContestParticipation.class),
             vacationId
         );
     }
