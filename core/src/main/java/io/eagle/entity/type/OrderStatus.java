@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum OrderStatus {
 
-    FAILED("FAILED"),
     ONGOING("ONGOING"),
     DONE("DONE");
 
