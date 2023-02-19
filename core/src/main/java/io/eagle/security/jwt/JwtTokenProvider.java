@@ -46,7 +46,7 @@ public class JwtTokenProvider {
     }
 
     public Long getUserIdFromToken(String token) {
-        return (Long) getAllClaimsFromToken(token).get("id");
+        return Long.parseLong(getAllClaimsFromToken(token).get("id").toString());
     }
 
     // accessToken, refreshToken 동시 생성

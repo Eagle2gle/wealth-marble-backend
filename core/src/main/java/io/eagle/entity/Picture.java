@@ -1,5 +1,6 @@
 package io.eagle.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.eagle.entity.BaseEntity;
 import lombok.*;
 
@@ -15,6 +16,7 @@ public class Picture extends BaseEntity {
     private Long id;
 
 //    private <User|Vacation> foreignId;
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "cahoots_id")
     private Vacation vacation;

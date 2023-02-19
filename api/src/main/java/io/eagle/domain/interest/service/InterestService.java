@@ -34,6 +34,10 @@ public class InterestService {
     public Interest createInterest(InterestDto interestDto) {
         User user = userRepository.getReferenceById(interestDto.getUserId());
         Vacation vacation = vacationRepository.getReferenceById(interestDto.getVacationId());
+        Interest interest = interestRepository.findByUserAndVacation(interestDto.getUserId(), interestDto.getVacationId());
+        if (interest != null) {
+            return null;
+        }
         return interestRepository.save(new Interest(user, vacation));
     }
 
