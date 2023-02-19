@@ -29,7 +29,7 @@ public class SecurityConfig {
         return (web) -> web.ignoring().antMatchers(
             // security를 적용하지 않을 요소를 선언
             "/swagger-ui/**",
-            "/api/v1/login"
+            "/api/**"
         );
     }
 
@@ -43,8 +43,9 @@ public class SecurityConfig {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)// Spring Security에서 session을 사용하지 않도록 설정
             .and()
                 .authorizeRequests()
-                .antMatchers("/api/auth/**").hasRole("USER")
-                .antMatchers("/**").permitAll()
+                .antMatchers("/api/**").permitAll()
+                .antMatchers("/api/auth/**").hasAuthority("ROLE_USER")
+                .anyRequest().permitAll()
             .and()
             .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class) // JWT filter 적용
             .oauth2Login()
