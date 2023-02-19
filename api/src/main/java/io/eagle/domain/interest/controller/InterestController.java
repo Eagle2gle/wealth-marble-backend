@@ -36,7 +36,7 @@ public class InterestController {
     @PostMapping("/auth/interests")
     public ApiResponse createInterest(@RequestBody InterestDto interestDto) {
         Interest interest = interestService.createInterest(interestDto);
-        return interest != null ? ApiResponse.createSuccess(interest) : ApiResponse.createError("해당 유저나 휴가 정보가 존재하지 않습니다.");
+        return interest != null ? ApiResponse.createSuccess(interest) : ApiResponse.createError("이미 존재하거나 해당 유저나 휴가 정보가 존재하지 않습니다.");
     }
 
     @DeleteMapping("/auth/interests")
