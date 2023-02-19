@@ -17,7 +17,7 @@ public class DeleteContestParticipationItemWriter implements ItemWriter<List<Ret
     @Override
     public void write(List<? extends List<RetrieveMoneyVO>> items) throws Exception {
         for (List<RetrieveMoneyVO> retrieveMoneyVOS: items) {
-            jdbcBatchItemWriter.setSql("DELETE FROM contest_participation WHERE id = :contestParticipationId");
+            jdbcBatchItemWriter.setSql("UPDATE contest_participation SET status = :status WHERE id = :contestParticipationId");
             jdbcBatchItemWriter.write(retrieveMoneyVOS);
         }
     }

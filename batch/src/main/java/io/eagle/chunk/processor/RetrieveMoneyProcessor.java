@@ -25,6 +25,7 @@ public class RetrieveMoneyProcessor implements ItemProcessor<Vacation, List<Retr
             .userId(contestParticipation.getUser().getId())
             .addCash(item.getStock().getPrice().intValue() * contestParticipation.getStocks())
             .contestParticipationId(contestParticipation.getId())
+            .status("FAILED")
             .build()).collect(Collectors.toList());
     }
 

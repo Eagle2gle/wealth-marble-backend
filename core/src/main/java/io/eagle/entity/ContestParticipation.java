@@ -1,5 +1,6 @@
 package io.eagle.entity;
 
+import io.eagle.entity.type.ContestParticipationStatus;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
@@ -26,6 +27,10 @@ public class ContestParticipation extends BaseEntity {
 
     @Positive
     private Integer stocks;
+
+    @Enumerated(EnumType.STRING)
+    @Column
+    private ContestParticipationStatus status = ContestParticipationStatus.PARTICIPATION;
 
     @Builder
     public ContestParticipation(User user, Vacation vacation, Integer stocks) {
