@@ -4,11 +4,13 @@ import io.eagle.domain.ContestParticipation.dto.HistoryCahootsDto;
 import io.eagle.domain.ContestParticipation.dto.HistoryCahootsDtoList;
 import io.eagle.entity.ContestParticipation;
 import io.eagle.domain.ContestParticipation.repository.ContestParticipationRepository;
+import io.eagle.entity.User;
 import io.eagle.entity.Vacation;
 import io.eagle.entity.type.VacationStatusType;
 import io.eagle.domain.vacation.repository.VacationRepository;
 import io.eagle.exception.ApiException;
 import io.eagle.exception.error.ErrorCode;
+import io.eagle.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,9 +21,10 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class ContestParticipationService {
+
+    private final UserRepository userRepository;
     private final VacationRepository vacationRepository;
     private final ContestParticipationRepository contestParticipationRepository;
-
 
     @Transactional
     public void participate(Long cahootsId, Integer stocks){
@@ -38,7 +41,8 @@ public class ContestParticipationService {
         }
         // 사용자 정보에서 잔액 차감 + 공모 참여 현황에 추가
         // TODO : 사용자 잔액 차감
-        ContestParticipation contestParticipation = ContestParticipation.builder().userId(userId).vacation(vacation).stocks(stocks).build();
+        User user = userRepository.getReferenceById(userId);
+        ContestParticipation contestParticipation = ContestParticipation.builder().user(user).vacation(vacation).stocks(stocks).build();
         contestParticipationRepository.save(contestParticipation);
     }
 

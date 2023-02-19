@@ -53,7 +53,7 @@ public class CahootsServiceTest {
         vacationRepository.save(vacation);
         interestRepository.save(new Interest(contributor, vacation));
         Integer stocks = 7;
-        contestParticipationRepository.save(new ContestParticipation(contributor.getId(), vacation, stocks));
+        contestParticipationRepository.save(new ContestParticipation(contributor, vacation, stocks));
 
         // when
         DetailCahootsDto detailCahootsDto = cahootsService.getDetail(vacation.getId());
