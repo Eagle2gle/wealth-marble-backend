@@ -1,10 +1,8 @@
 package io.eagle.chunk.processor;
 
-import io.eagle.domain.order.vo.OrderHistoryVO;
 import io.eagle.entity.ContestParticipation;
 import io.eagle.entity.Vacation;
 import io.eagle.entity.type.VacationStatusType;
-import io.eagle.rowmapper.OrderHistoryVORowMapper;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;

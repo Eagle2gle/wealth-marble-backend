@@ -1,6 +1,5 @@
 package io.eagle.entity;
 
-import io.eagle.entity.BaseEntity;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;

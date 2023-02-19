@@ -1,6 +1,6 @@
 package io.eagle.rowmapper;
 
-import io.eagle.domain.order.vo.OrderHistoryVO;
+import io.eagle.domain.OrderHistoryVO;
 import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;
