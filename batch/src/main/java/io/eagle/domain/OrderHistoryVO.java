@@ -1,4 +1,4 @@
-package io.eagle.domain.order.vo;
+package io.eagle.domain;
 
 import lombok.Builder;
 import lombok.Getter;

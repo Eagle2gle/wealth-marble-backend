@@ -5,10 +5,11 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public enum OrderStatus {
+public enum ContestParticipationStatus {
 
-    ONGOING("ONGOING"),
-    DONE("DONE");
+    PARTICIPATION("PARTICIPATION"),
+    FAILED("FAILED");
 
     private final String key;
+
 }

@@ -1,12 +1,13 @@
 package io.eagle.job;
 
-import io.eagle.chunk.processor.OrderTransitionProcessor;
-import io.eagle.chunk.processor.TransactionAssignProcessor;
+import io.eagle.chunk.processor.CreateStockProcessor;
+import io.eagle.chunk.processor.RetrieveMoneyProcessor;
 import io.eagle.chunk.processor.VacationTransitionProcessor;
-import io.eagle.chunk.writer.OrderTransitionItemWriter;
-import io.eagle.chunk.writer.TransactionAssignItemWriter;
-import io.eagle.entity.Order;
-import io.eagle.entity.Transaction;
+import io.eagle.chunk.writer.CreateStockItemWriter;
+import io.eagle.chunk.writer.DeleteContestParticipationItemWriter;
+import io.eagle.chunk.writer.RetrieveMoneyWriter;
+import io.eagle.domain.RetrieveMoneyVO;
+import io.eagle.entity.Stock;
 import io.eagle.entity.Vacation;
 import io.eagle.entity.type.VacationStatusType;
 import io.eagle.listener.CustomJobExecutionListener;
@@ -20,16 +21,19 @@ import org.springframework.batch.core.configuration.annotation.StepBuilderFactor
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.item.ItemProcessor;
+import org.springframework.batch.item.database.JdbcBatchItemWriter;
 import org.springframework.batch.item.database.JpaCursorItemReader;
 import org.springframework.batch.item.database.JpaItemWriter;
 import org.springframework.batch.item.database.builder.JpaCursorItemReaderBuilder;
 import org.springframework.batch.item.database.builder.JpaItemWriterBuilder;
+import org.springframework.batch.item.support.CompositeItemWriter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -39,11 +43,10 @@ public class VacationJobConfiguration {
 
     public static final String VACATION_JOB = "vacationTransitionJob";
     public static final String VACATION_TRANSITION_STEP = "vacationTransitionStep";
-    public static final String ORDER_TRANSITION = "orderTransition";
-    public static final String TRANSACTION_ASSIGN = "transactionAssign";
+    public static final String CREATE_STOCK = "createStock";
+    public static final String RETRIEVE_MONEY = "retrieveMoney";
     public static final String EXPIRED_VACATION_PAGE_READER = "vacationJpaPagingItemReader";
-    public static final String ORDER_TRANSITION_READER = "orderTransitionReader";
-    public static final String TRANSACTION_ASSIGN_READER = "transactionAssignReader";
+    public static final String CREATE_STOCK_READER = "createStockReader";
 
     private final JobBuilderFactory jobBuilderFactory;
     private final StepBuilderFactory stepBuilderFactory;
@@ -58,8 +61,8 @@ public class VacationJobConfiguration {
             .incrementer(new RunIdIncrementer())
             .listener(new CustomJobExecutionListener())
             .start(vacationTransitionStep())
-            .next(orderTransitionStep())
-            .next(transactionAssignStep())
+            .next(createStockStep())
+            .next(retrieveMoneyStep())
             .build();
     }
 
@@ -105,81 +108,98 @@ public class VacationJobConfiguration {
 
     @Bean
     @JobScope
-    public Step orderTransitionStep() {
-        return stepBuilderFactory.get(ORDER_TRANSITION + "_step")
-            .<Vacation, List<Order>>chunk(chunkSize)
-            .reader(orderTransitionItemReader())
-            .processor(orderTransitionItemProcessor())
-            .writer(orderTransitionItemWriter())
+    public Step createStockStep() {
+        return stepBuilderFactory.get(CREATE_STOCK + "_step")
+            .<Vacation, List<Stock>>chunk(chunkSize)
+            .reader(createStockItemReader())
+            .processor(createStockItemProcessor())
+            .writer(createStockItemWriter())
             .listener(new CustomStepExecutionListener())
             .build();
     }
 
-    @Bean(ORDER_TRANSITION + "_reader")
+    @Bean(CREATE_STOCK + "_reader")
     @StepScope
-    public JpaCursorItemReader<Vacation> orderTransitionItemReader() {
+    public JpaCursorItemReader<Vacation> createStockItemReader() {
         HashMap<String, Object> parameters = new HashMap<>();
         parameters.put("end", LocalDate.now().minusDays(1L));
+        parameters.put("status", VacationStatusType.MARKET_ONGOING);
         return new JpaCursorItemReaderBuilder<Vacation>()
-            .queryString("SELECT v FROM Vacation v WHERE stockPeriod.end = :end")
+            .queryString("SELECT v FROM Vacation v WHERE stockPeriod.end = :end and status = :status")
             .entityManagerFactory(entityManagerFactory)
             .parameterValues(parameters)
-            .name(ORDER_TRANSITION_READER)
+            .name(CREATE_STOCK_READER)
             .build();
     }
 
-    @Bean(ORDER_TRANSITION + "_processor")
+    @Bean(CREATE_STOCK + "_processor")
     @StepScope
-    public ItemProcessor<Vacation, List<Order>> orderTransitionItemProcessor() {
-        return new OrderTransitionProcessor(dataSource);
+    public ItemProcessor<Vacation, List<Stock>> createStockItemProcessor() {
+        return new CreateStockProcessor(dataSource);
     }
 
-    @Bean(ORDER_TRANSITION + "_writer")
+    @Bean(CREATE_STOCK + "_writer")
     @StepScope
-    public OrderTransitionItemWriter orderTransitionItemWriter() {
-        JpaItemWriter<Order> jpaItemWriter = new JpaItemWriter();
+    public CreateStockItemWriter createStockItemWriter() {
+        JpaItemWriter<Stock> jpaItemWriter = new JpaItemWriter();
         jpaItemWriter.setEntityManagerFactory(entityManagerFactory);
-        return new OrderTransitionItemWriter(jpaItemWriter);
+        return new CreateStockItemWriter(jpaItemWriter);
     }
 
     @Bean
     @JobScope
-    public Step transactionAssignStep() {
-        return stepBuilderFactory.get(TRANSACTION_ASSIGN + "_step")
-            .<Vacation, List<Transaction>>chunk(chunkSize)
-            .reader(transactionAssignItemReader())
-            .processor(transactionAssignItemProcessor())
-            .writer(transactionAssignItemWriter())
+    public Step retrieveMoneyStep() {
+        return stepBuilderFactory.get(RETRIEVE_MONEY + "_step")
             .listener(new CustomStepExecutionListener())
+            .<Vacation, List<RetrieveMoneyVO>>chunk(chunkSize)
+            .reader(retrieveMoneyItemReader())
+            .processor(retrieveMoneyItemProcessor())
+            .writer(retrieveMoneyItemWriter())
             .build();
     }
 
-    @Bean(TRANSACTION_ASSIGN + "_reader")
+    @Bean(RETRIEVE_MONEY + "_reader")
     @StepScope
-    public JpaCursorItemReader<Vacation> transactionAssignItemReader() {
+    public JpaCursorItemReader<Vacation> retrieveMoneyItemReader() {
         HashMap<String, Object> parameters = new HashMap<>();
-        parameters.put("status", VacationStatusType.MARKET_ONGOING);
         parameters.put("end", LocalDate.now().minusDays(1L));
+        parameters.put("status", VacationStatusType.CAHOOTS_CLOSE);
         return new JpaCursorItemReaderBuilder<Vacation>()
-            .queryString("SELECT v FROM Vacation v WHERE status = :status and stockPeriod.end = :end")
+            .queryString("SELECT v FROM Vacation v WHERE stockPeriod.end = :end and status = :status")
             .entityManagerFactory(entityManagerFactory)
             .parameterValues(parameters)
-            .name(TRANSACTION_ASSIGN_READER)
+            .name(RETRIEVE_MONEY + "_reader")
             .build();
     }
 
-    @Bean(TRANSACTION_ASSIGN + "_processor")
+    @Bean(RETRIEVE_MONEY + "_processor")
     @StepScope
-    public ItemProcessor<Vacation, List<Transaction>> transactionAssignItemProcessor() {
-        return new TransactionAssignProcessor(dataSource);
+    public ItemProcessor<Vacation, List<RetrieveMoneyVO>> retrieveMoneyItemProcessor() {
+        return new RetrieveMoneyProcessor(dataSource);
     }
 
-    @Bean(TRANSACTION_ASSIGN + "_writer")
+    @Bean(RETRIEVE_MONEY + "_writer")
     @StepScope
-    public TransactionAssignItemWriter transactionAssignItemWriter() {
-        JpaItemWriter<Transaction> jpaItemWriter = new JpaItemWriter();
-        jpaItemWriter.setEntityManagerFactory(entityManagerFactory);
-        return new TransactionAssignItemWriter(jpaItemWriter);
+    public CompositeItemWriter<List<RetrieveMoneyVO>> retrieveMoneyItemWriter() {
+        CompositeItemWriter<List<RetrieveMoneyVO>> compositeItemWriter = new CompositeItemWriter<>();
+        compositeItemWriter.setDelegates(Arrays.asList(updateCash(), deleteContestParticipation()));
+        return compositeItemWriter;
+    }
+
+    @Bean(RETRIEVE_MONEY + "_writer_update_cash")
+    @StepScope
+    public RetrieveMoneyWriter updateCash() {
+        JdbcBatchItemWriter jdbcBatchItemWriter = new JdbcBatchItemWriter();
+        jdbcBatchItemWriter.setDataSource(dataSource);
+        return new RetrieveMoneyWriter(jdbcBatchItemWriter);
+    }
+
+    @Bean(RETRIEVE_MONEY + "_writer_delete_contest_participation")
+    @StepScope
+    public DeleteContestParticipationItemWriter deleteContestParticipation() {
+        JdbcBatchItemWriter jdbcBatchItemWriter = new JdbcBatchItemWriter();
+        jdbcBatchItemWriter.setDataSource(dataSource);
+        return new DeleteContestParticipationItemWriter(jdbcBatchItemWriter);
     }
 
 }

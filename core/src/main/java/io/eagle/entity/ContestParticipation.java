@@ -1,6 +1,6 @@
 package io.eagle.entity;
 
-import io.eagle.entity.BaseEntity;
+import io.eagle.entity.type.ContestParticipationStatus;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
@@ -17,10 +17,9 @@ public class ContestParticipation extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // TODO : FK 추가
-//    @OneToMany(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "user_id")
-//    private User user;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @ManyToOne
     @JoinColumn(name = "cahoots_id")
@@ -29,8 +28,13 @@ public class ContestParticipation extends BaseEntity {
     @Positive
     private Integer stocks;
 
+    @Enumerated(EnumType.STRING)
+    @Column
+    private ContestParticipationStatus status = ContestParticipationStatus.PARTICIPATION;
+
     @Builder
-    public ContestParticipation(Long userId, Vacation vacation, Integer stocks) {
+    public ContestParticipation(User user, Vacation vacation, Integer stocks) {
+        this.user = user;
         this.stocks = stocks;
         this.vacation = vacation;
     }
