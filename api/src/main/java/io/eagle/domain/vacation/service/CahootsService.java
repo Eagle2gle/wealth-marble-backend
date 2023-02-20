@@ -48,7 +48,7 @@ public class CahootsService {
         return detailCahootsDto;
     }
 
-    public BreifCahootsListDto getBreifList(InfoConditionDto infoConditionDto){
+    public List<BreifCahootsDto> getBreifList(InfoConditionDto infoConditionDto){
         List<BreifCahootsDto> breifCahootsList = vacationRepository.getVacationsBreif(infoConditionDto);
         // TODO : 사용자 정보 추가
         List<Long> myInterestVacation = vacationRepository.findVacationIdByUserInterested(1L);
@@ -56,23 +56,23 @@ public class CahootsService {
             breifCahootsDto.setImages(getImageUrls(breifCahootsDto.getId()));
             breifCahootsDto.setIsInterest(myInterestVacation.contains(breifCahootsDto.getId()));
         });
-        return BreifCahootsListDto.builder().result(breifCahootsList).build();
+        return breifCahootsList;
     }
 
-    public BreifV2CahootsListDto getBreifV2List(InfoConditionDto infoConditionDto){
+    public List<BreifV2CahootsDto> getBreifV2List(InfoConditionDto infoConditionDto){
         List<BreifV2CahootsDto> breifCahootsList = vacationRepository.getVacationsBreifV2(infoConditionDto);
         breifCahootsList.forEach(breifCahootsDto -> {breifCahootsDto.setImages(getImageUrls(breifCahootsDto.getId()));});
-        return BreifV2CahootsListDto.builder().result(breifCahootsList).build();
+        return breifCahootsList;
     }
 
-    public ImminentInfoListDto getMostImminentCahoots(){
-        return ImminentInfoListDto.builder().result(vacationRepository.findByImminentEndVacation()).build();
+    public List<ImminentInfoDto> getMostImminentCahoots(){
+        return vacationRepository.findByImminentEndVacation();
     }
 
-    public LatestCahootsListDto getLatestsList(){
+    public List<LatestCahootsDto> getLatestsList(){
         List<LatestCahootsDto> latestCahootsDtoList = vacationRepository.findLatestVacations();
         latestCahootsDtoList.forEach(latestCahootsDto -> {latestCahootsDto.setImages(getImageUrls(latestCahootsDto.getId()));});
-        return LatestCahootsListDto.builder().result(latestCahootsDtoList).build();
+        return latestCahootsDtoList;
     }
 
     public List<String> getImageUrls(Long id){
