@@ -31,19 +31,17 @@ public class ApiResponse<T> {
 
     private ApiResponse(String status, T data, String message) {
         this.status = status;
-        this.data = data;
-        this.message = message;
-    }
-
-    private ApiResponse(String status, List<T> data, String message){
-        this.status = status;
-        this.data = (T) new ListToClass(data);
+        if(data instanceof List){
+            this.data = (T) new ListToClass(data);
+        } else {
+            this.data = data;
+        }
         this.message = message;
     }
 
     @RequiredArgsConstructor
     class ListToClass{
-        public final List<T> result;
+        public final T result;
     }
 
 }
