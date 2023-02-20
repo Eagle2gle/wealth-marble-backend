@@ -18,4 +18,9 @@ public class InterestDto {
     @NotNull
     private Long vacationId;
 
+    public InterestDto(Long userId, Long vacationId) {
+        this.userId = userId;
+        this.vacationId = vacationId;
+    }
+
 }
