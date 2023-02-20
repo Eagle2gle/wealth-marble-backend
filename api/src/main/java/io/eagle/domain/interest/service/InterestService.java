@@ -3,6 +3,7 @@ package io.eagle.domain.interest.service;
 import io.eagle.domain.interest.dto.InterestDto;
 import io.eagle.domain.interest.dto.InterestInfoDto;
 import io.eagle.domain.interest.repository.InterestRepository;
+import io.eagle.entity.type.VacationStatusType;
 import io.eagle.repository.UserRepository;
 import io.eagle.domain.vacation.repository.VacationRepository;
 import io.eagle.entity.Interest;
@@ -23,8 +24,16 @@ public class InterestService {
     private final UserRepository userRepository;
     private final VacationRepository vacationRepository;
 
-    public List<InterestInfoDto> getAllInterest(User user, Pageable pageable) {
-        return interestRepository.findInterestByUser(user, pageable).stream().map(interest -> new InterestInfoDto(interest.getVacation())).collect(Collectors.toList());
+    public List<InterestInfoDto> getAllInterest(String type, User user, Pageable pageable) {
+        return interestRepository.findInterestByUser(user, pageable).stream().map(interest -> {
+            VacationStatusType vacationType = interest.getVacation().getStatus();
+            if (type.equals("market") && vacationType.equals(VacationStatusType.MARKET_ONGOING)) {
+                return new InterestInfoDto(interest.getVacation());
+            } else if (type.equals("cahoot") && !vacationType.equals(VacationStatusType.MARKET_ONGOING)) {
+                return new InterestInfoDto(interest.getVacation());
+            }
+            return null;
+        }).collect(Collectors.toList());
     }
 
     public Boolean isUserInterest(User user) {
