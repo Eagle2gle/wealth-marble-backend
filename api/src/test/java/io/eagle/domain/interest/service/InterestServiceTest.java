@@ -53,5 +53,25 @@ public class InterestServiceTest {
         assertEquals(createInterest.getUser(), interest.getUser());
         assertEquals(createInterest.getVacation(), interest.getVacation());
     }
-    
+
+    @Test
+    @DisplayName("관심상품_삭제하기")
+    void deleteInterest() {
+        // given
+        TestUtil testUtil = new TestUtil();
+        User user = testUtil.createUser("anonymous", "anonymous@email.com");
+        User anotherUser = testUtil.createUser("interest", "interest@email.com");
+        Vacation vacation = testUtil.createVacation(user);
+        Interest interest = testUtil.createInterest(anotherUser, vacation);
+        InterestDto interestDto = new InterestDto(1L, 1L);
+
+        // when
+        when(interestRepository.findByUserAndVacation(1L, 1L)).thenReturn(interest);
+        Boolean result = interestService.deleteInterest(interestDto);
+
+        // then
+        verify(interestRepository, times(1)).delete(interest);
+        assertEquals(result, true);
+    }
+
 }
