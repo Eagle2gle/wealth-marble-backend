@@ -33,4 +33,9 @@ public class MarketController {
         return ApiResponse.createSuccess(marketService.getVacationInfo(vacationId));
     }
 
+    @GetMapping("/markets/countries")
+    public ApiResponse getCountries(){
+        return ApiResponse.createSuccess(marketService.getCountries());
+    }
+
 }
