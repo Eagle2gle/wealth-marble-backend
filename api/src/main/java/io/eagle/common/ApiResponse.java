@@ -2,6 +2,9 @@ package io.eagle.common;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
+
+import java.util.List;
 
 @Getter
 @NoArgsConstructor
@@ -30,6 +33,17 @@ public class ApiResponse<T> {
         this.status = status;
         this.data = data;
         this.message = message;
+    }
+
+    private ApiResponse(String status, List<T> data, String message){
+        this.status = status;
+        this.data = (T) new ListToClass(data);
+        this.message = message;
+    }
+
+    @RequiredArgsConstructor
+    class ListToClass{
+        public final List<T> result;
     }
 
 }
