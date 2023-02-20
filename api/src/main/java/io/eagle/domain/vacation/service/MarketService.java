@@ -12,6 +12,7 @@ import io.eagle.entity.PriceInfo;
 import io.eagle.entity.Transaction;
 import io.eagle.entity.Vacation;
 import io.eagle.entity.type.PriceStatus;
+import io.eagle.entity.type.VacationStatusType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -97,4 +98,7 @@ public class MarketService {
         }
     }
 
+    public List<String> getCountries(){
+        return vacationRepository.getCountries(VacationStatusType.MARKET_ONGOING);
+    }
 }
