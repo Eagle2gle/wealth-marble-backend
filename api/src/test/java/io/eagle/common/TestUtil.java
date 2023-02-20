@@ -8,6 +8,7 @@ import io.eagle.entity.embeded.Theme;
 import io.eagle.entity.type.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 public class TestUtil {
 
@@ -42,6 +43,7 @@ public class TestUtil {
                 .build()
             )
             .expectedRateOfReturn(12)
+            .pictureList(List.of(new Picture("url", "type", null)))
             .build();
     }
 
