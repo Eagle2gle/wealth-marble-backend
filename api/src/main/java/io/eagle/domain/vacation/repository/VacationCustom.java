@@ -3,6 +3,7 @@ package io.eagle.domain.vacation.repository;
 import io.eagle.domain.vacation.dto.*;
 import io.eagle.domain.vacation.dto.response.*;
 import io.eagle.entity.Vacation;
+import io.eagle.entity.type.VacationStatusType;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
@@ -17,4 +18,6 @@ public interface VacationCustom {
     List<Vacation> findAllMarkets(Pageable pageable);
 
     List<ImminentInfoDto> findByImminentEndVacation();
+
+    List<String> getCountries(VacationStatusType type);
 }

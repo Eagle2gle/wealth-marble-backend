@@ -148,6 +148,10 @@ public class VacationCustomImpl implements VacationCustom {
             .fetch();
     }
 
+    public List<String> getCountries(VacationStatusType type){
+        return queryFactory.select(vacation.country).from(vacation).where(vacation.status.eq(type)).fetch();
+    }
+
     private BooleanExpression isInStatus(VacationStatusType[] statusTypes){
         return statusTypes.length > 0 ? vacation.status.in(statusTypes) : null;
     }
