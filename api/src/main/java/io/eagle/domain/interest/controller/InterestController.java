@@ -26,11 +26,12 @@ public class InterestController {
     @GetMapping("/auth/interests/me")
     public ApiResponse getAllUserInterests(
         @AuthenticationPrincipal AuthDetails authDetails,
+        @RequestParam(defaultValue = "market") String type,
         @RequestParam(defaultValue = "10", required = false) Integer size,
         @RequestParam(defaultValue = "0", required = false) Integer page
     ) {
         Pageable pageable = PageRequest.of(page, size);
-        return ApiResponse.createSuccess(interestService.getAllInterest(authDetails.getUser(), pageable));
+        return ApiResponse.createSuccess(interestService.getAllInterest(type, authDetails.getUser(), pageable));
     }
 
     @PostMapping("/auth/interests")
