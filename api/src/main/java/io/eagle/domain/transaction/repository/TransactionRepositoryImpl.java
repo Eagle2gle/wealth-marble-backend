@@ -3,7 +3,7 @@ package io.eagle.domain.transaction.repository;
 import com.querydsl.core.types.dsl.DateTemplate;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.JPQLQueryFactory;
-import io.eagle.domain.transaction.dto.QTransactionResponseDto;
+import io.eagle.domain.transaction.dto.response.QTransactionResponseDto;
 import io.eagle.domain.transaction.dto.request.TransactionRequestDto;
 import io.eagle.domain.transaction.dto.response.TransactionResponseDto;
 import io.eagle.entity.Order;
