@@ -2,6 +2,7 @@ package io.eagle.domain.ContestParticipation.service;
 
 import io.eagle.domain.ContestParticipation.dto.HistoryCahootsDto;
 import io.eagle.domain.ContestParticipation.dto.HistoryCahootsDtoList;
+import io.eagle.domain.ContestParticipation.dto.response.ContestParticipationMineDto;
 import io.eagle.entity.ContestParticipation;
 import io.eagle.domain.ContestParticipation.repository.ContestParticipationRepository;
 import io.eagle.entity.User;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -51,5 +53,23 @@ public class ContestParticipationService {
         List<ContestParticipation> contestParticipation = contestParticipationRepository.findAllByCahootsId(cahootsId);
         // dto 형식으로 만들기
         return HistoryCahootsDtoList.builder().result(contestParticipation.stream().map(HistoryCahootsDto::toDto).collect(Collectors.toList())).build();
+    }
+
+    public List<ContestParticipationMineDto> getMyContestParticipation(User user) {
+        List<ContestParticipation> contestParticipations = contestParticipationRepository.findAllByUserId(user.getId());
+        return contestParticipations.stream().map(contestParticipation -> {
+            Vacation vacation = contestParticipation.getVacation();
+            if (vacation != null) {
+                return ContestParticipationMineDto
+                    .builder()
+                    .title(vacation.getTitle())
+                    .createdAt(contestParticipation.getCreatedAt())
+                    .amount(contestParticipation.getStocks())
+                    .price(vacation.getStock().getPrice().intValue())
+                    .status(vacation.getStatus().toString())
+                    .build();
+            }
+            return null;
+        }).filter(Objects::nonNull).collect(Collectors.toList());
     }
 }
