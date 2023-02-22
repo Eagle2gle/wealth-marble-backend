@@ -20,7 +20,6 @@ public class StockRepositoryImpl implements StockRepositoryCustom {
             .select(new QStockInfoDto(stock.price, stock.amount))
             .from(stock)
             .where(stock.user.id.eq(userId))
-            .groupBy(stock.vacation.id)
             .fetch();
     }
 }
