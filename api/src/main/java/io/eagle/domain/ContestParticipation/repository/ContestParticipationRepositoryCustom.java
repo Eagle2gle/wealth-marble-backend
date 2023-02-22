@@ -7,4 +7,5 @@ import java.util.Optional;
 public interface ContestParticipationRepositoryCustom {
     Optional<Integer> getCurrentContestNum(Long cahootsId);
     List<ContestParticipation> findAllByCahootsId(Long cahootsId);
+    List<ContestParticipation> findAllByUserId(Long userId);
 }
