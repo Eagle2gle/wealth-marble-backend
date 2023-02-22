@@ -1,10 +1,13 @@
 package io.eagle.domain.transaction.controller;
 
+import io.eagle.auth.AuthDetails;
 import io.eagle.common.ApiResponse;
 import io.eagle.domain.transaction.dto.TransactionRequestDto;
 import io.eagle.domain.transaction.service.TransactionService;
+import io.eagle.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -17,9 +20,8 @@ public class TransactionController {
     private final TransactionService transactionService;
 
     @GetMapping("/auth/transactions/me")
-    public ResponseEntity getTransactionHistoryByMine() {
-        Long userId = 1L;
-        return ResponseEntity.ok(transactionService.getMineTransaction(userId));
+    public ApiResponse getTransactionHistoryByMine(@AuthenticationPrincipal AuthDetails authDetails) {
+        return ApiResponse.createSuccess(transactionService.getMineTransaction(authDetails.getUser()));
     }
 
     @GetMapping("/transactions/{vacationId}")
