@@ -1,9 +1,9 @@
 package io.eagle.domain.transaction.service;
 
 import io.eagle.domain.order.repository.OrderRepository;
-import io.eagle.domain.transaction.dto.TransactionRequestDto;
-import io.eagle.domain.transaction.dto.TransactionResponseDto;
-import io.eagle.domain.transaction.dto.UserTransactionInfoDto;
+import io.eagle.domain.transaction.dto.request.TransactionRequestDto;
+import io.eagle.domain.transaction.dto.response.TransactionResponseDto;
+import io.eagle.domain.transaction.dto.response.UserTransactionInfoDto;
 import io.eagle.domain.transaction.repository.TransactionRepository;
 import io.eagle.entity.User;
 import io.eagle.repository.UserRepository;
@@ -13,7 +13,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -29,15 +31,13 @@ public class TransactionService {
         return transactionRepository.findByVacationOrderByCreatedAtDesc(pageRequest, requestDto);
     }
 
-    public List<UserTransactionInfoDto> getMineTransaction(Long userId) {
-        User user = userRepository.findUserById(userId).orElse(null);
-        return null;
-//        return orderRepository
-//            .findAllByUser(user)
-//            .stream()
-//            .map(order -> transactionRepository.findAllByOrder(order).stream()
-//                .map(transaction -> transaction.toUserTransactionInfoDto(order.getId())).collect(Collectors.toList())
-//            ).flatMap(List::stream).collect(Collectors.toList());
+    public List<UserTransactionInfoDto> getMineTransaction(User user) {
+        return orderRepository
+            .findAllByUser(user)
+            .stream()
+            .map(order -> transactionRepository.findAllByOrder(order).stream()
+                .map(transaction -> new UserTransactionInfoDto(transaction, order.getId())).collect(Collectors.toList())
+            ).flatMap(List::stream).collect(Collectors.toList());
     }
 
 }

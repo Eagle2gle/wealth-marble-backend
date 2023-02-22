@@ -29,6 +29,16 @@ public class ContestParticipationRepositoryImpl implements ContestParticipationR
                 .where(contestParticipation.vacation.id.eq(cahootsId))
                 .orderBy(contestParticipation.createdAt.desc())
                 .fetch();
-
     }
+
+    @Override
+    public List<ContestParticipation> findAllByUserId(Long userId) {
+        return queryFactory
+            .selectFrom(contestParticipation)
+            .where(contestParticipation.user.id.eq(userId))
+            .orderBy(contestParticipation.createdAt.desc())
+            .fetch();
+    }
+
+
 }
