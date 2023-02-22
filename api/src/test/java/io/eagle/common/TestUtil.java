@@ -86,4 +86,12 @@ public class TestUtil {
             .vacation(vacation)
             .build();
     }
+
+    public ContestParticipation createContestParticipation(User user, Vacation vacation) {
+        return ContestParticipation.builder()
+            .user(user)
+            .vacation(vacation)
+            .stocks(10)
+            .build();
+    }
 }
