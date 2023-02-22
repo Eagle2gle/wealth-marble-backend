@@ -13,7 +13,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -29,15 +31,23 @@ public class TransactionService {
         return transactionRepository.findByVacationOrderByCreatedAtDesc(pageRequest, requestDto);
     }
 
-    public List<UserTransactionInfoDto> getMineTransaction(Long userId) {
-        User user = userRepository.findUserById(userId).orElse(null);
-        return null;
-//        return orderRepository
-//            .findAllByUser(user)
-//            .stream()
-//            .map(order -> transactionRepository.findAllByOrder(order).stream()
-//                .map(transaction -> transaction.toUserTransactionInfoDto(order.getId())).collect(Collectors.toList())
-//            ).flatMap(List::stream).collect(Collectors.toList());
+    public List<UserTransactionInfoDto> getMineTransaction(User user) {
+        return orderRepository
+            .findAllByUser(user)
+            .stream()
+            .map(order -> transactionRepository.findAllByOrder(order).stream()
+                .map(transaction -> {
+                    String transactionType = transaction.getBuyOrder().getId().equals(order.getId()) ? "BUY" : "SELL";
+                    return UserTransactionInfoDto
+                        .builder()
+                        .vacationName(transaction.getVacation().getTitle())
+                        .transactionTime(transaction.getCreatedAt().format(DateTimeFormatter.ofPattern("YY-MM-DD")).toString())
+                        .price(transaction.getPrice())
+                        .amount(transaction.getAmount())
+                        .transactionType(transactionType)
+                        .build();
+                }).collect(Collectors.toList())
+            ).flatMap(List::stream).collect(Collectors.toList());
     }
 
 }
