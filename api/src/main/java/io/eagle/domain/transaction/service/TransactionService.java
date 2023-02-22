@@ -36,17 +36,7 @@ public class TransactionService {
             .findAllByUser(user)
             .stream()
             .map(order -> transactionRepository.findAllByOrder(order).stream()
-                .map(transaction -> {
-                    String transactionType = transaction.getBuyOrder().getId().equals(order.getId()) ? "BUY" : "SELL";
-                    return UserTransactionInfoDto
-                        .builder()
-                        .vacationName(transaction.getVacation().getTitle())
-                        .transactionTime(transaction.getCreatedAt().format(DateTimeFormatter.ofPattern("YY-MM-DD")).toString())
-                        .price(transaction.getPrice())
-                        .amount(transaction.getAmount())
-                        .transactionType(transactionType)
-                        .build();
-                }).collect(Collectors.toList())
+                .map(transaction -> new UserTransactionInfoDto(transaction, order.getId())).collect(Collectors.toList())
             ).flatMap(List::stream).collect(Collectors.toList());
     }
 
