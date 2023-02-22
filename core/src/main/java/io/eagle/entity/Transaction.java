@@ -36,15 +36,4 @@ public class Transaction extends BaseEntity {
     @Column(nullable = false)
     private Integer amount;
 
-//    public UserTransactionInfoDto toUserTransactionInfoDto(Long orderId) {
-//        String transactionType = this.buyOrder.getId().equals(orderId) ? "BUY" : "SELL";
-//        return UserTransactionInfoDto
-//            .builder()
-//            .vacationName(this.vacation.getTitle())
-//            .transactionTime(this.getCreatedAt().format(DateTimeFormatter.ofPattern("YY-MM-DD")).toString())
-//            .price(this.price)
-//            .amount(this.amount)
-//            .transactionType(transactionType)
-//            .build();
-//    }
 }
