@@ -1,5 +1,6 @@
 package io.eagle.job;
 
+import io.eagle.chunk.processor.TransferLastdayInfoProcessor;
 import io.eagle.entity.PriceInfo;
 import io.eagle.listener.CustomJobExecutionListener;
 import io.eagle.listener.CustomStepExecutionListener;
@@ -11,6 +12,7 @@ import org.springframework.batch.core.configuration.annotation.JobScope;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
+import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.database.JpaCursorItemReader;
 import org.springframework.batch.item.database.JpaItemWriter;
 import org.springframework.batch.item.database.builder.JpaCursorItemReaderBuilder;
@@ -25,6 +27,7 @@ import java.util.HashMap;
 
 import static io.eagle.common.BatchConstant.*;
 import static io.eagle.common.BatchConstant.TRANSACTIONS_SUMMARY_STEP;
+import static io.eagle.common.ReaderQuery.SelectNoTransactionsQuery;
 import static io.eagle.common.ReaderQuery.TransactionSummaryQuery;
 
 @Configuration
@@ -42,6 +45,7 @@ public class PriceInfoJobConfig {
                 .incrementer(new RunIdIncrementer())
                 .listener(new CustomJobExecutionListener())
                 .start(vacationTransitionStep())
+                .next(transferLastdayPriceInfoStep())
                 .build();
     }
 
@@ -50,7 +54,7 @@ public class PriceInfoJobConfig {
     public Step vacationTransitionStep() {
         return stepBuilderFactory.get(TRANSACTIONS_SUMMARY_STEP)
                 .<PriceInfo, PriceInfo>chunk(CHUNK_SIZE)
-                .reader(transactionsSummaryItemReader())
+                .reader(transferLastdayPriceInfoItemReader())
                 .writer(transactionsSummaryItemWriter())
                 .listener(new CustomStepExecutionListener())
                 .build();
@@ -74,6 +78,46 @@ public class PriceInfoJobConfig {
     @Bean(TRANSACTIONS_SUMMARY_STEP + "_writer")
     @StepScope
     public JpaItemWriter<PriceInfo> transactionsSummaryItemWriter() {
+        return new JpaItemWriterBuilder<PriceInfo>()
+                .entityManagerFactory(entityManagerFactory)
+                .build();
+    }
+
+    @Bean
+    @JobScope
+    public Step transferLastdayPriceInfoStep() {
+        return stepBuilderFactory.get(TRANSFER_LASTDAY_PRICEINFO_STEP)
+                .<PriceInfo, PriceInfo>chunk(CHUNK_SIZE)
+                .reader(transactionsSummaryItemReader())
+                .writer(transactionsSummaryItemWriter())
+                .listener(new CustomStepExecutionListener())
+                .build();
+    }
+
+    @Bean(TRANSFER_LASTDAY_PRICEINFO_STEP + "_reader")
+    @StepScope
+    public JpaCursorItemReader<PriceInfo> transferLastdayPriceInfoItemReader() {
+        HashMap<String, Object> parameters = new HashMap<>();
+        parameters.put("lastday", LocalDate.now().minusDays(1L));
+        parameters.put("twoDaysAgo", LocalDate.now().minusDays(2L));
+
+        return new JpaCursorItemReaderBuilder<PriceInfo>()
+                .entityManagerFactory(entityManagerFactory)
+                .queryString(SelectNoTransactionsQuery.getQuery())
+                .parameterValues(parameters)
+                .name(TRANSFER_LASTDAY_PRICEINFO_READER)
+                .build();
+    }
+
+    @Bean(TRANSFER_LASTDAY_PRICEINFO_STEP + "_processor")
+    @StepScope
+    public ItemProcessor<PriceInfo, PriceInfo> transferLastdayPriceInfoItemProcessor() {
+        return new TransferLastdayInfoProcessor(dataSource);
+    }
+
+    @Bean(TRANSFER_LASTDAY_PRICEINFO_STEP + "_writer")
+    @StepScope
+    public JpaItemWriter<PriceInfo> transferLastdayPriceInfoItemWriter() {
         return new JpaItemWriterBuilder<PriceInfo>()
                 .entityManagerFactory(entityManagerFactory)
                 .build();
