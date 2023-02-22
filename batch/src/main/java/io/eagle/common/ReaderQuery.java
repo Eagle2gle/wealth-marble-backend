@@ -1,4 +1,4 @@
-package io.eagle.job;
+package io.eagle.common;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

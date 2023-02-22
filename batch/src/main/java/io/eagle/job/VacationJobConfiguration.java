@@ -37,6 +37,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+import static io.eagle.common.BatchConstant.CHUNK_SIZE;
+
 @Configuration
 @RequiredArgsConstructor
 public class VacationJobConfiguration {
@@ -53,8 +55,6 @@ public class VacationJobConfiguration {
     private final DataSource dataSource;
     private final EntityManagerFactory entityManagerFactory;
 
-    private final int chunkSize = 10;
-
     @Bean
     public Job vacationJob() {
         return jobBuilderFactory.get(VACATION_JOB)
@@ -70,7 +70,7 @@ public class VacationJobConfiguration {
     @JobScope
     public Step vacationTransitionStep() {
         return stepBuilderFactory.get(VACATION_TRANSITION_STEP)
-            .<Vacation, Vacation>chunk(chunkSize)
+            .<Vacation, Vacation>chunk(CHUNK_SIZE)
             .reader(vacationTransitionItemReader())
             .processor(vacationTransitionItemProcessor())
             .writer(vacationTransitionItemWriter())
@@ -110,7 +110,7 @@ public class VacationJobConfiguration {
     @JobScope
     public Step createStockStep() {
         return stepBuilderFactory.get(CREATE_STOCK + "_step")
-            .<Vacation, List<Stock>>chunk(chunkSize)
+            .<Vacation, List<Stock>>chunk(CHUNK_SIZE)
             .reader(createStockItemReader())
             .processor(createStockItemProcessor())
             .writer(createStockItemWriter())
@@ -151,7 +151,7 @@ public class VacationJobConfiguration {
     public Step retrieveMoneyStep() {
         return stepBuilderFactory.get(RETRIEVE_MONEY + "_step")
             .listener(new CustomStepExecutionListener())
-            .<Vacation, List<RetrieveMoneyVO>>chunk(chunkSize)
+            .<Vacation, List<RetrieveMoneyVO>>chunk(CHUNK_SIZE)
             .reader(retrieveMoneyItemReader())
             .processor(retrieveMoneyItemProcessor())
             .writer(retrieveMoneyItemWriter())
