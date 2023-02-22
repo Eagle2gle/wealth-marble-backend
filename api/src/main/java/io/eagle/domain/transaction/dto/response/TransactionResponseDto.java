@@ -1,4 +1,4 @@
-package io.eagle.domain.transaction.dto;
+package io.eagle.domain.transaction.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.querydsl.core.annotations.QueryProjection;

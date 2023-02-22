@@ -1,4 +1,4 @@
-package io.eagle.domain.transaction.dto;
+package io.eagle.domain.transaction.dto.request;
 
 import lombok.Builder;
 import lombok.Getter;

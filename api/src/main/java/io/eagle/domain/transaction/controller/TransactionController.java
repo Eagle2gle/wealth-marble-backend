@@ -2,7 +2,7 @@ package io.eagle.domain.transaction.controller;
 
 import io.eagle.auth.AuthDetails;
 import io.eagle.common.ApiResponse;
-import io.eagle.domain.transaction.dto.TransactionRequestDto;
+import io.eagle.domain.transaction.dto.request.TransactionRequestDto;
 import io.eagle.domain.transaction.service.TransactionService;
 import io.eagle.entity.User;
 import lombok.RequiredArgsConstructor;

@@ -1,9 +1,9 @@
 package io.eagle.domain.transaction.service;
 
 import io.eagle.domain.order.repository.OrderRepository;
-import io.eagle.domain.transaction.dto.TransactionRequestDto;
-import io.eagle.domain.transaction.dto.TransactionResponseDto;
-import io.eagle.domain.transaction.dto.UserTransactionInfoDto;
+import io.eagle.domain.transaction.dto.request.TransactionRequestDto;
+import io.eagle.domain.transaction.dto.response.TransactionResponseDto;
+import io.eagle.domain.transaction.dto.response.UserTransactionInfoDto;
 import io.eagle.domain.transaction.repository.TransactionRepository;
 import io.eagle.entity.User;
 import io.eagle.repository.UserRepository;

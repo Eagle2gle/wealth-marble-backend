@@ -1,5 +1,6 @@
-package io.eagle.domain.transaction.dto;
+package io.eagle.domain.transaction.dto.response;
 
+import io.eagle.entity.Transaction;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,5 +17,9 @@ public class UserTransactionInfoDto {
     private Integer price;
     private Integer amount;
     private String transactionType;
+
+    public UserTransactionInfoDto(Transaction transaction) {
+
+    }
 
 }
