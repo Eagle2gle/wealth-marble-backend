@@ -37,18 +37,11 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-import static io.eagle.common.BatchConstant.CHUNK_SIZE;
+import static io.eagle.common.BatchConstant.*;
 
 @Configuration
 @RequiredArgsConstructor
 public class VacationJobConfiguration {
-
-    public static final String VACATION_JOB = "vacationTransitionJob";
-    public static final String VACATION_TRANSITION_STEP = "vacationTransitionStep";
-    public static final String CREATE_STOCK = "createStock";
-    public static final String RETRIEVE_MONEY = "retrieveMoney";
-    public static final String EXPIRED_VACATION_PAGE_READER = "vacationJpaPagingItemReader";
-    public static final String CREATE_STOCK_READER = "createStockReader";
 
     private final JobBuilderFactory jobBuilderFactory;
     private final StepBuilderFactory stepBuilderFactory;
