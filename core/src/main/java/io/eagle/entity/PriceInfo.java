@@ -1,13 +1,14 @@
 package io.eagle.entity;
 
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Entity
 @Data
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
+@AllArgsConstructor
 public class PriceInfo extends BaseEntity {
 
     @Id
