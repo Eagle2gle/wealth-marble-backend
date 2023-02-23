@@ -7,3 +7,12 @@ spring:
   batch:
     jdbc:
       initialize-schema: embedded
+
+logging:
+  level:
+    org:
+      springframework:
+        jdbc:
+          core: INFO
+        boot:
+          autoconfigure: INFO
