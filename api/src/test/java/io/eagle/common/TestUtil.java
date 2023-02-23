@@ -94,4 +94,14 @@ public class TestUtil {
             .stocks(10)
             .build();
     }
+
+    public io.eagle.entity.Stock createStock(User user, Vacation vacation) {
+        return io.eagle.entity.Stock
+            .builder()
+            .user(user)
+            .vacation(vacation)
+            .amount(1)
+            .price(100)
+            .build();
+    }
 }
