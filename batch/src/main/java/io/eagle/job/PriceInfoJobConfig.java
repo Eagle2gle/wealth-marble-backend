@@ -1,28 +1,31 @@
 package io.eagle.job;
 
-import io.eagle.chunk.processor.TransferLastdayInfoProcessor;
+import io.eagle.chunk.processor.CopyPriceInfoProcessor;
+import io.eagle.chunk.processor.PriceInfoProcessor;
+import io.eagle.domain.PriceInfoVO;
 import io.eagle.entity.PriceInfo;
 import io.eagle.listener.CustomJobExecutionListener;
 import io.eagle.listener.CustomStepExecutionListener;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
-import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
-import org.springframework.batch.core.configuration.annotation.JobScope;
-import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
-import org.springframework.batch.core.configuration.annotation.StepScope;
+import org.springframework.batch.core.configuration.annotation.*;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.item.ItemProcessor;
-import org.springframework.batch.item.database.JpaCursorItemReader;
+import org.springframework.batch.item.database.JdbcCursorItemReader;
 import org.springframework.batch.item.database.JpaItemWriter;
-import org.springframework.batch.item.database.builder.JpaCursorItemReaderBuilder;
+import org.springframework.batch.item.database.builder.JdbcCursorItemReaderBuilder;
 import org.springframework.batch.item.database.builder.JpaItemWriterBuilder;
+import org.springframework.batch.item.database.support.ListPreparedStatementSetter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterUtils;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.HashMap;
 
 import static io.eagle.common.BatchConstant.*;
@@ -44,17 +47,18 @@ public class PriceInfoJobConfig {
         return jobBuilderFactory.get(PRICE_JOB)
                 .incrementer(new RunIdIncrementer())
                 .listener(new CustomJobExecutionListener())
-                .start(vacationTransitionStep())
+                .start(transactionsSummaryStep())
                 .next(transferLastdayPriceInfoStep())
                 .build();
     }
 
     @Bean
     @JobScope
-    public Step vacationTransitionStep() {
+    public Step transactionsSummaryStep() {
         return stepBuilderFactory.get(TRANSACTIONS_SUMMARY_STEP)
-                .<PriceInfo, PriceInfo>chunk(CHUNK_SIZE)
-                .reader(transferLastdayPriceInfoItemReader())
+                .<PriceInfoVO, PriceInfo>chunk(CHUNK_SIZE)
+                .reader(transactionsSummaryItemReader())
+                .processor(transactionsSummaryItemProcessor())
                 .writer(transactionsSummaryItemWriter())
                 .listener(new CustomStepExecutionListener())
                 .build();
@@ -62,17 +66,25 @@ public class PriceInfoJobConfig {
 
     @Bean(TRANSACTIONS_SUMMARY_STEP + "_reader")
     @StepScope
-    public JpaCursorItemReader<PriceInfo> transactionsSummaryItemReader() {
+    public JdbcCursorItemReader<PriceInfoVO> transactionsSummaryItemReader() {
         HashMap<String, Object> parameters = new HashMap<>();
-        parameters.put("lastday", LocalDate.now().minusDays(1L));
-        parameters.put("twoDaysAgo", LocalDate.now().minusDays(2L));
+        LocalDate today = LocalDate.now(); // LocalDate.of(2023,02,11); // for test
+        parameters.put("lastday", today.minusDays(1L));
+        parameters.put("twoDaysAgo", today.minusDays(2L));
 
-        return new JpaCursorItemReaderBuilder<PriceInfo>()
-                .entityManagerFactory(entityManagerFactory)
-                .queryString(TransactionSummaryQuery.getQuery())
-                .parameterValues(parameters)
+        return new JdbcCursorItemReaderBuilder<PriceInfoVO>()
+                .fetchSize(CHUNK_SIZE)
+                .dataSource(dataSource)
                 .name(TRANSACTIONS_SUMMARY_READER)
+                .sql(NamedParameterUtils.substituteNamedParameters(TransactionSummaryQuery.getQuery(), new MapSqlParameterSource(parameters)))
+                .preparedStatementSetter(new ListPreparedStatementSetter(Arrays.asList(NamedParameterUtils.buildValueArray(TransactionSummaryQuery.getQuery(), parameters))))
+                .beanRowMapper(PriceInfoVO.class)
                 .build();
+    }
+    @Bean(TRANSACTIONS_SUMMARY_STEP + "_processor")
+    @StepScope
+    public ItemProcessor<PriceInfoVO, PriceInfo> transactionsSummaryItemProcessor() {
+        return new PriceInfoProcessor();
     }
 
     @Bean(TRANSACTIONS_SUMMARY_STEP + "_writer")
@@ -87,32 +99,36 @@ public class PriceInfoJobConfig {
     @JobScope
     public Step transferLastdayPriceInfoStep() {
         return stepBuilderFactory.get(TRANSFER_LASTDAY_PRICEINFO_STEP)
-                .<PriceInfo, PriceInfo>chunk(CHUNK_SIZE)
-                .reader(transactionsSummaryItemReader())
-                .writer(transactionsSummaryItemWriter())
+                .<PriceInfoVO, PriceInfo>chunk(CHUNK_SIZE)
+                .reader(transferLastdayPriceInfoItemReader())
+                .processor(transferLastdayPriceInfoItemProcessor())
+                .writer(transferLastdayPriceInfoItemWriter())
                 .listener(new CustomStepExecutionListener())
                 .build();
     }
 
     @Bean(TRANSFER_LASTDAY_PRICEINFO_STEP + "_reader")
     @StepScope
-    public JpaCursorItemReader<PriceInfo> transferLastdayPriceInfoItemReader() {
+    public JdbcCursorItemReader<PriceInfoVO> transferLastdayPriceInfoItemReader() {
         HashMap<String, Object> parameters = new HashMap<>();
-        parameters.put("lastday", LocalDate.now().minusDays(1L));
-        parameters.put("twoDaysAgo", LocalDate.now().minusDays(2L));
+        LocalDate today = LocalDate.now(); // LocalDate.of(2023,02,11); // for test
+        parameters.put("lastday", today.minusDays(1L));
+        parameters.put("twoDaysAgo", today.minusDays(2L));
 
-        return new JpaCursorItemReaderBuilder<PriceInfo>()
-                .entityManagerFactory(entityManagerFactory)
-                .queryString(SelectNoTransactionsQuery.getQuery())
-                .parameterValues(parameters)
+        return new JdbcCursorItemReaderBuilder<PriceInfoVO>()
+                .fetchSize(CHUNK_SIZE)
+                .dataSource(dataSource)
                 .name(TRANSFER_LASTDAY_PRICEINFO_READER)
+                .sql(NamedParameterUtils.substituteNamedParameters(SelectNoTransactionsQuery.getQuery(), new MapSqlParameterSource(parameters)))
+                .preparedStatementSetter(new ListPreparedStatementSetter(Arrays.asList(NamedParameterUtils.buildValueArray(SelectNoTransactionsQuery.getQuery(), parameters))))
+                .beanRowMapper(PriceInfoVO.class)
                 .build();
     }
 
     @Bean(TRANSFER_LASTDAY_PRICEINFO_STEP + "_processor")
     @StepScope
-    public ItemProcessor<PriceInfo, PriceInfo> transferLastdayPriceInfoItemProcessor() {
-        return new TransferLastdayInfoProcessor(dataSource);
+    public ItemProcessor<PriceInfoVO, PriceInfo> transferLastdayPriceInfoItemProcessor() {
+        return new CopyPriceInfoProcessor();
     }
 
     @Bean(TRANSFER_LASTDAY_PRICEINFO_STEP + "_writer")
@@ -122,4 +138,5 @@ public class PriceInfoJobConfig {
                 .entityManagerFactory(entityManagerFactory)
                 .build();
     }
+
 }
