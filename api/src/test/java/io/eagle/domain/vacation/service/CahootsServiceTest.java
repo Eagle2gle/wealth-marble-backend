@@ -56,7 +56,7 @@ public class CahootsServiceTest {
         contestParticipationRepository.save(new ContestParticipation(contributor, vacation, stocks));
 
         // when
-        DetailCahootsDto detailCahootsDto = cahootsService.getDetail(vacation.getId());
+        DetailCahootsDto detailCahootsDto = cahootsService.getDetail(vacation.getId(), contributor.getId());
 
         // then
         assertEquals(detailCahootsDto.getDescription(), vacation.getDescription());

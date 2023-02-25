@@ -2,8 +2,10 @@ package io.eagle.domain.vacation.controller;
 
 import io.eagle.auth.AuthDetails;
 import io.eagle.common.ApiResponse;
+import io.eagle.domain.vacation.common.Utils;
 import io.eagle.domain.vacation.dto.*;
 import io.eagle.domain.vacation.dto.request.CreateCahootsDto;
+import io.eagle.domain.vacation.dto.request.OptionalUserIdDto;
 import io.eagle.domain.vacation.dto.response.ImminentInfoDto;
 import io.eagle.entity.type.VacationStatusType;
 import io.eagle.domain.vacation.service.CahootsService;
@@ -26,13 +28,14 @@ public class CahootsController {
     }
 
     @GetMapping(value = "/cahoots/{cahootsId}", params = "info=detail")
-    public ApiResponse getCahootsDetailInfo(@PathVariable("cahootsId") Long cahootsId){
-        return ApiResponse.createSuccess(cahootsService.getDetail(cahootsId));
+    public ApiResponse getCahootsDetailInfo(@PathVariable("cahootsId") Long cahootsId, @RequestBody(required = false) OptionalUserIdDto user){
+        return ApiResponse.createSuccess(cahootsService.getDetail(cahootsId, Utils.getUserId(user)));
     }
 
     @GetMapping(value="/cahoots", params = "status=ongoing")
-    public ApiResponse getBreifCahootsInfo(@Valid InfoConditionDto infoConditionDto){
+    public ApiResponse getBreifCahootsInfo(@Valid InfoConditionDto infoConditionDto, @RequestBody(required = false) OptionalUserIdDto user){
         infoConditionDto.setTypes(new VacationStatusType[]{VacationStatusType.CAHOOTS_ONGOING});
+        infoConditionDto.setUserId(Utils.getUserId(user));
         return ApiResponse.createSuccess(cahootsService.getBreifList(infoConditionDto));
     }
 

@@ -36,21 +36,20 @@ public class CahootsService {
         vacationRepository.save(newVacation);
     }
 
-    public DetailCahootsDto getDetail(Long cahootsId) {
+    public DetailCahootsDto getDetail(Long cahootsId, Long userId) {
         DetailCahootsDto detailCahootsDto = vacationRepository.getVacationDetail(cahootsId).checkNull();
         List<Interest> interests = interestRepository.findByVacation(vacationRepository.getReferenceById(cahootsId));
         detailCahootsDto.setInterestCount(interests.size());
-        // TODO : 사용자 정보 추가
-        Long userId = 1L;
-        detailCahootsDto.setIsInterest(interests.stream().map(Interest::getUser).map(User::getId).anyMatch(id -> id.equals(userId)));
+        Boolean isInterest = (userId != null ? interests.stream().map(Interest::getUser).map(User::getId).anyMatch(id -> id.equals(userId)) : false);
+        detailCahootsDto.setIsInterest(isInterest);
         detailCahootsDto.setImages(getImageUrls(cahootsId));
         return detailCahootsDto;
     }
 
     public List<BreifCahootsDto> getBreifList(InfoConditionDto infoConditionDto){
         List<BreifCahootsDto> breifCahootsList = vacationRepository.getVacationsBreif(infoConditionDto);
-        // TODO : 사용자 정보 추가
-        List<Long> myInterestVacation = vacationRepository.findVacationIdByUserInterested(1L);
+        Long userId = infoConditionDto.getUserId();
+        List<Long> myInterestVacation = (userId != null ? vacationRepository.findVacationIdByUserInterested(infoConditionDto.getUserId()) : List.of());
         breifCahootsList.forEach(breifCahootsDto -> {
             breifCahootsDto.setImages(getImageUrls(breifCahootsDto.getId()));
             breifCahootsDto.setIsInterest(myInterestVacation.contains(breifCahootsDto.getId()));
