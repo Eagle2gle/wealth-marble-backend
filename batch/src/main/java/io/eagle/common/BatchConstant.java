@@ -1,7 +1,7 @@
 package io.eagle.common;
 
 public final class BatchConstant {
-    public static final Integer CHUNK_SIZE = 1;
+    public static final Integer CHUNK_SIZE = 10;
 
     public static final String VACATION_JOB = "vacationTransitionJob";
     public static final String VACATION_TRANSITION_STEP = "vacationTransitionStep";
