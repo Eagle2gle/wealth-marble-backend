@@ -7,6 +7,8 @@ import io.eagle.entity.type.OrderStatus;
 import io.eagle.entity.type.OrderType;
 import lombok.*;
 
+import javax.validation.constraints.NotNull;
+
 @Data
 public class MessageDto {
 
@@ -15,7 +17,9 @@ public class MessageDto {
     private Integer amount;
     private OrderType orderType;
 
+    @NotNull
     private Long requesterId;
+    private String token;
 
     public Order buildOrder(User user, Vacation vacation, Integer existingAmount, OrderStatus status){
         return Order.builder()

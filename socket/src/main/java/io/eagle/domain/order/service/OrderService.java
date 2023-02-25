@@ -13,6 +13,7 @@ import io.eagle.entity.type.OrderStatus;
 import io.eagle.entity.type.OrderType;
 import io.eagle.exception.SocketException;
 import io.eagle.repository.UserRepository;
+import io.eagle.security.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -28,6 +29,8 @@ public class OrderService {
     private final UserRepository userRepository;
     private final TransactionRepository transactionRepository;
     private final VacationRepository vacationRepository;
+
+    private final JwtTokenProvider jwtTokenProvider;
 
     @Transactional
     public BroadcastMessageDto purchaseMarket(MessageDto message){
@@ -68,6 +71,12 @@ public class OrderService {
     }
 
     private void verifyMessage(MessageDto message){
+        try{
+            Long userId = jwtTokenProvider.getUserIdFromToken(message.getToken());
+            message.setRequesterId(userId);
+        } catch(Exception e){
+            throw new SocketException("요청자가 올바르지 않습니다.");
+        }
         if(message.getAmount() <= 0) throw new SocketException("요청 수량이 올바르지 않습니다.");
         if(message.getPrice() <= 0) throw new SocketException("요청 가격이 올바르지 않습니다.");
     }
