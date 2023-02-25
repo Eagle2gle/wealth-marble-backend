@@ -2,7 +2,7 @@ package io.eagle.domain.vacation.controller;
 
 import io.eagle.common.ApiResponse;
 import io.eagle.domain.vacation.service.MarketService;
-import io.eagle.domain.vacation.type.MarketRankingType;
+import io.eagle.entity.type.MarketRankingType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;

@@ -8,7 +8,7 @@ import io.eagle.domain.vacation.dto.response.MarketInfoDto;
 import io.eagle.domain.vacation.dto.response.MarketListDto;
 import io.eagle.domain.vacation.dto.response.MarketRankDto;
 import io.eagle.domain.vacation.repository.VacationRepository;
-import io.eagle.domain.vacation.type.MarketRankingType;
+import io.eagle.entity.type.MarketRankingType;
 import io.eagle.entity.Picture;
 import io.eagle.entity.PriceInfo;
 import io.eagle.entity.Transaction;
@@ -38,7 +38,6 @@ public class MarketService {
     private final PictureRepository pictureRepository;
     private final InterestRepository interestRepository;
     private final RedisTemplate<String, String> redisTemplate;
-    private final String rankingKey = "RANKING_KEY";
 
     public List<MarketListDto> getAllMarkets(Pageable pageable) {
         return vacationRepository.findAllMarkets(pageable).stream().map(vacation -> {
