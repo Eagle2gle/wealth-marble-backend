@@ -21,7 +21,7 @@ public class MarketRankDto {
         if (vo.getCurrentPrice() != null && vo.getStartPrice() != null) {
             this.currentPrice = vo.getCurrentPrice();
             this.gap = vo.getCurrentPrice() - vo.getStartPrice();
-            this.gapRate = (vo.getCurrentPrice() - vo.getStartPrice()) / (double) vo.getStartPrice();
+            this.gapRate = (vo.getCurrentPrice() - vo.getStartPrice()) * 100 / (double) vo.getStartPrice();
             this.dividend = (vo.getCurrentPrice() * 0.1 + Math.random() * 0.1);
             this.dividendRate = this.dividend / this.currentPrice;
         }
