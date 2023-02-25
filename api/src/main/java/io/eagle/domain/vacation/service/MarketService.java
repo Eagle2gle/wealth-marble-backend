@@ -6,7 +6,9 @@ import io.eagle.domain.transaction.repository.TransactionRepository;
 import io.eagle.domain.vacation.dto.response.MarketDetailDto;
 import io.eagle.domain.vacation.dto.response.MarketInfoDto;
 import io.eagle.domain.vacation.dto.response.MarketListDto;
+import io.eagle.domain.vacation.dto.response.MarketRankDto;
 import io.eagle.domain.vacation.repository.VacationRepository;
+import io.eagle.domain.vacation.type.MarketRankingType;
 import io.eagle.entity.Picture;
 import io.eagle.entity.PriceInfo;
 import io.eagle.entity.Transaction;
@@ -15,12 +17,15 @@ import io.eagle.entity.type.PriceStatus;
 import io.eagle.entity.type.VacationStatusType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -32,6 +37,8 @@ public class MarketService {
     private final TransactionRepository transactionRepository;
     private final PictureRepository pictureRepository;
     private final InterestRepository interestRepository;
+    private final RedisTemplate<String, String> redisTemplate;
+    private final String rankingKey = "RANKING_KEY";
 
     public List<MarketListDto> getAllMarkets(Pageable pageable) {
         return vacationRepository.findAllMarkets(pageable).stream().map(vacation -> {
@@ -100,5 +107,26 @@ public class MarketService {
 
     public List<String> getCountries(){
         return vacationRepository.getCountries(VacationStatusType.MARKET_ONGOING);
+    }
+
+    public List<MarketRankDto> getTop5MarketRankingByProperty(MarketRankingType type, Boolean upOrDown) {
+        return this.findMarketRankInRedis(type.getKey(), upOrDown)
+            .stream()
+            .map(e -> this.findMarketRankInfoById(
+                Long.parseLong(Objects.requireNonNull(e.getValue())))
+            )
+            .collect(Collectors.toList());
+    }
+
+    private Set<ZSetOperations.TypedTuple<String>> findMarketRankInRedis(String key, Boolean upOrDown) {
+        ZSetOperations<String, String> zSetOperations = redisTemplate.opsForZSet();
+        if (upOrDown) {
+            return zSetOperations.reverseRangeWithScores(key, 0, 5);
+        }
+        return zSetOperations.rangeWithScores(key, 0, 5);
+    }
+
+    private MarketRankDto findMarketRankInfoById(Long id) {
+        return vacationRepository.findMarketRankInfoById(id);
     }
 }
