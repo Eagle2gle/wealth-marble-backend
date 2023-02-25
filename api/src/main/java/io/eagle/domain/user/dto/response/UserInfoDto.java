@@ -9,7 +9,7 @@ import lombok.Getter;
 public class UserInfoDto {
 
     private String username;
-    private Integer cash;
+    private Long cash;
     private Integer value;
     private String email;
     private ProviderType providerType;

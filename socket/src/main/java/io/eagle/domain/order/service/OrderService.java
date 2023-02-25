@@ -71,7 +71,7 @@ public class OrderService {
         if(message.getAmount() <= 0) throw new SocketException("요청 수량이 올바르지 않습니다.");
         if(message.getPrice() <= 0) throw new SocketException("요청 가격이 올바르지 않습니다.");
     }
-    private void verifyUserCash(Integer userCash, MessageDto message){
+    private void verifyUserCash(Long userCash, MessageDto message){
         Integer totalPrice = message.getPrice() * message.getAmount();
         if(totalPrice > userCash){// error handling
             throw new SocketException("사용자 캐시가 부족합니다");
@@ -79,7 +79,7 @@ public class OrderService {
     }
 
     private void subtractUserCash(User user, MessageDto message){
-        Integer leftCash = user.getCash() - (message.getAmount() * message.getPrice());
+        Long leftCash = user.getCash() - (message.getAmount() * message.getPrice());
         user.setCash(leftCash);
     }
     private Integer processOrdering(OrderType type, Integer requestAmount, Order purchaseOrder, Order saleOrder){
