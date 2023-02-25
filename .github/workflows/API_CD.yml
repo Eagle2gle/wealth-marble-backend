@@ -68,6 +68,8 @@ jobs:
             sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/wm-api-server:${GITHUB_SHA::7}
             docker run -d -p 8080:8080 --name wm-api-server ${{ secrets.DOCKERHUB_USERNAME }}/wm-api-server:${GITHUB_SHA::7}
             docker image prune -af
+            docker pull redis
+            docker run --name redis -p 6379:6379 -d redis
 
 #      - name: Slack Deploy bot 실행
 #        uses: 8398a7/action-slack@v3
