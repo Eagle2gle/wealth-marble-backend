@@ -17,9 +17,9 @@ import java.util.Map;
 public class ContestParticipationController {
     private final ContestParticipationService contestParticipationService;
 
-    @PostMapping("/cahoots/{cahootsId}")
-    public ApiResponse participateCahoots (@PathVariable("cahootsId") Long cahootsId, @RequestBody Map<String,Integer> param){
-        contestParticipationService.participate(cahootsId, param.get("stocks"));
+    @PostMapping("/auth/cahoots/{cahootsId}")
+    public ApiResponse participateCahoots (@PathVariable("cahootsId") Long cahootsId, @RequestBody Map<String,Integer> param, @AuthenticationPrincipal AuthDetails authDetails){
+        contestParticipationService.participate(cahootsId, param.get("stocks"), authDetails.getUser());
         return ApiResponse.createSuccessWithNoContent();
     }
 
