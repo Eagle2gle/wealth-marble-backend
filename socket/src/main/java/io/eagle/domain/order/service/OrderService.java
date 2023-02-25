@@ -1,5 +1,6 @@
 package io.eagle.domain.order.service;
 
+import io.eagle.domain.PriceInfo.repository.PriceInfoRepository;
 import io.eagle.domain.order.dto.request.MessageDto;
 import io.eagle.domain.order.dto.response.BroadcastMessageDto;
 import io.eagle.domain.order.dto.TotalMountDto;
@@ -7,14 +8,17 @@ import io.eagle.domain.order.repository.OrderRepository;
 import io.eagle.domain.transaction.repository.TransactionRepository;
 import io.eagle.domain.vacation.repository.VacationRepository;
 import io.eagle.entity.Order;
+import io.eagle.entity.PriceInfo;
 import io.eagle.entity.Transaction;
 import io.eagle.entity.User;
+import io.eagle.entity.type.MarketRankingType;
 import io.eagle.entity.type.OrderStatus;
 import io.eagle.entity.type.OrderType;
 import io.eagle.exception.SocketException;
 import io.eagle.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,11 +27,14 @@ import java.util.List;
 @Service
 @Slf4j
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class OrderService {
     private final OrderRepository orderRepository;
     private final UserRepository userRepository;
     private final TransactionRepository transactionRepository;
     private final VacationRepository vacationRepository;
+    private final PriceInfoRepository priceInfoRepository;
+    private final RedisTemplate redisTemplate;
 
     @Transactional
     public BroadcastMessageDto purchaseMarket(MessageDto message){
@@ -103,8 +110,6 @@ public class OrderService {
     }
 
     public BroadcastMessageDto sellMarket(MessageDto message){
-
-
         return BroadcastMessageDto.builder().build();
     }
 
@@ -126,15 +131,24 @@ public class OrderService {
     }
 
     private void createTransaction(Order purchaseOrder, Order saleOrder, Integer transactionAmount){
-        // transaction 생성.
+        Long vacationId = saleOrder.getVacation().getId();
         Transaction transaction = Transaction.builder()
-                .vacation(vacationRepository.getReferenceById(saleOrder.getVacation().getId()))
-//                .vacationId(saleOrder.getVacationId())
+                .vacation(vacationRepository.getReferenceById(vacationId))
                 .buyOrder(purchaseOrder)
                 .sellOrder(saleOrder)
                 .amount(transactionAmount)
                 .price(saleOrder.getPrice())
                 .build();
-        transactionRepository.save(transaction);
+
+        Transaction savedTransaction = transactionRepository.save(transaction);
+        PriceInfo priceInfo = priceInfoRepository.findByVacationOrderByCreatedAt(vacationId);
+
+        if (priceInfo != null) {
+            Double price = (double) (saleOrder.getPrice() - priceInfo.getStandardPrice());
+            Double priceRate = price * 100 / (double) priceInfo.getStandardPrice();
+            redisTemplate.opsForZSet().add(MarketRankingType.PRICE.getKey(), vacationId.toString(), price);
+            redisTemplate.opsForZSet().add(MarketRankingType.PRICE_RATE.getKey(), vacationId.toString(), priceRate);
+        }
+
     }
 }
