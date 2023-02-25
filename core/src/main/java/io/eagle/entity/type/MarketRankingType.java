@@ -1,4 +1,4 @@
-package io.eagle.domain.vacation.type;
+package io.eagle.entity.type;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
