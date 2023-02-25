@@ -2,6 +2,7 @@ package io.eagle.domain.vacation.controller;
 
 import io.eagle.common.ApiResponse;
 import io.eagle.domain.vacation.service.MarketService;
+import io.eagle.domain.vacation.type.MarketRankingType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -38,4 +39,15 @@ public class MarketController {
         return ApiResponse.createSuccess(marketService.getCountries());
     }
 
+    @GetMapping("/markets/rank")
+    public ApiResponse getRankingPrice(
+        @RequestParam(value = "type", defaultValue = "PRICE") String type,
+        @RequestParam(value = "up", defaultValue = "TRUE") String up
+    ) {
+        return ApiResponse.createSuccess(
+            marketService.getTop5MarketRankingByProperty(
+                MarketRankingType.valueOf(type), Boolean.valueOf(up)
+            )
+        );
+    }
 }
