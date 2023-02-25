@@ -29,21 +29,17 @@ public class ContestParticipationService {
     private final ContestParticipationRepository contestParticipationRepository;
 
     @Transactional
-    public void participate(Long cahootsId, Integer stocks){
+    public void participate(Long cahootsId, Integer stocks, User user){
         if (stocks > 10000) { // 주식 너무 많으면 reject
            throw new ApiException(ErrorCode.INVALID_PARAMETER);
         }
-        // TODO : 사용자 정보에서 현재 잔액 가져오기
-        Integer cache = 100000;
-        Long userId = 3L;
-
         Vacation vacation = vacationRepository.findByIdAndStatus(cahootsId, VacationStatusType.CAHOOTS_ONGOING).orElseThrow(()-> new ApiException(ErrorCode.VACATION_NOT_FOUND));
-        if ( cache < vacation.getStock().getPrice() * stocks) { // 공모 정보 가져올 때 진행중이 맞는지 체크하고 잔액이 모자라면 에러
-            throw new ApiException(ErrorCode.USER_LACK_OF_CACHE);
-        }
+        Long cash = user.getCash();
+        Long stockTotalPrice = vacation.getStock().getPrice() * stocks;
+        verifyUserCash(cash, stockTotalPrice);
+
         // 사용자 정보에서 잔액 차감 + 공모 참여 현황에 추가
-        // TODO : 사용자 잔액 차감
-        User user = userRepository.getReferenceById(userId);
+        subtractUserCash(user, stockTotalPrice);
         ContestParticipation contestParticipation = ContestParticipation.builder().user(user).vacation(vacation).stocks(stocks).build();
         contestParticipationRepository.save(contestParticipation);
     }
@@ -71,5 +67,17 @@ public class ContestParticipationService {
             }
             return null;
         }).filter(Objects::nonNull).collect(Collectors.toList());
+    }
+
+    private void verifyUserCash(Long userCash, Long stockTotalPrice){
+        if(userCash < stockTotalPrice){ // 공모 정보 가져올 때 진행중이 맞는지 체크하고 잔액이 모자라면 에러
+            throw new ApiException(ErrorCode.USER_LACK_OF_CACHE);
+        }
+    }
+
+    private void subtractUserCash(User user, Long stockTotalPrice){
+        Long leftCash = user.getCash() - stockTotalPrice;
+        user.setCash(leftCash);
+        userRepository.updateCash(user.getId(), user.getCash());
     }
 }
