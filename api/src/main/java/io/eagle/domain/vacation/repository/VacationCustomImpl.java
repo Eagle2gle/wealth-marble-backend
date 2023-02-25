@@ -8,13 +8,17 @@ import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.JPQLQueryFactory;
 import io.eagle.domain.vacation.dto.*;
 import io.eagle.domain.vacation.dto.response.*;
+import io.eagle.domain.vacation.vo.MarketQueryVO;
 import io.eagle.entity.Vacation;
 import io.eagle.entity.type.VacationStatusType;
 import lombok.RequiredArgsConstructor;
+import org.qlrm.mapper.JpaResultMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.parameters.P;
 
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -26,6 +30,7 @@ import static io.eagle.entity.QVacation.vacation;
 public class VacationCustomImpl implements VacationCustom {
 
     private final JPQLQueryFactory queryFactory;
+    private final EntityManager entityManager;
 
     @Value("${eagle.int.page}")
     private Integer page;
@@ -155,6 +160,31 @@ public class VacationCustomImpl implements VacationCustom {
                 .where(vacation.status.eq(type))
                 .groupBy(vacation.country)
                 .fetch();
+    }
+
+    @Override
+    public MarketRankDto findMarketRankInfoById(Long id) {
+        String sql = "" +
+            "SELECT " +
+            "pic.url as pictureUrl," +
+            "v.title as title, " +
+            "t.price as currentPrice, " +
+            "price.standard_price as startPrice " +
+            "FROM vacation AS v " +
+            "LEFT JOIN price_info AS price ON price.id = (SELECT p2.id FROM price_info AS p2 WHERE p2.vacation_id = ? ORDER BY p2.created_at DESC LIMIT 1) " +
+            "LEFT JOIN picture AS pic ON pic.id = (SELECT pic2.id FROM picture AS pic2 WHERE pic2.cahoots_id = ? ORDER BY pic2.created_at DESC LIMIT 1) " +
+            "LEFT JOIN transaction AS t ON t.vacation_id = (SELECT id FROM transaction AS t2 WHERE t2.vacation_id = ? ORDER BY created_at DESC LIMIT 1) " +
+            "WHERE v.id = ?";
+
+        JpaResultMapper jpaResultMapper = new JpaResultMapper();
+        Query query = entityManager.createNativeQuery(sql);
+        query.setParameter(1, id);
+        query.setParameter(2, id);
+        query.setParameter(3, id);
+        query.setParameter(4, id);
+
+        List<MarketQueryVO> marketQueryVO = jpaResultMapper.list(query, MarketQueryVO.class);
+        return marketQueryVO.size() == 0 ? null : new MarketRankDto(marketQueryVO.get(0));
     }
 
     private BooleanExpression isInStatus(VacationStatusType[] statusTypes){
