@@ -47,5 +47,5 @@ public class User {
     private String refreshToken;
 
     @Column
-    private Integer cash;
+    private Long cash;
 }

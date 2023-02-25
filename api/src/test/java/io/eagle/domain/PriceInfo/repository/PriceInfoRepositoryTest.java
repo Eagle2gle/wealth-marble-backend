@@ -126,7 +126,7 @@ public class PriceInfoRepositoryTest {
             .providerId("12354126646")
             .ranks(Ranks.NAMJAK)
             .role(Role.USER)
-            .cash(100)
+            .cash(100L)
             .build();
     }
 
