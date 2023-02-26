@@ -7,7 +7,7 @@ $ docker-compose exec kafka kafka-topics --describe --topic kafka-market --boots
 ```
 1 line : docker-compose 실행
 
-2 line : topic (kafka-market) 생성
+2 line : topic 없을 시, topic (kafka-market) 생성 -> docker-compose.yml에 `KAFKA_CREATE_TOPICS` 가 없는 경우
 
 3 line : kafka-market topic이 있는지 확인
 
