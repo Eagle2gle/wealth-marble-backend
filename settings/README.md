@@ -17,3 +17,13 @@ $ docker-compose exec kafka kafka-topics --describe --topic kafka-market --boots
 docker pull redis:alpine
 docker run --name redis -p 6379:6379 -d redis
 ```
+
+## network 설정
+```shell
+$ docker network create wm-net # wm-net이라는 이름으로 network 생성
+$ docker network ls # network 목록
+$ docker network inspect wm-net # wm-net 상세 정보
+$ docker network conenct 네트워크명 컨테이너명 # 컨테이너를 네트워크로 연결
+$ docker network disconnet 네트워크명 컨테이너명
+$ docker run -itd --name two --network wm-net busybox # container 실행 시 네트워크 연결
+```
