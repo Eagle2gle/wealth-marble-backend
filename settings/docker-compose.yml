@@ -27,3 +27,6 @@ services:
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
       KAFKA_CREATE_TOPICS : 'kafka-market:1:1'
+networks:
+  wm-net:
+    driver: bridge
