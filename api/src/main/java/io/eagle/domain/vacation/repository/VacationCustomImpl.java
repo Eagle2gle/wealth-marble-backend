@@ -171,9 +171,9 @@ public class VacationCustomImpl implements VacationCustom {
             "t.price as currentPrice, " +
             "price.standard_price as startPrice " +
             "FROM vacation AS v " +
-            "LEFT JOIN price_info AS price ON price.id = (SELECT p2.id FROM price_info AS p2 WHERE p2.vacation_id = ? ORDER BY p2.created_at DESC LIMIT 1) " +
-            "LEFT JOIN picture AS pic ON pic.id = (SELECT pic2.id FROM picture AS pic2 WHERE pic2.cahoots_id = ? ORDER BY pic2.created_at DESC LIMIT 1) " +
-            "LEFT JOIN transaction AS t ON t.vacation_id = (SELECT id FROM transaction AS t2 WHERE t2.vacation_id = ? ORDER BY created_at DESC LIMIT 1) " +
+            "LEFT JOIN price_info AS price ON price.id = (SELECT MAX(p2.id) FROM price_info AS p2 WHERE p2.vacation_id = ?) " +
+            "LEFT JOIN picture AS pic ON pic.id = (SELECT MAX(pic2.id) FROM picture AS pic2 WHERE pic2.cahoots_id = ?) " +
+            "LEFT JOIN transaction AS t ON t.id = (SELECT MAX(t2.id) FROM transaction AS t2 WHERE t2.vacation_id = ?) " +
             "WHERE v.id = ?";
 
         JpaResultMapper jpaResultMapper = new JpaResultMapper();
