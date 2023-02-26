@@ -32,4 +32,4 @@ spring:
 kafka:
   broker:
     address:
-      "ubuntu_kafka_1:29092"
+      "localhost:29092"
