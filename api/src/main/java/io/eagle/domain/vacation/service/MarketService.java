@@ -112,17 +112,17 @@ public class MarketService {
         return this.findMarketRankInRedis(type.getKey(), upOrDown)
             .stream()
             .map(e -> this.findMarketRankInfoById(
-                Long.parseLong(Objects.requireNonNull(e.getValue())))
+                Long.parseLong(Objects.requireNonNull(e)))
             )
             .collect(Collectors.toList());
     }
 
-    private Set<ZSetOperations.TypedTuple<String>> findMarketRankInRedis(String key, Boolean upOrDown) {
+    private Set<String> findMarketRankInRedis(String key, Boolean upOrDown) {
         ZSetOperations<String, String> zSetOperations = redisTemplate.opsForZSet();
         if (upOrDown) {
-            return zSetOperations.reverseRangeWithScores(key, 0, 5);
+            return zSetOperations.reverseRange(key, 0, 5);
         }
-        return zSetOperations.rangeWithScores(key, 0, 5);
+        return zSetOperations.range(key, 0, 5);
     }
 
     private MarketRankDto findMarketRankInfoById(Long id) {
