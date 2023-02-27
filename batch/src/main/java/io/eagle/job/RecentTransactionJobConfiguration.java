@@ -2,6 +2,7 @@ package io.eagle.job;
 
 import io.eagle.listener.CustomJobExecutionListener;
 import io.eagle.listener.CustomStepExecutionListener;
+import io.eagle.service.RecentTransactionApiService;
 import io.eagle.tasklet.ReadTransactionTasklet;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
@@ -37,9 +38,10 @@ public class RecentTransactionJobConfiguration {
     @Bean
     @JobScope
     public Step recentStep() {
+
         return stepBuilderFactory.get(RECENT_TRANSACTION_STEP)
             .listener(new CustomStepExecutionListener())
-            .tasklet(new ReadTransactionTasklet(dataSource))
+            .tasklet(new ReadTransactionTasklet(dataSource, new RecentTransactionApiService()))
             .build();
     }
 
