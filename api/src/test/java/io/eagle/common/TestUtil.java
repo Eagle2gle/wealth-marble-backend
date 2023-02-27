@@ -15,6 +15,7 @@ public class TestUtil {
     public Vacation createVacation(User user) {
         return Vacation
             .builder()
+            .id(1L)
             .user(user)
             .status(VacationStatusType.CAHOOTS_CLOSE)
             .title("다나카와 함께하는")
@@ -102,6 +103,18 @@ public class TestUtil {
             .vacation(vacation)
             .amount(1)
             .price(100)
+            .build();
+    }
+
+    public PriceInfo createPriceInfo(Vacation vacation) {
+        return PriceInfo.builder()
+            .vacation(vacation)
+            .transactionAmount(10)
+            .lowPrice(100)
+            .highPrice(1000)
+            .standardPrice(500)
+            .startPrice(300)
+            .transactionMoney(10000)
             .build();
     }
 }
