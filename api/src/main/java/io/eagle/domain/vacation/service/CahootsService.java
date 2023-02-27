@@ -49,7 +49,7 @@ public class CahootsService {
     public List<BreifCahootsDto> getBreifList(InfoConditionDto infoConditionDto){
         List<BreifCahootsDto> breifCahootsList = vacationRepository.getVacationsBreif(infoConditionDto);
         Long userId = infoConditionDto.getUserId();
-        List<Long> myInterestVacation = (userId != null ? vacationRepository.findVacationIdByUserInterested(infoConditionDto.getUserId()) : List.of());
+        List<Long> myInterestVacation = (userId != null ? vacationRepository.findVacationIdByUserInterested(userId) : List.of());
         breifCahootsList.forEach(breifCahootsDto -> {
             breifCahootsDto.setImages(getImageUrls(breifCahootsDto.getId()));
             breifCahootsDto.setIsInterest(myInterestVacation.contains(breifCahootsDto.getId()));
