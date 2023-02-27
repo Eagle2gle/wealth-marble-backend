@@ -1,11 +1,13 @@
 package io.eagle.domain.transaction.dto.response;
 
+import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
 
 @Getter
-public class RecentTransactionDto {
+@Builder
+public class RecentTransactionResponseDto {
 
     private String pictureUrl = "";
     private String title = "";
