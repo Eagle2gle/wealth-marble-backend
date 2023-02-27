@@ -45,9 +45,8 @@ public class RecentTransactionApiService {
         return doApiService(restTemplate, httpEntity);
     }
 
-    public Boolean doApiService(RestTemplate restTemplate, HttpEntity vo) {
-        ResponseEntity<String> response = restTemplate.postForEntity("http://localhost:8080/api/transactions/publish-recent", vo, String.class);
-        System.out.println(response);
+    public Boolean doApiService(RestTemplate restTemplate, HttpEntity httpEntity) {
+        ResponseEntity<String> response = restTemplate.postForEntity("http://localhost:8080/api/transactions/publish-recent", httpEntity, String.class);
         return response.getStatusCodeValue() < 400;
     }
 
