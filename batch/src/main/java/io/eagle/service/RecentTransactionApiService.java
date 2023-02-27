@@ -18,7 +18,11 @@ import java.io.IOException;
 @Service
 public class RecentTransactionApiService {
 
-    public Boolean service(Transaction transaction) {
+    public Boolean service(RecentTransactionRequestVO vo) {
+        if (vo == null) {
+            return false;
+        }
+
         // API 연동 작업
         RestTemplateBuilder restTemplateBuilder = new RestTemplateBuilder();
         RestTemplate restTemplate = restTemplateBuilder.errorHandler(new ResponseErrorHandler() {
@@ -32,18 +36,18 @@ public class RecentTransactionApiService {
 
             }
         }).build();
-        restTemplate.setRequestFactory(new HttpComponentsClientHttpRequestFactory());
 
         // 헤더 설정
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-        RecentTransactionRequestVO vo = new RecentTransactionRequestVO(transaction);
-        return doApiService(restTemplate, vo);
+        HttpEntity<RecentTransactionRequestVO> httpEntity = new HttpEntity<>(vo, headers);
+        return doApiService(restTemplate, httpEntity);
     }
 
-    public Boolean doApiService(RestTemplate restTemplate, RecentTransactionRequestVO vo) {
-        ResponseEntity<String> response = restTemplate.postForEntity("http://localhost:8080/api/transactions/recent-publish", vo, String.class);
+    public Boolean doApiService(RestTemplate restTemplate, HttpEntity vo) {
+        ResponseEntity<String> response = restTemplate.postForEntity("http://localhost:8080/api/transactions/publish-recent", vo, String.class);
+        System.out.println(response);
         return response.getStatusCodeValue() < 400;
     }
 
