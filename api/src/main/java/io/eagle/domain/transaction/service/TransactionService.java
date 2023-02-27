@@ -83,7 +83,7 @@ public class TransactionService {
         deadRandomIds.forEach(CLIENTS::remove);
     }
 
-    private RecentTransactionResponseDto createRecentTransactionResponseDto(RecentTransactionRequestDto request) {
+    public RecentTransactionResponseDto createRecentTransactionResponseDto(RecentTransactionRequestDto request) {
         Long vacationId = request.getVacationId();
         Vacation vacation = vacationRepository.findById(vacationId).orElse(null);
         try {
