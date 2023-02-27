@@ -7,7 +7,7 @@ import org.springframework.data.repository.query.Param;
 
 public interface PriceInfoRepository extends JpaRepository<PriceInfo, Long>, PriceInfoRepositoryCustom {
 
-    @Query(value = "SELECT * FROM price_info p WHERE p.vacationId = :vacationId ORDER BY p.id LIMIT 1", nativeQuery = true)
-    PriceInfo findOneByVacationId(@Param("vacationId") Long vacationId);
+    @Query(value = "SELECT * FROM price_info WHERE vacation_id = ?1 ORDER BY id DESC LIMIT 1", nativeQuery = true)
+    PriceInfo findOneByVacationId(Long vacationId);
 
 }
