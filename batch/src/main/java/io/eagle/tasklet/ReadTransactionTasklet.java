@@ -26,7 +26,7 @@ public class ReadTransactionTasklet implements Tasklet {
 
     private List<Transaction> getRecentlyTransaction() {
         return jdbcTemplate.query(
-            "SELECT TOP 1 * FROM transaction ORDER BY id DESC",
+            "SELECT TOP 1 * FROM transaction ORDER BY id DESC WHERE created_at > DATE_SUB(NOW(), INTERVAL 30 MINUTE)",
             new BeanPropertyRowMapper(Transaction.class)
         );
     }
