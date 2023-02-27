@@ -3,6 +3,7 @@ package io.eagle.domain.transaction.controller;
 import io.eagle.auth.AuthDetails;
 import io.eagle.common.ApiResponse;
 import io.eagle.domain.transaction.dto.request.TransactionRequestDto;
+import io.eagle.domain.transaction.dto.response.RecentTransactionDto;
 import io.eagle.domain.transaction.service.TransactionService;
 import io.eagle.entity.User;
 import lombok.RequiredArgsConstructor;
@@ -48,6 +49,16 @@ public class TransactionController {
         @PathVariable("randomId") String randomId
     ) {
         return ApiResponse.createSuccess(transactionService.subscribeRecentTransaction(randomId));
+    }
+
+    @PostMapping("/transactions/publish-recent")
+    public ApiResponse publishRecentTransaction(@RequestBody RecentTransactionDto recentTransactionDto) {
+        try {
+            transactionService.publishRecentTransaction(recentTransactionDto);
+            return ApiResponse.createSuccessWithNoContent();
+        } catch (Exception e) {
+            return ApiResponse.createError("Cannot Send Data");
+        }
     }
 
 }
