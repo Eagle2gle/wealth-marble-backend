@@ -50,7 +50,7 @@ public class ReadTransactionTasklet implements Tasklet {
                     return new RecentTransactionRequestVO(
                         rs.getLong("vacationId"),
                         rs.getInt("currentPrice"),
-                        rs.getString("createdAt").toString()
+                        rs.getString("createdAt")
                     );
                 }
             }
