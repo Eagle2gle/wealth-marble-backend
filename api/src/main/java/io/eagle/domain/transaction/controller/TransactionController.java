@@ -6,8 +6,10 @@ import io.eagle.domain.transaction.dto.request.RecentTransactionRequestDto;
 import io.eagle.domain.transaction.dto.request.TransactionRequestDto;
 import io.eagle.domain.transaction.service.TransactionService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.time.LocalDate;
 
@@ -42,11 +44,11 @@ public class TransactionController {
         );
     }
 
-    @GetMapping("/transactions/subscribe-recent/{randomId}")
-    public ApiResponse subscribeRecentTransaction(
+    @GetMapping(value = "/transactions/subscribe-recent/{randomId}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public SseEmitter subscribeRecentTransaction(
         @PathVariable("randomId") String randomId
     ) {
-        return ApiResponse.createSuccess(transactionService.subscribeRecentTransaction(randomId));
+        return transactionService.subscribeRecentTransaction(randomId);
     }
 
     @PostMapping("/transactions/publish-recent")

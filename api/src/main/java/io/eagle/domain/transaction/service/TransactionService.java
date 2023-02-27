@@ -1,5 +1,6 @@
 package io.eagle.domain.transaction.service;
 
+import io.eagle.common.ApiResponse;
 import io.eagle.domain.PriceInfo.repository.PriceInfoRepository;
 import io.eagle.domain.order.repository.OrderRepository;
 import io.eagle.domain.picture.repository.PictureRepository;
@@ -75,7 +76,7 @@ public class TransactionService {
         RecentTransactionResponseDto response = this.createRecentTransactionResponseDto(request);
         CLIENTS.forEach((randomId, emitter) -> {
             try {
-                emitter.send(response);
+                emitter.send(ApiResponse.createSuccess(response));
             } catch (Exception e) {
                 deadRandomIds.add(randomId);
             }
