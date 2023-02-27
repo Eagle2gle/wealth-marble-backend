@@ -9,13 +9,13 @@ import java.time.LocalDateTime;
 @Builder
 public class RecentTransactionResponseDto {
 
-    private String pictureUrl = "";
-    private String title = "";
-    private Integer currentPrice = 0;
-    private Integer gap = 0;
-    private Double gapRate = 0.0;
-    private Double dividend = 0.0;
-    private Double dividendRate = 0.0;
+    private String pictureUrl;
+    private String title;
+    private Integer currentPrice;
+    private Integer gap;
+    private Double gapRate;
+    private Double dividend;
+    private Double dividendRate;
     private LocalDateTime createdAt;
 
 }
