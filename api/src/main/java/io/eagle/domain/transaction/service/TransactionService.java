@@ -52,6 +52,12 @@ public class TransactionService {
         SseEmitter sseEmitter = new SseEmitter();
         CLIENTS.put(randomId, sseEmitter);
 
+        try {
+            sseEmitter.send(SseEmitter.event().name("connect").data("connected"));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         sseEmitter.onTimeout(() -> CLIENTS.remove(randomId));
         sseEmitter.onCompletion(() -> CLIENTS.remove(randomId));
         return sseEmitter;
