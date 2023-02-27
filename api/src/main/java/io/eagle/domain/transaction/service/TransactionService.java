@@ -7,7 +7,6 @@ import io.eagle.domain.transaction.dto.response.TransactionResponseDto;
 import io.eagle.domain.transaction.dto.response.UserTransactionInfoDto;
 import io.eagle.domain.transaction.repository.TransactionRepository;
 import io.eagle.entity.User;
-import io.eagle.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -15,7 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
-import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -28,7 +26,6 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 public class TransactionService {
 
-    private final UserRepository userRepository;
     private final TransactionRepository transactionRepository;
     private final OrderRepository orderRepository;
 
