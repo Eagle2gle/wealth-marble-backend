@@ -57,4 +57,16 @@ public class TransactionService {
         return sseEmitter;
     }
 
+    public void publishRecentTransaction(RecentTransactionDto recentTransactionDto) {
+        Set<String> deadRandomIds = new HashSet<>();
+        CLIENTS.forEach((randomId, emitter) -> {
+            try {
+                emitter.send(recentTransactionDto);
+            } catch (Exception e) {
+                deadRandomIds.add(randomId);
+            }
+        });
+        deadRandomIds.forEach(CLIENTS::remove);
+    }
+
 }
