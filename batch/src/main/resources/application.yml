@@ -16,3 +16,5 @@ logging:
           core: INFO
         boot:
           autoconfigure: INFO
+server:
+  port: 8081
