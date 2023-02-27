@@ -2,12 +2,10 @@ package io.eagle.domain.transaction.controller;
 
 import io.eagle.auth.AuthDetails;
 import io.eagle.common.ApiResponse;
+import io.eagle.domain.transaction.dto.request.RecentTransactionRequestDto;
 import io.eagle.domain.transaction.dto.request.TransactionRequestDto;
-import io.eagle.domain.transaction.dto.response.RecentTransactionDto;
 import io.eagle.domain.transaction.service.TransactionService;
-import io.eagle.entity.User;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -52,9 +50,9 @@ public class TransactionController {
     }
 
     @PostMapping("/transactions/publish-recent")
-    public ApiResponse publishRecentTransaction(@RequestBody RecentTransactionDto recentTransactionDto) {
+    public ApiResponse publishRecentTransaction(@RequestBody RecentTransactionRequestDto request) {
         try {
-            transactionService.publishRecentTransaction(recentTransactionDto);
+            transactionService.publishRecentTransaction(request);
             return ApiResponse.createSuccessWithNoContent();
         } catch (Exception e) {
             return ApiResponse.createError("Cannot Send Data");
