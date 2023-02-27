@@ -43,4 +43,11 @@ public class TransactionController {
         );
     }
 
+    @GetMapping("/transactions/subscribe-recent/{randomId}")
+    public ApiResponse subscribeRecentTransaction(
+        @PathVariable("randomId") String randomId
+    ) {
+        return ApiResponse.createSuccess(transactionService.subscribeRecentTransaction(randomId));
+    }
+
 }
