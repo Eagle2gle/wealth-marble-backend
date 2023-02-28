@@ -7,7 +7,13 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum MarketRankingType {
     PRICE("PRICE"),
-    PRICE_RATE("PRICE_RATE");
+    PRICE_RATE("PRICE_RATE"),
+
+    COUNTRY("COUNTRY");
 
     private final String key;
+
+    public static String CountryKey(String country){
+        return COUNTRY + "-" + country;
+    }
 }
