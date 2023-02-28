@@ -26,3 +26,6 @@ eagle:
     page : 10
     before_day : 30
     recent_day : 100
+  score:
+    view: 1
+    order: 5
