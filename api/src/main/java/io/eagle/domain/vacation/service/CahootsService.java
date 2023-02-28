@@ -12,8 +12,13 @@ import io.eagle.entity.User;
 import io.eagle.entity.Vacation;
 import io.eagle.domain.vacation.repository.VacationRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import java.util.List;
+
+import static io.eagle.entity.type.MarketRankingType.CountryKey;
+import static io.eagle.entity.type.VacationStatusType.MARKET_ONGOING;
 
 @Service
 @RequiredArgsConstructor
@@ -22,8 +27,12 @@ public class CahootsService {
     private final VacationRepository vacationRepository;
     private final PictureRepository pictureRepository;
     private final InterestRepository interestRepository;
+    private final RedisTemplate<String, String> redisTemplate;
 
     private final S3 s3;
+
+    @Value("${eagle.score.view}")
+    private Integer viewScore;
 
     public void create(CreateCahootsDto createCahootsDto, User user) {
         createCahootsDto.validateCahootsPeriod();
@@ -43,6 +52,9 @@ public class CahootsService {
         Boolean isInterest = (userId != null ? interests.stream().map(Interest::getUser).map(User::getId).anyMatch(id -> id.equals(userId)) : false);
         detailCahootsDto.setIsInterest(isInterest);
         detailCahootsDto.setImages(getImageUrls(cahootsId));
+        if(detailCahootsDto.getStatus().equals(MARKET_ONGOING)){
+            this.incrementInterestMarketScore(CountryKey(detailCahootsDto.getCountry()), detailCahootsDto.getId().toString(), viewScore);
+        }
         return detailCahootsDto;
     }
 
@@ -76,4 +88,10 @@ public class CahootsService {
     public List<String> getImageUrls(Long id){
         return pictureRepository.findUrlsByCahootsId(id);
     }
+
+    private void incrementInterestMarketScore(String key, String value, Integer score){
+        redisTemplate.opsForZSet().incrementScore(key, value, (double) score);
+    }
+
+
 }
