@@ -50,4 +50,10 @@ public class MarketController {
             )
         );
     }
+
+    @GetMapping("/markets/recommend")
+    public ApiResponse getRankingPrice(String country) {
+        System.out.println(country);
+        return ApiResponse.createSuccessWithNoContent();
+    }
 }
