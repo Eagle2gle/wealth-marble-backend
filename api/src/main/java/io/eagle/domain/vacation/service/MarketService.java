@@ -3,10 +3,7 @@ package io.eagle.domain.vacation.service;
 import io.eagle.domain.interest.repository.InterestRepository;
 import io.eagle.domain.picture.repository.PictureRepository;
 import io.eagle.domain.transaction.repository.TransactionRepository;
-import io.eagle.domain.vacation.dto.response.MarketDetailDto;
-import io.eagle.domain.vacation.dto.response.MarketInfoDto;
-import io.eagle.domain.vacation.dto.response.MarketListDto;
-import io.eagle.domain.vacation.dto.response.MarketRankDto;
+import io.eagle.domain.vacation.dto.response.*;
 import io.eagle.domain.vacation.repository.VacationRepository;
 import io.eagle.entity.type.MarketRankingType;
 import io.eagle.entity.Picture;
@@ -27,6 +24,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import static io.eagle.entity.type.MarketRankingType.CountryKey;
 
 @Service
 @RequiredArgsConstructor
@@ -115,6 +114,14 @@ public class MarketService {
                 Long.parseLong(Objects.requireNonNull(e)))
             )
             .collect(Collectors.toList());
+    }
+
+    public List<RecommendMarketDto> getRecommendMarketByCountry(String country, Long userId){
+        String key = CountryKey(country);
+        return this.findMarketRankInRedis(key, true)
+                .stream()
+                .map(e -> vacationRepository.getRecommendMarket(Long.parseLong(Objects.requireNonNull(e)), userId))
+                .collect(Collectors.toList());
     }
 
     private Set<String> findMarketRankInRedis(String key, Boolean upOrDown) {
