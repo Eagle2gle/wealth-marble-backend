@@ -64,7 +64,7 @@ jobs:
           script: |
             sudo docker rm -f wm-socket-server
             sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/wm-socket-server:${GITHUB_SHA::7}
-            docker run -d -p 7070:8080 --name wm-socket-server --network wm-net ${{ secrets.DOCKERHUB_USERNAME }}/wm-socket-server:${GITHUB_SHA::7}
+            docker run -d -p 7070:8080 --name wm-socket-server --add-host host.docker.internal:host-gateway ${{ secrets.DOCKERHUB_USERNAME }}/wm-socket-server:${GITHUB_SHA::7}
             docker image prune -af
 
 #      - name: Slack Deploy bot 실행
