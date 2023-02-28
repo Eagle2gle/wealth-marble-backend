@@ -189,8 +189,7 @@ public class VacationCustomImpl implements VacationCustom {
     }
 
     public RecommendMarketDto getRecommendMarket(Long vacationId, Long userId){
-        // select vacation.id, vacation.title , vacation.expectedRateOfReturn, picture.url, interest.me
-        return queryFactory
+        List<RecommendMarketDto> result = queryFactory
                 .select(Projections.fields(RecommendMarketDto.class,
                         vacation.id,
                         vacation.title,
@@ -199,10 +198,11 @@ public class VacationCustomImpl implements VacationCustom {
                         interest.isNotNull().as("isInterest")
                 ))
                 .from(vacation)
+                .leftJoin(picture).on(picture.vacation.id.eq(vacationId))
+                .leftJoin(interest).on(interest.vacation.id.eq(vacationId), isInterest(userId))
                 .where(vacation.id.eq(vacationId))
-                .leftJoin(picture)
-                .leftJoin(interest).on(interest.user.id.eq(userId))
-                .fetchOne();
+                .fetch();
+        return result.get(0);
     }
 
     private BooleanExpression isInStatus(VacationStatusType[] statusTypes){
@@ -222,5 +222,9 @@ public class VacationCustomImpl implements VacationCustom {
     private BooleanExpression isInEndDateRange(Integer interval){
         LocalDate today = LocalDate.now();
         return vacation.stockPeriod.end.between(today, today.plusDays(interval));
+    }
+
+    private BooleanExpression isInterest(Long userId){
+        return userId != null ? interest.user.id.eq(userId) : null;
     }
 }
