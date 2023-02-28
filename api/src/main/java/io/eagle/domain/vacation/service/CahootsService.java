@@ -14,7 +14,10 @@ import io.eagle.domain.vacation.repository.VacationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.PostConstruct;
 import java.util.List;
 
 import static io.eagle.entity.type.MarketRankingType.CountryKey;
@@ -28,11 +31,17 @@ public class CahootsService {
     private final PictureRepository pictureRepository;
     private final InterestRepository interestRepository;
     private final RedisTemplate<String, String> redisTemplate;
+    private ZSetOperations<String, String> redisZSet;
 
     private final S3 s3;
 
     @Value("${eagle.score.view}")
     private Integer viewScore;
+
+    @PostConstruct
+    public void init(){
+        this.redisZSet = redisTemplate.opsForZSet();
+    }
 
     public void create(CreateCahootsDto createCahootsDto, User user) {
         createCahootsDto.validateCahootsPeriod();
@@ -90,7 +99,7 @@ public class CahootsService {
     }
 
     private void incrementInterestMarketScore(String key, String value, Integer score){
-        redisTemplate.opsForZSet().incrementScore(key, value, (double) score);
+        redisZSet.incrementScore(key, value, (double) score);
     }
 
 

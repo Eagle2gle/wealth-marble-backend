@@ -19,6 +19,7 @@ import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.PostConstruct;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -37,6 +38,12 @@ public class MarketService {
     private final PictureRepository pictureRepository;
     private final InterestRepository interestRepository;
     private final RedisTemplate<String, String> redisTemplate;
+    private ZSetOperations<String, String> redisZSet;
+
+    @PostConstruct
+    public void init(){
+        this.redisZSet = redisTemplate.opsForZSet();
+    }
 
     public List<MarketListDto> getAllMarkets(Pageable pageable) {
         return vacationRepository.findAllMarkets(pageable).stream().map(vacation -> {
@@ -125,11 +132,10 @@ public class MarketService {
     }
 
     private Set<String> findMarketRankInRedis(String key, Boolean upOrDown) {
-        ZSetOperations<String, String> zSetOperations = redisTemplate.opsForZSet();
         if (upOrDown) {
-            return zSetOperations.reverseRange(key, 0, 5);
+            return redisZSet.reverseRange(key, 0, 5);
         }
-        return zSetOperations.range(key, 0, 5);
+        return redisZSet.range(key, 0, 5);
     }
 
     private MarketRankDto findMarketRankInfoById(Long id) {
