@@ -24,6 +24,7 @@ import java.util.List;
 
 import static io.eagle.entity.QContestParticipation.contestParticipation;
 import static io.eagle.entity.QInterest.interest;
+import static io.eagle.entity.QPicture.picture;
 import static io.eagle.entity.QVacation.vacation;
 
 @RequiredArgsConstructor
@@ -185,6 +186,23 @@ public class VacationCustomImpl implements VacationCustom {
 
         List<MarketQueryVO> marketQueryVO = jpaResultMapper.list(query, MarketQueryVO.class);
         return marketQueryVO.size() == 0 ? null : new MarketRankDto(marketQueryVO.get(0));
+    }
+
+    public RecommendMarketDto getRecommendMarket(Long vacationId, Long userId){
+        // select vacation.id, vacation.title , vacation.expectedRateOfReturn, picture.url, interest.me
+        return queryFactory
+                .select(Projections.fields(RecommendMarketDto.class,
+                        vacation.id,
+                        vacation.title,
+                        vacation.expectedRateOfReturn,
+                        picture.url.as("image"),
+                        interest.isNotNull().as("isInterest")
+                ))
+                .from(vacation)
+                .where(vacation.id.eq(vacationId))
+                .leftJoin(picture)
+                .leftJoin(interest).on(interest.user.id.eq(userId))
+                .fetchOne();
     }
 
     private BooleanExpression isInStatus(VacationStatusType[] statusTypes){
