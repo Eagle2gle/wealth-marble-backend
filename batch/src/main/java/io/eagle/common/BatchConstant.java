@@ -15,4 +15,7 @@ public final class BatchConstant {
 
     public static final String TRANSFER_LASTDAY_PRICEINFO_STEP = "transferLastdayPriceInfoStep";
     public static final String TRANSFER_LASTDAY_PRICEINFO_READER = "transferLastdayPriceInfoItemReader";
+
+    public static final String RECENT_TRANSACTION_JOB = "recentTransactionJob";
+    public static final String RECENT_TRANSACTION_STEP = "recentTransactionStep";
 }
