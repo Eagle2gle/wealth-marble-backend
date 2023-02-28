@@ -19,11 +19,16 @@ import io.eagle.repository.UserRepository;
 import io.eagle.security.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.PostConstruct;
 import java.util.List;
+
+import static io.eagle.entity.type.MarketRankingType.*;
 
 @Service
 @Slf4j
@@ -36,8 +41,17 @@ public class OrderService {
     private final VacationRepository vacationRepository;
     private final PriceInfoRepository priceInfoRepository;
     private final RedisTemplate redisTemplate;
+    private ZSetOperations<String, String> redisZSet;
 
     private final JwtTokenProvider jwtTokenProvider;
+
+    @Value("${eagle.score.order}")
+    private Integer orderScore;
+
+    @PostConstruct
+    public void init(){
+        this.redisZSet = redisTemplate.opsForZSet();
+    }
 
     @Transactional
     public BroadcastMessageDto purchaseMarket(MessageDto message){
@@ -45,6 +59,7 @@ public class OrderService {
         User user = userRepository.findById(message.getRequesterId()).orElseThrow(()-> new SocketException("존재하지 않는 사용자입니다."));
         verifyUserCash(user.getCash(), message); // 사용자 잔여 캐쉬 확인 (사려는 가격보다 부족하면 에러)
         subtractUserCash(user, message);
+        incrementInterestMarketScore(message);
 
         //  order 확인해서 매도 수량 있는지 확인
         message.setOrderType(OrderType.BUY);
@@ -155,9 +170,16 @@ public class OrderService {
         if (priceInfo != null) {
             Double price = (double) (saleOrder.getPrice() - priceInfo.getStandardPrice());
             Double priceRate = price * 100 / (double) priceInfo.getStandardPrice();
-            redisTemplate.opsForZSet().add(MarketRankingType.PRICE.getKey(), vacationId.toString(), price);
-            redisTemplate.opsForZSet().add(MarketRankingType.PRICE_RATE.getKey(), vacationId.toString(), priceRate);
+            redisZSet.add(PRICE.getKey(), vacationId.toString(), price);
+            redisZSet.add(PRICE_RATE.getKey(), vacationId.toString(), priceRate);
         }
 
+    }
+
+    private void incrementInterestMarketScore( MessageDto message){
+        String key = CountryKey(vacationRepository.findById(message.getMarketId()).get().getCountry());
+        String value = message.getMarketId().toString();
+        Integer score = message.getAmount() * orderScore;
+        redisZSet.incrementScore(key, value, (double) score);
     }
 }
