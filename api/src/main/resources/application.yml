@@ -5,3 +5,7 @@ spring:
       - mysql
       - oauth
       - cloud
+
+eagle:
+  score:
+    view: 1
