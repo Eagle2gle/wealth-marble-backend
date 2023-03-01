@@ -11,3 +11,9 @@ $ docker-compose exec kafka kafka-topics --describe --topic kafka-market --boots
 
 3 line : kafka-market topic이 있는지 확인
 
+## Redis docker 설정
+
+```shell
+docker pull redis:alpine
+docker run --name redis -p 6379:6379 -d redis
+```

@@ -64,11 +64,9 @@ jobs:
           port: ${{ secrets.EC2_REMOTE_SSH_PORT }}
           envs: GITHUB_SHA
           script: |
-            sudo docker rm -f $(docker ps -aq) && docker image rm -f $(docker image ls -q)
+            sudo docker rm -f wm-api-server
             sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/wm-api-server:${GITHUB_SHA::7}
             docker run -d -p 8080:8080 --name wm-api-server ${{ secrets.DOCKERHUB_USERNAME }}/wm-api-server:${GITHUB_SHA::7}
-            docker pull redis:alpine
-            docker run --name redis -p 6379:6379 -d redis
             docker image prune -af
 
 #      - name: Slack Deploy bot 실행
