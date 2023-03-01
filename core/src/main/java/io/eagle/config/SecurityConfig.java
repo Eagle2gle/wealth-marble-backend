@@ -49,8 +49,12 @@ public class SecurityConfig {
             .and()
             .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class) // JWT filter 적용
             .oauth2Login()
-                .successHandler(oAuth2SuccessHandler)
-                .userInfoEndpoint().userService(oAuth2UserService).and().and().build();
+            .redirectionEndpoint()
+                .and()
+            .userInfoEndpoint()
+                .userService(oAuth2UserService)
+                .and()
+                .successHandler(oAuth2SuccessHandler).and().build();
     }
 
     @Bean
