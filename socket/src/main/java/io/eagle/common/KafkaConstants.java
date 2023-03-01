@@ -8,5 +8,5 @@ public final class KafkaConstants {
     public static final String KAFKA_TOPIC = "kafka-market";
     public static final String GROUP_ID = "eagle";
 
-    public static String BROKER = "kafka:29092";
+    public static String BROKER = "172.26.0.3:29092";
 }
