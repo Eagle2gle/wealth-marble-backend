@@ -44,11 +44,11 @@ public class ContestParticipationService {
         contestParticipationRepository.save(contestParticipation);
     }
 
-    public HistoryCahootsDtoList getHistory(Long cahootsId) {
+    public List<HistoryCahootsDto> getHistory(Long cahootsId) {
         // 공모 조회
         List<ContestParticipation> contestParticipation = contestParticipationRepository.findAllByCahootsId(cahootsId);
         // dto 형식으로 만들기
-        return HistoryCahootsDtoList.builder().result(contestParticipation.stream().map(HistoryCahootsDto::toDto).collect(Collectors.toList())).build();
+        return contestParticipation.stream().map(HistoryCahootsDto::toDto).collect(Collectors.toList());
     }
 
     public List<ContestParticipationMineDto> getMyContestParticipation(User user) {
