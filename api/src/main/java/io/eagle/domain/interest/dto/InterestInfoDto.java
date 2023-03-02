@@ -7,12 +7,14 @@ import lombok.Getter;
 @Getter
 public class InterestInfoDto {
 
+    private Long vacationId;
     private String title;
     private String shortDescription;
     private String location;
     private Picture picture;
 
     public InterestInfoDto(Vacation vacation) {
+        this.vacationId = vacation.getId();
         this.title = vacation.getTitle();
         this.shortDescription = vacation.getShortDescription();
         this.location = vacation.getLocation();
