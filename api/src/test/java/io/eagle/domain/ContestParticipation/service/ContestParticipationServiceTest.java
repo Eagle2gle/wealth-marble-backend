@@ -2,7 +2,6 @@ package io.eagle.domain.ContestParticipation.service;
 
 import io.eagle.common.TestUtil;
 import io.eagle.domain.ContestParticipation.dto.HistoryCahootsDto;
-import io.eagle.domain.ContestParticipation.dto.HistoryCahootsDtoList;
 import io.eagle.domain.ContestParticipation.dto.response.ContestParticipationMineDto;
 import io.eagle.domain.ContestParticipation.repository.ContestParticipationRepository;
 import io.eagle.domain.vacation.repository.VacationRepository;
