@@ -16,7 +16,7 @@ public class InterestInfoDto {
         this.title = vacation.getTitle();
         this.shortDescription = vacation.getShortDescription();
         this.location = vacation.getLocation();
-        this.picture = vacation.getPictureList().get(0);
+        this.picture = vacation.getPictureList() != null && vacation.getPictureList().size() > 0 ? vacation.getPictureList().get(0) : null;
     }
 
 }
