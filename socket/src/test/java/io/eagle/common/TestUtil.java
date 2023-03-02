@@ -56,7 +56,7 @@ public class TestUtil {
             .providerId("12354126646")
             .ranks(Ranks.NAMJAK)
             .role(Role.USER)
-            .cash(9000000)
+            .cash(9000000L)
             .build();
     }
 
