@@ -15,7 +15,7 @@ public class TestUtil {
     public Vacation createVacation(User user) {
         return Vacation
             .builder()
-            .id(1L)
+            .id(1381749L)
             .user(user)
             .status(VacationStatusType.CAHOOTS_CLOSE)
             .title("다나카 테스트 휴양지")

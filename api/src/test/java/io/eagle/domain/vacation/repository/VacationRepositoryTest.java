@@ -24,6 +24,7 @@ import static io.eagle.entity.type.VacationStatusType.CAHOOTS_ONGOING;
 
 import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @DataJpaTest
 @Transactional
@@ -51,13 +52,20 @@ public class VacationRepositoryTest {
         List<BreifCahootsDto> breifCahootsDtoList = vacationRepository.getVacationsBreif(InfoConditionDto.builder()
                 .page(0)
                 .types(new VacationStatusType[]{VacationStatusType.CAHOOTS_ONGOING})
-                .keyword("다나카 테스트 휴양지")
+                .keyword(vacation.getTitle())
                 .build()
         );
 
         assertEquals(breifCahootsDtoList.size(), 1);
         breifCahootsDtoList.forEach(e->{
             assertEquals(e.getStatus(), CAHOOTS_ONGOING);
+            assertNotNull(e.getTitle());
+            assertNotNull(e.getLocation());
+            assertEquals(e.getCompetitionRate(),0);
+            assertNotNull(e.getStockNum());
+            assertNotNull(e.getStockPrice());
+            assertNotNull(e.getStockStart());
+            assertNotNull(e.getStockEnd());
         });
     }
 }
