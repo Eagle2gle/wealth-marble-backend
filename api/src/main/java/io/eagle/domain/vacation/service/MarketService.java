@@ -51,7 +51,7 @@ public class MarketService {
         Pageable pageable = PageRequest.of(infoConditionDto.getPage(), infoConditionDto.getSize());
         return vacationRepository.findAllMarkets(pageable, infoConditionDto.getKeyword()).stream().map(vacation -> {
             PriceInfo priceInfo = vacation.getPriceInfos() != null && vacation.getPriceInfos().size() > 0 ? vacation.getPriceInfos().get(0) : null;
-            String picture = vacation.getPictureList() != null && vacation.getPriceInfos().size() > 0 ? vacation.getPictureList().get(0).getUrl() : null;
+            String picture = vacation.getPictureList() != null && vacation.getPictureList().size() > 0 ? vacation.getPictureList().get(0).getUrl() : null;
             PriceStatus priceStatus = getPriceStatus(priceInfo);
             return MarketListDto
                 .builder()
