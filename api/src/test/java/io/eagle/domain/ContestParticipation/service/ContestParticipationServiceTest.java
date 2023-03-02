@@ -33,6 +33,24 @@ public class ContestParticipationServiceTest {
     @InjectMocks
     private ContestParticipationService contestParticipationService;
 
+    private final TestUtil testUtil = new TestUtil();
+
+    @Test
+    @DisplayName("사용자 잔여 캐시 검증")
+    public void verifyUserCash(){
+
+        User user = testUtil.createUser("test", "test@email.com");
+        Vacation vacation = testUtil.createVacation(user);
+
+        when(vacationRepository.findByIdAndStatus(vacation.getId(), CAHOOTS_ONGOING)).thenReturn(Optional.of(vacation));
+
+        Assertions.assertThrows(ApiException.class, ()-> {
+            contestParticipationService.participate(vacation.getId(), 1000, user);
+        });
+    }
+
+
+
     @Test
     @DisplayName("내_공모내역_가져오기")
     public void getMyContestParticipation() {
