@@ -65,7 +65,7 @@ public class MarketService {
     public MarketDetailDto getOne(Long vacationId) {
         Vacation vacation = vacationRepository.findById(vacationId).orElse(null);
         if (vacation != null) {
-            Transaction transaction = transactionRepository.findByVacation(vacationId);
+            Transaction transaction = transactionRepository.findOneByVacation(vacationId);
             List<String> pictures = pictureRepository.findUrlsByCahootsId(vacationId);
             List<Long> userIds = interestRepository.findAllByVacation(vacationId)
                 .stream()
@@ -73,6 +73,7 @@ public class MarketService {
                 .collect(Collectors.toList());
             return MarketDetailDto
                 .builder()
+                .vacationId(vacationId)
                 .title(vacation.getTitle())
                 .location(vacation.getLocation())
                 .shortDescription(vacation.getShortDescription())
