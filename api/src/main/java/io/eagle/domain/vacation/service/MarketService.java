@@ -56,7 +56,7 @@ public class MarketService {
                 .country(vacation.getCountry())
                 .shortDescription(vacation.getShortDescription())
                 .picture(picture)
-                .price(priceInfo != null ? priceInfo.getStandardPrice() : null)
+                .price(priceInfo != null ? priceInfo.getStandardPrice() : vacation.getStock().getPrice().intValue())
                 .priceStatus(priceStatus)
                 .build();
         }).collect(Collectors.toList());
