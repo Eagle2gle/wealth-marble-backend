@@ -11,7 +11,10 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 
 @RestController
 @RequestMapping("/api")
@@ -28,17 +31,26 @@ public class TransactionController {
     @GetMapping("/transactions/{vacationId}")
     public ApiResponse getTransactions(
         @PathVariable("vacationId") Long vacationId,
-        @RequestParam("page") Integer page,
-        @RequestParam("startDate") LocalDate startDate,
-        @RequestParam("endDate") LocalDate endDate
+        @RequestParam(value = "page", defaultValue = "0") Integer page,
+        @RequestParam(value = "startDate", required = false) String startDate,
+        @RequestParam(value = "endDate", required = false) String endDate
     ) {
+        if (checkTransactionsParams(startDate, endDate)) {
+            HashMap<String, String> params = new HashMap<>();
+            params.put("page", "0");
+            params.put("startDate", "2023-03-01");
+            params.put("endDate", "2023-03-02");
+            return ApiResponse.createErrorWithContent(params, "해당 API에 필요한 param들에 대하여 다음과 같은 형식을 지켜주세요");
+        }
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         return ApiResponse.createSuccess(
             transactionService.getTransactions(
                 TransactionRequestDto.builder()
                     .vacationId(vacationId)
                     .page(page)
-                    .startDate(startDate)
-                    .endDate(endDate)
+                    .startDate(LocalDate.parse(startDate, formatter))
+                    .endDate(LocalDate.parse(endDate, formatter))
                     .build()
             )
         );
@@ -59,6 +71,27 @@ public class TransactionController {
         } catch (Exception e) {
             return ApiResponse.createError("Cannot Send Data");
         }
+    }
+
+    private Boolean checkTransactionsParams(String startDate, String endDate) {
+        try{
+            if (startDate == null || endDate == null || !matchesDatePattern(startDate) || !matchesDatePattern(endDate)) {
+                return true;
+            }
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            dateFormat.setLenient(false);
+
+            dateFormat.parse(startDate);
+            dateFormat.parse(endDate);
+            return false;
+        } catch (Exception e){
+            e.printStackTrace();
+            return true;
+        }
+    }
+
+    private boolean matchesDatePattern(String dateString) {
+        return dateString.matches("^\\d+\\-\\d+\\-\\d+");
     }
 
 }

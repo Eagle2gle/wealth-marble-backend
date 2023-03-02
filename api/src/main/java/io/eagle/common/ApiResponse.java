@@ -29,6 +29,10 @@ public class ApiResponse<T> {
         return new ApiResponse<>(ERROR_STATUS, null, message);
     }
 
+    public static <T> ApiResponse<T> createErrorWithContent(T data, String message) {
+        return new ApiResponse<>(ERROR_STATUS, data, message);
+    }
+
     private ApiResponse(String status, T data, String message) {
         this.status = status;
         if(data instanceof List){
