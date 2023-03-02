@@ -3,6 +3,7 @@ package io.eagle.domain.vacation.service;
 import io.eagle.domain.interest.repository.InterestRepository;
 import io.eagle.domain.picture.repository.PictureRepository;
 import io.eagle.domain.transaction.repository.TransactionRepository;
+import io.eagle.domain.vacation.dto.MarketInfoConditionDto;
 import io.eagle.domain.vacation.dto.response.*;
 import io.eagle.domain.vacation.repository.VacationRepository;
 import io.eagle.entity.type.MarketRankingType;
@@ -13,6 +14,7 @@ import io.eagle.entity.Vacation;
 import io.eagle.entity.type.PriceStatus;
 import io.eagle.entity.type.VacationStatusType;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
@@ -45,8 +47,9 @@ public class MarketService {
         this.redisZSet = redisTemplate.opsForZSet();
     }
 
-    public List<MarketListDto> getAllMarkets(Pageable pageable) {
-        return vacationRepository.findAllMarkets(pageable).stream().map(vacation -> {
+    public List<MarketListDto> getAllMarkets(MarketInfoConditionDto infoConditionDto) {
+        Pageable pageable = PageRequest.of(infoConditionDto.getPage(), infoConditionDto.getSize());
+        return vacationRepository.findAllMarkets(pageable, infoConditionDto.getKeyword()).stream().map(vacation -> {
             PriceInfo priceInfo = vacation.getPriceInfos() != null && vacation.getPriceInfos().size() > 0 ? vacation.getPriceInfos().get(0) : null;
             String picture = vacation.getPictureList() != null && vacation.getPriceInfos().size() > 0 ? vacation.getPictureList().get(0).getUrl() : null;
             PriceStatus priceStatus = getPriceStatus(priceInfo);
