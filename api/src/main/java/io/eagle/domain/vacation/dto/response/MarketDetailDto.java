@@ -1,6 +1,5 @@
 package io.eagle.domain.vacation.dto.response;
 
-import io.eagle.entity.Picture;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -11,6 +10,7 @@ import java.util.List;
 @Builder
 public class MarketDetailDto {
 
+    private Long vacationId;
     @NotNull
     private String title;
     @NotNull
