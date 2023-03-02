@@ -145,10 +145,10 @@ public class VacationCustomImpl implements VacationCustom {
     }
 
     @Override
-    public List<Vacation> findAllMarkets(Pageable pageable) {
+    public List<Vacation> findAllMarkets(Pageable pageable, String keyword) {
         return queryFactory
             .selectFrom(vacation)
-            .where(vacation.status.eq(VacationStatusType.MARKET_ONGOING))
+            .where(vacation.status.eq(VacationStatusType.MARKET_ONGOING), hasKeyword(keyword))
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
             .fetch();
@@ -210,8 +210,12 @@ public class VacationCustomImpl implements VacationCustom {
     }
 
     private BooleanExpression hasKeyword(String keyword){
-        // TODO : 검색 범위 논의
-        return keyword != null && !keyword.isBlank() ? (vacation.title.contains(keyword).or(vacation.location.contains(keyword))) : null;
+        return keyword != null && !keyword.isBlank() ? (
+                vacation.title.contains(keyword)
+                .or(vacation.location.contains(keyword))
+                .or(vacation.theme.themeBuilding.stringValue().contains(keyword)
+                .or(vacation.shortDescription.contains(keyword)))
+        ) : null;
     }
 
     private BooleanExpression isInStartDateRange(Integer interval){

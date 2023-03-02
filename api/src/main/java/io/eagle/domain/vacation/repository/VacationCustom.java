@@ -15,7 +15,7 @@ public interface VacationCustom {
     List<BreifCahootsDto> getVacationsBreif(InfoConditionDto infoConditionDto);
     List<BreifV2CahootsDto> getVacationsBreifV2(InfoConditionDto infoConditionDto);
     List<LatestCahootsDto> findLatestVacations();
-    List<Vacation> findAllMarkets(Pageable pageable);
+    List<Vacation> findAllMarkets(Pageable pageable, String keyword);
     List<ImminentInfoDto> findByImminentEndVacation();
     List<String> getCountries(VacationStatusType type);
     MarketRankDto findMarketRankInfoById(Long id);
