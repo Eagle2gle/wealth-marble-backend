@@ -92,7 +92,7 @@ public class TransactionRepositoryTest {
         createObject();
 
         // when
-        Transaction findTransaction = transactionRepository.findByVacation(vacation.getId());
+        Transaction findTransaction = transactionRepository.findOneByVacation(vacation.getId());
 
         // then
         assertNotNull(findTransaction);

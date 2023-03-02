@@ -11,7 +11,7 @@ import java.util.List;
 public interface TransactionRepositoryCustom {
 
     List<Transaction> findAllByOrder(Order order);
-    Transaction findByVacation(Long vacationId);
+    Transaction findOneByVacation(Long vacationId);
     List<TransactionResponseDto> findByVacationOrderByCreatedAtDesc(Pageable pageable, TransactionRequestDto requestDto);
 
 }

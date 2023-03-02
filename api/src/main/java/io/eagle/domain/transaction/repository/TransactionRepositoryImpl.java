@@ -36,8 +36,7 @@ public class TransactionRepositoryImpl implements TransactionRepositoryCustom{
     }
 
     @Override
-    public Transaction findByVacation(Long vacationId) {
-        System.out.println(vacationId);
+    public Transaction findOneByVacation(Long vacationId) {
         return jpqlQueryFactory
             .selectFrom(transaction)
             .where(transaction.vacation.id.eq(vacationId))

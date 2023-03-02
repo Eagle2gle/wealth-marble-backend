@@ -8,6 +8,7 @@ import lombok.Getter;
 @Builder
 public class MarketListDto {
 
+    private Long vacationId;
     private String picture;
     private String country;
     private String shortDescription;

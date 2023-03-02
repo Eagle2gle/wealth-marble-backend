@@ -19,10 +19,10 @@ public class MarketController {
 
     @GetMapping("/markets")
     public ApiResponse getAllMarkets(
-        @RequestParam(value = "page", defaultValue = "0") Integer page,
-        @RequestParam(value = "size", defaultValue = "10") Integer size
+        @RequestParam(value = "page", defaultValue = "0") String page,
+        @RequestParam(value = "size", defaultValue = "10") String size
     ) {
-        Pageable pageable = PageRequest.of(page, size);
+        Pageable pageable = PageRequest.of(Integer.parseInt(page), Integer.parseInt(size));
         return ApiResponse.createSuccess(marketService.getAllMarkets(pageable));
     }
 

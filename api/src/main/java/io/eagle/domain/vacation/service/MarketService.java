@@ -47,15 +47,16 @@ public class MarketService {
 
     public List<MarketListDto> getAllMarkets(Pageable pageable) {
         return vacationRepository.findAllMarkets(pageable).stream().map(vacation -> {
-            PriceInfo priceInfo = vacation.getPriceInfos() != null ? vacation.getPriceInfos().get(0) : null;
-            Picture picture = vacation.getPictureList() != null ? vacation.getPictureList().get(0) : null;
-            PriceStatus priceStatus = getPriceStatus(Optional.ofNullable(priceInfo));
+            PriceInfo priceInfo = vacation.getPriceInfos() != null && vacation.getPriceInfos().size() > 0 ? vacation.getPriceInfos().get(0) : null;
+            String picture = vacation.getPictureList() != null && vacation.getPriceInfos().size() > 0 ? vacation.getPictureList().get(0).getUrl() : null;
+            PriceStatus priceStatus = getPriceStatus(priceInfo);
             return MarketListDto
                 .builder()
+                .vacationId(vacation.getId())
                 .country(vacation.getCountry())
                 .shortDescription(vacation.getShortDescription())
-                .picture(Objects.requireNonNull(picture).getUrl())
-                .price(Objects.requireNonNull(priceInfo).getStandardPrice())
+                .picture(picture)
+                .price(priceInfo != null ? priceInfo.getStandardPrice() : null)
                 .priceStatus(priceStatus)
                 .build();
         }).collect(Collectors.toList());
@@ -64,7 +65,7 @@ public class MarketService {
     public MarketDetailDto getOne(Long vacationId) {
         Vacation vacation = vacationRepository.findById(vacationId).orElse(null);
         if (vacation != null) {
-            Transaction transaction = transactionRepository.findByVacation(vacationId);
+            Transaction transaction = transactionRepository.findOneByVacation(vacationId);
             List<String> pictures = pictureRepository.findUrlsByCahootsId(vacationId);
             List<Long> userIds = interestRepository.findAllByVacation(vacationId)
                 .stream()
@@ -72,6 +73,7 @@ public class MarketService {
                 .collect(Collectors.toList());
             return MarketDetailDto
                 .builder()
+                .vacationId(vacationId)
                 .title(vacation.getTitle())
                 .location(vacation.getLocation())
                 .shortDescription(vacation.getShortDescription())
@@ -93,13 +95,13 @@ public class MarketService {
         return null;
     }
 
-    private PriceStatus getPriceStatus(Optional<PriceInfo> priceInfo) {
-        if (priceInfo.isEmpty()) {
+    private PriceStatus getPriceStatus(PriceInfo priceInfo) {
+        if (priceInfo == null) {
             return PriceStatus.SAME;
         }
 
-        Integer startPrice = priceInfo.get().getStartPrice();
-        Integer standardPrice = priceInfo.get().getStandardPrice();
+        Integer startPrice = priceInfo.getStartPrice();
+        Integer standardPrice = priceInfo.getStandardPrice();
 
         if (startPrice > standardPrice) {
             return PriceStatus.DOWN;
