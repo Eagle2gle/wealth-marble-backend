@@ -2,6 +2,7 @@ package io.eagle.domain.vacation.controller;
 
 import io.eagle.common.ApiResponse;
 import io.eagle.domain.vacation.common.Utils;
+import io.eagle.domain.vacation.dto.MarketInfoConditionDto;
 import io.eagle.domain.vacation.dto.request.OptionalUserIdDto;
 import io.eagle.domain.vacation.service.MarketService;
 import io.eagle.entity.type.MarketRankingType;
@@ -18,12 +19,8 @@ public class MarketController {
     private final MarketService marketService;
 
     @GetMapping("/markets")
-    public ApiResponse getAllMarkets(
-        @RequestParam(value = "page", defaultValue = "0") String page,
-        @RequestParam(value = "size", defaultValue = "10") String size
-    ) {
-        Pageable pageable = PageRequest.of(Integer.parseInt(page), Integer.parseInt(size));
-        return ApiResponse.createSuccess(marketService.getAllMarkets(pageable));
+    public ApiResponse getAllMarkets(MarketInfoConditionDto infoConditionDto) {
+        return ApiResponse.createSuccess(marketService.getAllMarkets(infoConditionDto));
     }
 
     @GetMapping("/markets/{vacationId}")
