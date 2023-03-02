@@ -18,7 +18,7 @@ public class TestUtil {
             .id(1L)
             .user(user)
             .status(VacationStatusType.CAHOOTS_CLOSE)
-            .title("다나카와 함께하는")
+            .title("다나카 테스트 휴양지")
             .theme(Theme.builder()
                 .building(ThemeBuildingType.GUEST_HOUSE)
                 .location(ThemeLocationType.BEACH)
