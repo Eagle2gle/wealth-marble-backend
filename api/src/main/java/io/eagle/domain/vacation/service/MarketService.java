@@ -13,6 +13,7 @@ import io.eagle.entity.Transaction;
 import io.eagle.entity.Vacation;
 import io.eagle.entity.type.PriceStatus;
 import io.eagle.entity.type.VacationStatusType;
+import io.eagle.exception.ApiException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
@@ -31,6 +32,8 @@ import java.util.stream.Collectors;
 
 import static io.eagle.entity.type.MarketRankingType.CountryKey;
 import static io.eagle.entity.type.VacationStatusType.MARKET_ONGOING;
+import static io.eagle.exception.error.ErrorCode.VACATION_IS_NOT_MARKET;
+import static io.eagle.exception.error.ErrorCode.VACATION_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
@@ -71,37 +74,33 @@ public class MarketService {
     }
 
     public MarketDetailDto getOne(Long vacationId) {
-        Vacation vacation = vacationRepository.findById(vacationId).orElse(null);
-        if (vacation != null) {
-            Transaction transaction = transactionRepository.findOneByVacation(vacationId);
-            List<String> pictures = pictureRepository.findUrlsByCahootsId(vacationId);
-            List<Long> userIds = interestRepository.findAllByVacation(vacationId)
-                .stream()
-                .map(interest -> interest.getUser().getId())
-                .collect(Collectors.toList());
-            this.incrementInterestMarketScore(CountryKey(vacation.getCountry()), vacation.getId().toString(), viewScore);
-            return MarketDetailDto
-                .builder()
-                .vacationId(vacationId)
-                .title(vacation.getTitle())
-                .location(vacation.getLocation())
-                .shortDescription(vacation.getShortDescription())
-                .expectedRateOfReturn(vacation.getExpectedRateOfReturn())
-                .price(transaction != null ? transaction.getPrice() : vacation.getStock().getPrice().intValue())
-                .pictures(pictures)
-                .userIds(userIds)
-                .build();
-        }
-        return null;
+        Vacation vacation = vacationRepository.findById(vacationId).orElseThrow(()-> new ApiException(VACATION_NOT_FOUND));
+        verifyMarketStatus(vacation);
+        Transaction transaction = transactionRepository.findOneByVacation(vacationId);
+        List<String> pictures = pictureRepository.findUrlsByCahootsId(vacationId);
+        List<Long> userIds = interestRepository.findAllByVacation(vacationId)
+            .stream()
+            .map(interest -> interest.getUser().getId())
+            .collect(Collectors.toList());
+        this.incrementInterestMarketScore(CountryKey(vacation.getCountry()), vacation.getId().toString(), viewScore);
+        return MarketDetailDto
+            .builder()
+            .vacationId(vacationId)
+            .title(vacation.getTitle())
+            .location(vacation.getLocation())
+            .shortDescription(vacation.getShortDescription())
+            .expectedRateOfReturn(vacation.getExpectedRateOfReturn())
+            .price(transaction != null ? transaction.getPrice() : vacation.getStock().getPrice().intValue())
+            .pictures(pictures)
+            .userIds(userIds)
+            .build();
     }
 
     public MarketInfoDto getVacationInfo(Long vacationId) {
-        Vacation vacation = vacationRepository.findById(vacationId).orElse(null);
-        if (vacation != null) {
-            List<String> pictures = pictureRepository.findUrlsByCahootsId(vacationId);
-            return new MarketInfoDto(vacation, pictures);
-        }
-        return null;
+        Vacation vacation = vacationRepository.findById(vacationId).orElseThrow(()-> new ApiException(VACATION_NOT_FOUND));
+        verifyMarketStatus(vacation);
+        List<String> pictures = pictureRepository.findUrlsByCahootsId(vacationId);
+        return new MarketInfoDto(vacation, pictures);
     }
 
     private PriceStatus getPriceStatus(PriceInfo priceInfo) {
@@ -155,5 +154,11 @@ public class MarketService {
 
     private void incrementInterestMarketScore(String key, String value, Integer score){
         redisZSet.incrementScore(key, value, (double) score);
+    }
+
+    private void verifyMarketStatus(Vacation vacation){
+        if(vacation.getStatus() != MARKET_ONGOING){
+            throw new ApiException(VACATION_IS_NOT_MARKET);
+        }
     }
 }
