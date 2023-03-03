@@ -30,18 +30,8 @@ public class CahootsService {
     private final VacationRepository vacationRepository;
     private final PictureRepository pictureRepository;
     private final InterestRepository interestRepository;
-    private final RedisTemplate<String, String> redisTemplate;
-    private ZSetOperations<String, String> redisZSet;
 
     private final S3 s3;
-
-    @Value("${eagle.score.view}")
-    private Integer viewScore;
-
-    @PostConstruct
-    public void init(){
-        this.redisZSet = redisTemplate.opsForZSet();
-    }
 
     public void create(CreateCahootsDto createCahootsDto, User user) {
         createCahootsDto.validateCahootsPeriod();
@@ -61,9 +51,6 @@ public class CahootsService {
         Boolean isInterest = (userId != null ? interests.stream().map(Interest::getUser).map(User::getId).anyMatch(id -> id.equals(userId)) : false);
         detailCahootsDto.setIsInterest(isInterest);
         detailCahootsDto.setImages(getImageUrls(cahootsId));
-        if(detailCahootsDto.getStatus().equals(MARKET_ONGOING)){
-            this.incrementInterestMarketScore(CountryKey(detailCahootsDto.getCountry()), detailCahootsDto.getId().toString(), viewScore);
-        }
         return detailCahootsDto;
     }
 
@@ -96,10 +83,6 @@ public class CahootsService {
 
     public List<String> getImageUrls(Long id){
         return pictureRepository.findUrlsByCahootsId(id);
-    }
-
-    private void incrementInterestMarketScore(String key, String value, Integer score){
-        redisZSet.incrementScore(key, value, (double) score);
     }
 
 
