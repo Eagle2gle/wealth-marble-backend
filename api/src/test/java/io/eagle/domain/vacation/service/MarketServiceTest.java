@@ -4,6 +4,7 @@ import io.eagle.common.TestUtil;
 import io.eagle.domain.interest.repository.InterestRepository;
 import io.eagle.domain.picture.repository.PictureRepository;
 import io.eagle.domain.transaction.repository.TransactionRepository;
+import io.eagle.domain.vacation.dto.MarketInfoConditionDto;
 import io.eagle.domain.vacation.dto.response.MarketInfoDto;
 import io.eagle.domain.vacation.dto.response.MarketListDto;
 import io.eagle.domain.vacation.repository.VacationRepository;
@@ -71,6 +72,11 @@ public class MarketServiceTest {
 
         User user = testUtil.createUser("anonymous", "anonymous@email.com");
         Vacation vacation = testUtil.createVacation(user);
+        MarketInfoConditionDto marketInfoConditionDto = MarketInfoConditionDto.builder()
+            .page(0)
+            .size(10)
+            .keyword("test")
+            .build();
         Pageable pageable = PageRequest.of(0, 10);
         PriceInfo priceInfo = PriceInfo
             .builder()
@@ -93,10 +99,10 @@ public class MarketServiceTest {
             .shortDescription(vacation.getShortDescription())
             .picture(picture.getUrl())
             .build();
-        when(vacationRepository.findAllMarkets(pageable)).thenReturn(List.of(vacation));
+        when(vacationRepository.findAllMarkets(pageable, marketInfoConditionDto.getKeyword())).thenReturn(List.of(vacation));
 
         // when
-        List<MarketListDto> markets = marketService.getAllMarkets(pageable);
+        List<MarketListDto> markets = marketService.getAllMarkets(marketInfoConditionDto);
         MarketListDto market = markets.get(0);
 
         // then

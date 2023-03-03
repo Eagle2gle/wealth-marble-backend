@@ -81,7 +81,7 @@ public class MarketService {
                 .location(vacation.getLocation())
                 .shortDescription(vacation.getShortDescription())
                 .expectedRateOfReturn(vacation.getExpectedRateOfReturn())
-                .price(transaction.getPrice())
+                .price(transaction != null ? transaction.getPrice() : vacation.getStock().getPrice().intValue())
                 .pictures(pictures)
                 .userIds(userIds)
                 .build();
