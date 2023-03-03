@@ -21,6 +21,7 @@ public enum ErrorCode {
     // Vacation
     VACATION_NOT_FOUND(HttpStatus.NOT_FOUND,"존재하지 않는 공모 ID 입니다."),
     VACATION_PERIOD_INVALID(HttpStatus.BAD_REQUEST,"공모 기간이 올바르지 않습니다."),
+    VACATION_IS_NOT_MARKET(HttpStatus.BAD_REQUEST, "해당 휴양지는 마켓 진행 중이 아닙니다."),
 
     // Order
 
