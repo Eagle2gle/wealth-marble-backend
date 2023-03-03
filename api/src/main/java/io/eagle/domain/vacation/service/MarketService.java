@@ -14,6 +14,7 @@ import io.eagle.entity.Vacation;
 import io.eagle.entity.type.PriceStatus;
 import io.eagle.entity.type.VacationStatusType;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -29,6 +30,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static io.eagle.entity.type.MarketRankingType.CountryKey;
+import static io.eagle.entity.type.VacationStatusType.MARKET_ONGOING;
 
 @Service
 @RequiredArgsConstructor
@@ -41,6 +43,9 @@ public class MarketService {
     private final InterestRepository interestRepository;
     private final RedisTemplate<String, String> redisTemplate;
     private ZSetOperations<String, String> redisZSet;
+
+    @Value("${eagle.score.view}")
+    private Integer viewScore;
 
     @PostConstruct
     public void init(){
@@ -74,6 +79,7 @@ public class MarketService {
                 .stream()
                 .map(interest -> interest.getUser().getId())
                 .collect(Collectors.toList());
+            this.incrementInterestMarketScore(CountryKey(vacation.getCountry()), vacation.getId().toString(), viewScore);
             return MarketDetailDto
                 .builder()
                 .vacationId(vacationId)
@@ -145,5 +151,9 @@ public class MarketService {
 
     private MarketRankDto findMarketRankInfoById(Long id) {
         return vacationRepository.findMarketRankInfoById(id);
+    }
+
+    private void incrementInterestMarketScore(String key, String value, Integer score){
+        redisZSet.incrementScore(key, value, (double) score);
     }
 }
