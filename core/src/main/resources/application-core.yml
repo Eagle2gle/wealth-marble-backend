@@ -18,7 +18,7 @@ spring:
     restart:
       enabled: true
   redis:
-    host: localhost
+    host: host.docker.internal
     port: 6379
 
 eagle:
