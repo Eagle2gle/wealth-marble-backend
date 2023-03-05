@@ -13,6 +13,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.List;
 
 import static org.mockito.Mockito.*;
@@ -35,7 +37,7 @@ public class UserServiceTest {
         // given
         TestUtil testUtil = new TestUtil();
         User user = testUtil.createUser("me", "me@email.com");
-        StockInfoDto stockInfoDto = new StockInfoDto(1000, 1000);
+        StockInfoDto stockInfoDto = new StockInfoDto(BigInteger.valueOf(1000), BigDecimal.valueOf(1000L));
 
         // when
         when(stockRepository.getTotalStockValueByUser(user.getId())).thenReturn(List.of(stockInfoDto));
