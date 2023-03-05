@@ -54,7 +54,7 @@ public class ContestParticipationService {
         List<ContestParticipation> contestParticipations = contestParticipationRepository.findAllByUserId(user.getId());
         return contestParticipations.stream().map(contestParticipation -> {
             Vacation vacation = contestParticipation.getVacation();
-            if (vacation != null) {
+            if (vacation != null && !vacation.getStatus().equals(VacationStatusType.MARKET_ONGOING)) {
                 return ContestParticipationMineDto
                     .builder()
                     .title(vacation.getTitle())
