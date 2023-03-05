@@ -1,8 +1,4 @@
 spring:
-#  profiles:
-#    include:
-#      - mysql
-#      - oauth
   jpa:
     hibernate:
       ddl-auto: update
