@@ -1,20 +1,19 @@
 package io.eagle.domain.stock.dto;
 
-import com.querydsl.core.annotations.QueryProjection;
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
+
+import java.math.BigDecimal;
+import java.math.BigInteger;
 
 @Getter
-@Builder
+@Setter
 public class StockInfoDto {
 
     private Integer price;
     private Integer amount;
 
-    @QueryProjection
-    public StockInfoDto(Integer price, Integer amount) {
-        this.price = price;
-        this.amount = amount;
+    public StockInfoDto(BigInteger price, BigDecimal amount) {
+        this.price = price.intValue();
+        this.amount = amount.intValue();
     }
-
 }
