@@ -2,6 +2,7 @@ package io.eagle.domain.user.dto.response;
 
 import io.eagle.entity.User;
 import io.eagle.entity.type.ProviderType;
+import io.eagle.entity.type.Ranks;
 import io.eagle.entity.type.Role;
 import lombok.Getter;
 
@@ -13,7 +14,9 @@ public class UserInfoDto {
     private Integer value;
     private String email;
     private ProviderType providerType;
+    private Ranks rank;
     private Role role;
+
 
     public UserInfoDto(Integer value, User user) {
         this.username = user.getNickname();
@@ -21,6 +24,7 @@ public class UserInfoDto {
         this.value = value;
         this.email = user.getEmail();
         this.providerType = user.getProviderType();
+        this.rank = user.getRanks();
         this.role = user.getRole();
     }
 
