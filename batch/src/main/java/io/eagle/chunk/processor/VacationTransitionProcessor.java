@@ -10,6 +10,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import javax.sql.DataSource;
 import java.util.List;
 
+import static io.eagle.entity.type.VacationStatusType.*;
+
 public class VacationTransitionProcessor implements ItemProcessor<Vacation, Vacation> {
 
     private JdbcTemplate jdbcTemplate;
@@ -28,10 +30,10 @@ public class VacationTransitionProcessor implements ItemProcessor<Vacation, Vaca
         Integer totalAmount = this.calculateContestParticipationAmount(contestParticipations);
 
         if (totalAmount >= vacation.getStock().getNum()) {
-            vacation.setStatus(VacationStatusType.MARKET_ONGOING);
-            return vacation;
+                vacation.setStatus(MARKET_ONGOING);
+                return vacation;
         }
-        vacation.setStatus(VacationStatusType.CAHOOTS_CLOSE);
+        vacation.setStatus(CAHOOTS_CLOSE);
         return vacation;
     }
 
