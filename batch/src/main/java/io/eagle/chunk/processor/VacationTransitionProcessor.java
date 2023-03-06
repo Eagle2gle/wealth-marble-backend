@@ -22,7 +22,15 @@ public class VacationTransitionProcessor implements ItemProcessor<Vacation, Vaca
 
     @Override
     public Vacation process(Vacation vacation) throws Exception {
+        if(vacation.getStatus() == CAHOOTS_BEFORE){
+            return this.changeToOngoing(vacation);
+        }
         return this.isParticipationSuccess(vacation);
+    }
+
+    private Vacation changeToOngoing(Vacation vacation){
+        vacation.setStatus(CAHOOTS_ONGOING);
+        return vacation;
     }
 
     private Vacation isParticipationSuccess(Vacation vacation) {
