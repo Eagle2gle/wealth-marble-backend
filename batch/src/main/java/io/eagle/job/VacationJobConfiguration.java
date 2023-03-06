@@ -38,6 +38,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import static io.eagle.common.BatchConstant.*;
+import static io.eagle.entity.type.VacationStatusType.*;
 
 @Configuration
 @RequiredArgsConstructor
@@ -75,11 +76,13 @@ public class VacationJobConfiguration {
     @StepScope
     public JpaCursorItemReader<Vacation> vacationTransitionItemReader() {
         HashMap<String, Object> parameters = new HashMap<>();
+        parameters.put("start", LocalDate.now());
+        parameters.put("startStatus", CAHOOTS_BEFORE);
         parameters.put("end", LocalDate.now().minusDays(1L));
-        parameters.put("status", VacationStatusType.CAHOOTS_ONGOING);
+        parameters.put("ongoingStatus", CAHOOTS_ONGOING);
         return new JpaCursorItemReaderBuilder<Vacation>()
             .entityManagerFactory(entityManagerFactory)
-            .queryString("SELECT v FROM Vacation v WHERE status = :status and stockPeriod.end = :end")
+            .queryString("SELECT v FROM Vacation v WHERE (status = :ongoingStatus and stockPeriod.end = :end) or (status = :startStatus and stockPeriod.start = :start)")
             .parameterValues(parameters)
             .name(EXPIRED_VACATION_PAGE_READER)
             .build();
@@ -156,7 +159,7 @@ public class VacationJobConfiguration {
     public JpaCursorItemReader<Vacation> retrieveMoneyItemReader() {
         HashMap<String, Object> parameters = new HashMap<>();
         parameters.put("end", LocalDate.now().minusDays(1L));
-        parameters.put("status", VacationStatusType.CAHOOTS_CLOSE);
+        parameters.put("status", CAHOOTS_CLOSE);
         return new JpaCursorItemReaderBuilder<Vacation>()
             .queryString("SELECT v FROM Vacation v WHERE stockPeriod.end = :end and status = :status")
             .entityManagerFactory(entityManagerFactory)
