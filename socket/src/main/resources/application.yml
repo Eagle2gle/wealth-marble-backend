@@ -5,6 +5,7 @@ spring:
       - core
       - mysql
       - oauth
+      - redis
 
 #  devtools:
 #    restart:

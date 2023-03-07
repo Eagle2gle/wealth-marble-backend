@@ -4,6 +4,7 @@ spring:
       - core
       - mysql
       - oauth
+      - redis
   batch:
     jdbc:
       initialize-schema: embedded
