@@ -53,6 +53,8 @@ jobs:
           docker build -t wm-batch-server ./batch
           docker tag wm-batch-server ${{ secrets.DOCKERHUB_USERNAME }}/wm-batch-server:${GITHUB_SHA::7}
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/wm-batch-server:${GITHUB_SHA::7}
+          touch ./core/src/main/resources/application-redis.yml
+          echo "${{ secrets.APPLICATION_REDIS }}" | base64 --decode > ./core/src/main/resources/application-redis.yml
 
       - name: execute remote ssh
         uses: appleboy/ssh-action@master
