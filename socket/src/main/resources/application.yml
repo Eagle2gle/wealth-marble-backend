@@ -6,7 +6,6 @@ spring:
       - mysql
       - oauth
       - redis
-
 #  devtools:
 #    restart:
 #      log-condition-evaluation-delta=false:
