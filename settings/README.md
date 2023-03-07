@@ -15,7 +15,7 @@ $ docker-compose exec kafka kafka-topics --describe --topic kafka-market --boots
 
 ```shell
 docker pull redis:alpine
-docker run --name redis -p 6379:6379 -d redis
+docker run --name redis -p 6379:6379 -v /home/ubuntu/redis_data:/data -d redis
 ```
 
 ## network 설정
