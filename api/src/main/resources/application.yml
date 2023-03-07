@@ -6,3 +6,4 @@ spring:
       - oauth
       - cloud
       - redis
+
