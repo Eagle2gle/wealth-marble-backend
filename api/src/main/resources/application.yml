@@ -5,3 +5,4 @@ spring:
       - mysql
       - oauth
       - cloud
+      - redis

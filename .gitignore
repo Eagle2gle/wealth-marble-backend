@@ -25,6 +25,7 @@ rebel.xml
 application-mysql.yml
 application-cloud.yml
 application-oauth.yml
+application-redis.yml
 
 # generated
 /src/main/generated/
