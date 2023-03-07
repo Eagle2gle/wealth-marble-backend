@@ -8,10 +8,11 @@ on:
       - 'batch/**'
     types:
       - closed
-
+  push:
+    brances: ["dev"]
 jobs:
   build:
-    if: ${{ github.event.pull_request.merged == true }}
+#    if: ${{ github.event.pull_request.merged == true }}
     runs-on: ubuntu-latest
     steps:
       - name: 체크아웃
