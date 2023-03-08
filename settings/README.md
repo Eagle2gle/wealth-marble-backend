@@ -14,8 +14,9 @@ $ docker-compose exec kafka kafka-topics --describe --topic kafka-market --boots
 ## Redis docker 설정
 
 ```shell
-docker pull redis:alpine
-docker run --name redis -p 6379:6379 -v /home/ubuntu/redis_data:/data -d redis --requirepass {password}
+$ docker pull redis:alpine
+$ docker run --name redis -p 6379:6379 -v /home/ubuntu/redis_data:/data -d redis --requirepass {password}
+$ docker exec -it redis redis-cli -a {password} # redis-cli로 접속하기
 ```
 
 ## network 설정
