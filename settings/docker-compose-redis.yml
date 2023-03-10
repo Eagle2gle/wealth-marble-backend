@@ -3,7 +3,8 @@ version: '2'
 services:
   redis-master:
     image: redis:alpine
-    command: redis-server --requirepass ${REDIS_PASSWORD} --appendonly no
+    container_name: redis-master
+    command: redis-server  --requirepass ${REDIS_PASSWORD} --appendonly no
     volumes:
       - /home/ubuntu/redis_data/master:/data
     ports:
@@ -12,12 +13,14 @@ services:
       - wm-net
     environment:
       - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - REDIS_REPLICATION_MODE=master
     restart: always
     extra_hosts:
       - "host.docker.internal:host-gateway"
 
   redis-slave:
     image: redis:alpine
+    container_name: redis-slave
     command: redis-server --slaveof redis-master 6379 --requirepass ${REDIS_PASSWORD} --appendonly no
     volumes:
       - /home/ubuntu/redis_data/slave:/data
@@ -27,6 +30,7 @@ services:
       - wm-net
     environment:
       - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - REDIS_REPLICATION_MODE=slave
     restart: always
 
 networks:
