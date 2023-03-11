@@ -31,7 +31,7 @@ public class RetrieveMoneyProcessor implements ItemProcessor<Vacation, List<Retr
 
     private List<ContestParticipation> findAllContestParticipationByVacation(Long vacationId) {
         return jdbcTemplate.query(
-            "select * from contest_participation where vacation_id = ?",
+            "select * from contest_participation as c where c.cahoots_id = ?",
             new BeanPropertyRowMapper<>(ContestParticipation.class),
             vacationId
         );

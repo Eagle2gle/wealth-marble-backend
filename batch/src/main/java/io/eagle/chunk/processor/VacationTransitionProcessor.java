@@ -51,7 +51,7 @@ public class VacationTransitionProcessor implements ItemProcessor<Vacation, Vaca
 
     private List<ContestParticipation> findAllContestParticipationByVacation(Long vacationId) {
         return jdbcTemplate.query(
-            "select * from contest_participation where vacation_id = ?",
+            "select * from contest_participation as c where c.cahoots_id = ?",
             new BeanPropertyRowMapper<>(ContestParticipation.class),
             vacationId
         );
