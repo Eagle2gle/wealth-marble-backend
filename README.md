@@ -15,6 +15,17 @@
 3. 지분 거래 기능
     - 해외 휴양지 지분을 가지고 있는 사람들과 일반 사용자들이 공모 후 풀린 지분을 구매하거나 판매 가능
 
+## 기술 스택
+
+![Java](https://img.shields.io/badge/java-%23ED8B00.svg?style=for-the-badge&logo=java&logoColor=white)
+![Spring](https://img.shields.io/badge/spring-%236DB33F.svg?style=for-the-badge&logo=spring&logoColor=white)
+![MySQL](https://img.shields.io/badge/mysql-%2300f.svg?style=for-the-badge&logo=mysql&logoColor=white)
+![Redis](https://img.shields.io/badge/redis-%23DD0031.svg?style=for-the-badge&logo=redis&logoColor=white)
+![Apache Kafka](https://img.shields.io/badge/Apache%20Kafka-000?style=for-the-badge&logo=apachekafka)
+![GitHub Actions](https://img.shields.io/badge/github%20actions-%232671E5.svg?style=for-the-badge&logo=githubactions&logoColor=white)
+
+#6DB33F
+
 ## 기술적 도전
 
 - 설계 및 개발 고민 : https://jinsungone.notion.site/fb64bb18ff884273bd9dc857f79f492f?v=a23d6406ae614dfd90948f9d7341b9ae
