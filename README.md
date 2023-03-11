@@ -15,10 +15,26 @@
 3. 지분 거래 기능
     - 해외 휴양지 지분을 가지고 있는 사람들과 일반 사용자들이 공모 후 풀린 지분을 구매하거나 판매 가능
 
-## Architecture
+## Backend Infra
+
+### 서버 Architecture
 
 <img width="700" alt="image" src="https://user-images.githubusercontent.com/34162358/224474739-2f6f5e9f-f838-4ff8-bb43-bc747913e8a1.png">
+
+- AWS EC2, RDS, S3를 사용하고 있습니다.
+- EC2 인스턴스에서 API, WEBSOCKET, BATCH Docker Container가 구동되고 있습니다.
+- Redis는 Master와 Slave를 두고 Slave는 Master의 내용을 snapshot으로 가지고 있습니다.
+- Kafka는 zookeeper와 1개의 kafka가 운영되고 있으며 STOMP broker역할을 하고 있습니다.
+
+### 자동 배포 Process
+
 <img width="613" alt="image" src="https://user-images.githubusercontent.com/34162358/224475163-d580267a-5674-4d01-a005-a400a7fd5f7f.png">
+
+- Github PR review 후 dev branch로 PR merge 되면, Github Actions workflow 가 시작됩니다.
+- Github actions에서 수정이 발생한 모듈을 확인하여 빌드 후 Docker Image화 하여 Docker hub로 올립니다.
+- EC2에 ssh로 접속하여 Docker hub에 올라간 Docker Image파일을 받아와 실행시킵니다.
+- 모든 과정이 완료되면 Discord를 통해 성공,실패 여부를 알립니다.
+
 
 
 
