@@ -15,6 +15,13 @@
 3. 지분 거래 기능
     - 해외 휴양지 지분을 가지고 있는 사람들과 일반 사용자들이 공모 후 풀린 지분을 구매하거나 판매 가능
 
+## Architecture
+
+<img width="700" alt="image" src="https://user-images.githubusercontent.com/34162358/224474739-2f6f5e9f-f838-4ff8-bb43-bc747913e8a1.png">
+<img width="613" alt="image" src="https://user-images.githubusercontent.com/34162358/224475163-d580267a-5674-4d01-a005-a400a7fd5f7f.png">
+
+
+
 ## 기술 스택
 
 ![Java](https://img.shields.io/badge/java-%23ED8B00.svg?style=for-the-badge&logo=java&logoColor=white)
@@ -24,7 +31,6 @@
 ![Apache Kafka](https://img.shields.io/badge/Apache%20Kafka-000?style=for-the-badge&logo=apachekafka)
 ![GitHub Actions](https://img.shields.io/badge/github%20actions-%232671E5.svg?style=for-the-badge&logo=githubactions&logoColor=white)
 
-#6DB33F
 
 ## 기술적 도전
 
