@@ -17,7 +17,7 @@ public class RetrieveMoneyWriter implements ItemWriter<List<RetrieveMoneyVO>> {
     @Override
     public void write(List<? extends List<RetrieveMoneyVO>> items) throws Exception {
         for (List<RetrieveMoneyVO> retrieveMoneyVOS: items) {
-            jdbcBatchItemWriter.setSql("UPDATE user SET cash = cash + :addCash WHERE id = :userID");
+            jdbcBatchItemWriter.setSql("UPDATE user SET cash = cash + :addCash WHERE id = :userId");
             jdbcBatchItemWriter.write(retrieveMoneyVOS);
         }
     }
