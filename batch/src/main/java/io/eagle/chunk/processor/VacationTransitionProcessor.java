@@ -10,6 +10,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import javax.sql.DataSource;
 import java.util.List;
 
+import static io.eagle.entity.type.VacationStatusType.*;
+
 public class VacationTransitionProcessor implements ItemProcessor<Vacation, Vacation> {
 
     private JdbcTemplate jdbcTemplate;
@@ -20,7 +22,15 @@ public class VacationTransitionProcessor implements ItemProcessor<Vacation, Vaca
 
     @Override
     public Vacation process(Vacation vacation) throws Exception {
+        if(vacation.getStatus() == CAHOOTS_BEFORE){
+            return this.changeToOngoing(vacation);
+        }
         return this.isParticipationSuccess(vacation);
+    }
+
+    private Vacation changeToOngoing(Vacation vacation){
+        vacation.setStatus(CAHOOTS_ONGOING);
+        return vacation;
     }
 
     private Vacation isParticipationSuccess(Vacation vacation) {
@@ -28,10 +38,10 @@ public class VacationTransitionProcessor implements ItemProcessor<Vacation, Vaca
         Integer totalAmount = this.calculateContestParticipationAmount(contestParticipations);
 
         if (totalAmount >= vacation.getStock().getNum()) {
-            vacation.setStatus(VacationStatusType.MARKET_ONGOING);
-            return vacation;
+                vacation.setStatus(MARKET_ONGOING);
+                return vacation;
         }
-        vacation.setStatus(VacationStatusType.CAHOOTS_CLOSE);
+        vacation.setStatus(CAHOOTS_CLOSE);
         return vacation;
     }
 
@@ -41,7 +51,7 @@ public class VacationTransitionProcessor implements ItemProcessor<Vacation, Vaca
 
     private List<ContestParticipation> findAllContestParticipationByVacation(Long vacationId) {
         return jdbcTemplate.query(
-            "select * from contest_participation where vacation_id = ?",
+            "select * from contest_participation as c where c.cahoots_id = ?",
             new BeanPropertyRowMapper<>(ContestParticipation.class),
             vacationId
         );

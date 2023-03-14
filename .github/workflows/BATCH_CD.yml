@@ -1,4 +1,4 @@
-name: Server Socket CD
+name: Server Batch CD
 
 on:
   pull_request:
@@ -8,11 +8,10 @@ on:
       - 'batch/**'
     types:
       - closed
-  push:
-    branches : ["setting/deploy-batch"]
+
 jobs:
   build:
-#    if: ${{ github.event.pull_request.merged == true }}
+    if: ${{ github.event.pull_request.merged == true }}
     runs-on: ubuntu-latest
     steps:
       - name: 체크아웃
@@ -39,20 +38,23 @@ jobs:
           echo "${{ secrets.APPLICATION_MYSQL }}" | base64 --decode > ./core/src/main/resources/application-mysql.yml
           touch ./core/src/main/resources/application-oauth.yml
           echo "${{ secrets.APPLICATION_OAUTH }}" | base64 --decode > ./core/src/main/resources/application-oauth.yml
-
+          touch ./core/src/main/resources/application-redis.yml
+          echo "${{ secrets.APPLICATION_REDIS }}" | base64 --decode > ./core/src/main/resources/application-redis.yml
 
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew
-        #shell: bash
+
       - name: Build with Gradle
         run: ./gradlew clean :batch:build --exclude-task test
-        #shell: bash
+
       - name: 도커 이미지 빌드 및 도커 허브 푸쉬
         run: |
           docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
           docker build -t wm-batch-server ./batch
           docker tag wm-batch-server ${{ secrets.DOCKERHUB_USERNAME }}/wm-batch-server:${GITHUB_SHA::7}
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/wm-batch-server:${GITHUB_SHA::7}
+          touch ./core/src/main/resources/application-redis.yml
+          echo "${{ secrets.APPLICATION_REDIS }}" | base64 --decode > ./core/src/main/resources/application-redis.yml
 
       - name: execute remote ssh
         uses: appleboy/ssh-action@master
@@ -67,11 +69,3 @@ jobs:
             sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/wm-batch-server:${GITHUB_SHA::7}
             docker run -d -p 8081:8081 --name wm-batch-server --add-host host.docker.internal:host-gateway ${{ secrets.DOCKERHUB_USERNAME }}/wm-batch-server:${GITHUB_SHA::7}
             docker image prune -af
-
-#      - name: Discord notification
-#        env:
-#          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
-#        uses: Ilshidur/action-discord@master
-#        with:
-#          args: 'Deploy Batch ${{ job.status }} [${{ github.event.pull_request.title }}] - wealth marble'
-#        if: always()

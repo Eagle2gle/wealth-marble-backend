@@ -38,6 +38,8 @@ jobs:
           echo "${{ secrets.APPLICATION_MYSQL }}" | base64 --decode > ./core/src/main/resources/application-mysql.yml
           touch ./core/src/main/resources/application-oauth.yml
           echo "${{ secrets.APPLICATION_OAUTH }}" | base64 --decode > ./core/src/main/resources/application-oauth.yml
+          touch ./core/src/main/resources/application-redis.yml
+          echo "${{ secrets.APPLICATION_REDIS }}" | base64 --decode > ./core/src/main/resources/application-redis.yml
 
 
       - name: Grant execute permission for gradlew
