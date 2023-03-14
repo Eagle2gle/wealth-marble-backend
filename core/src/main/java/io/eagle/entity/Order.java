@@ -7,8 +7,10 @@ import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 
-@Data
+
 @Entity
+@Getter
+@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
