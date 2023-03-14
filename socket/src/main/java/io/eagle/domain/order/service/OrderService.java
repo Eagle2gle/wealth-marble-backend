@@ -123,11 +123,14 @@ public class OrderService {
             doneOrder = waitingOrder;
         }
 
-        createTransaction(
+        Transaction transaction = createTransaction(
                 (doneOrder.getOrderType().equals(OrderType.BUY) ? doneOrder : purchaseOrder),
                 (doneOrder.getOrderType().equals(OrderType.SELL) ? doneOrder : saleOrder),
                 transactionAmount
         ); // transaction 생성
+
+        // 최근 거래 휴양지 데이터 업데이트
+        updateRecentTransactionDataInRedis(transaction);
         return transactionAmount;
     }
 
@@ -152,26 +155,25 @@ public class OrderService {
         return List.of(a,b,c).stream().min(Integer::compare).orElse(0);
     }
 
-    private void createTransaction(Order purchaseOrder, Order saleOrder, Integer transactionAmount){
-        Long vacationId = saleOrder.getVacation().getId();
-        Transaction transaction = Transaction.builder()
-                .vacation(vacationRepository.getReferenceById(vacationId))
+    private Transaction createTransaction(Order purchaseOrder, Order saleOrder, Integer transactionAmount){
+        return transactionRepository.save(Transaction.builder()
+                .vacation(vacationRepository.getReferenceById(saleOrder.getVacation().getId()))
                 .buyOrder(purchaseOrder)
                 .sellOrder(saleOrder)
                 .amount(transactionAmount)
                 .price(saleOrder.getPrice())
-                .build();
+                .build());
+    }
 
-        transactionRepository.save(transaction);
-        PriceInfo priceInfo = priceInfoRepository.findByVacationOrderByCreatedAt(vacationId);
-
+    private void updateRecentTransactionDataInRedis(Transaction transaction) {
+        Long vacationId = transaction.getVacation().getId();
+        PriceInfo priceInfo = priceInfoRepository.findOneByVacationOrderByCreatedAt(vacationId);
         if (priceInfo != null) {
-            Double price = (double) (priceInfo.getStandardPrice() - saleOrder.getPrice());
-            Double priceRate = price * 100 / (double) saleOrder.getPrice();
+            Double price = (double) (priceInfo.getStandardPrice() - transaction.getPrice());
+            Double priceRate = price * 100 / (double) transaction.getPrice();
             redisZSet.add(PRICE.getKey(), vacationId.toString(), price);
             redisZSet.add(PRICE_RATE.getKey(), vacationId.toString(), priceRate);
         }
-
     }
 
     private void incrementInterestMarketScore( StockDto message){
