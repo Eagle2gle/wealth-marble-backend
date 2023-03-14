@@ -28,11 +28,11 @@ public class OrderController {
         kafkaTemplate.send(KafkaConstants.KAFKA_TOPIC, broadcastMessageDto);
     }
 
-    @MessageMapping("/sale") //   url : "order/sale"
-    public void sale(StockDto message){
-        BroadcastStockDto broadcastMessageDto = orderService.sellMarket(message);
-        log.info("[STOMP Producer] user sell market {} price : {}, amount : {}, left : {}",message.getMarketId(),message.getPrice(), message.getAmount());
-        kafkaTemplate.send(KafkaConstants.KAFKA_TOPIC, broadcastMessageDto);
+    @MessageMapping("/sale") //   url : "order/sale" 로 들어오는 정보 처리
+    public void sale(StockDto stock){
+        BroadcastStockDto broadcastStockDto = orderService.sellMarket(stock);
+        log.info("[STOMP Producer] user sell market {} price : {}, amount : {}, left : {}", stock.getMarketId(), stock.getPrice(), stock.getAmount());
+        kafkaTemplate.send(KafkaConstants.KAFKA_TOPIC, broadcastStockDto);
     }
 
     @MessageExceptionHandler
