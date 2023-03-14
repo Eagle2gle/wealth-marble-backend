@@ -24,6 +24,15 @@ public class RedisConfig {
     @Value("${spring.redis.password}")
     private String password;
 
+    private static final String REDISSON_HOST_PREFIX = "redis://";
+
+    @Bean
+    public RedissonClient redissonClient() {
+        Config config = new Config();
+        config.useSingleServer().setAddress(REDISSON_HOST_PREFIX + host + ":" + port);
+        return Redisson.create(config);
+    }
+
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {
         RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration();
