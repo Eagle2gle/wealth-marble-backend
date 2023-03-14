@@ -1,8 +1,8 @@
 package io.eagle.domain.order.service;
 
 import io.eagle.domain.PriceInfo.repository.PriceInfoRepository;
-import io.eagle.domain.order.dto.request.MessageDto;
-import io.eagle.domain.order.dto.response.BroadcastMessageDto;
+import io.eagle.domain.order.dto.request.StockDto;
+import io.eagle.domain.order.dto.response.BroadcastStockDto;
 import io.eagle.domain.order.dto.TotalMountDto;
 import io.eagle.domain.order.repository.OrderRepository;
 import io.eagle.domain.transaction.repository.TransactionRepository;
@@ -11,7 +11,6 @@ import io.eagle.entity.Order;
 import io.eagle.entity.PriceInfo;
 import io.eagle.entity.Transaction;
 import io.eagle.entity.User;
-import io.eagle.entity.type.MarketRankingType;
 import io.eagle.entity.type.OrderStatus;
 import io.eagle.entity.type.OrderType;
 import io.eagle.exception.SocketException;
@@ -42,7 +41,6 @@ public class OrderService {
     private final PriceInfoRepository priceInfoRepository;
     private final RedisTemplate redisTemplate;
     private ZSetOperations<String, String> redisZSet;
-
     private final JwtTokenProvider jwtTokenProvider;
 
     @Value("${eagle.score.order}")
@@ -54,7 +52,7 @@ public class OrderService {
     }
 
     @Transactional
-    public BroadcastMessageDto purchaseMarket(MessageDto message){
+    public BroadcastStockDto purchaseMarket(StockDto message){
         verifyMessage(message);
         User user = userRepository.findById(message.getRequesterId()).orElseThrow(()-> new SocketException("존재하지 않는 사용자입니다."));
         verifyUserCash(user.getCash(), message); // 사용자 잔여 캐쉬 확인 (사려는 가격보다 부족하면 에러)
@@ -84,7 +82,7 @@ public class OrderService {
         //   해당 가격의 수량 확인해서 전달
         TotalMountDto leftAmount = orderRepository.getCurrentOrderAmount(message.getMarketId(),message.getPrice(), message.getOrderType());
         log.debug(leftAmount.toString());
-        return BroadcastMessageDto.builder()
+        return BroadcastStockDto.builder()
                 .marketId(message.getMarketId())
                 .price(message.getPrice())
                 .amount(leftAmount.getAmount())
@@ -92,7 +90,7 @@ public class OrderService {
                 .build();
     }
 
-    private void verifyMessage(MessageDto message){
+    private void verifyMessage(StockDto message){
         try{
             Long userId = jwtTokenProvider.getUserIdFromToken(message.getToken());
             message.setRequesterId(userId);
@@ -102,14 +100,14 @@ public class OrderService {
         if(message.getAmount() <= 0) throw new SocketException("요청 수량이 올바르지 않습니다.");
         if(message.getPrice() <= 0) throw new SocketException("요청 가격이 올바르지 않습니다.");
     }
-    private void verifyUserCash(Long userCash, MessageDto message){
+    private void verifyUserCash(Long userCash, StockDto message){
         Integer totalPrice = message.getPrice() * message.getAmount();
         if(totalPrice > userCash){// error handling
             throw new SocketException("사용자 캐시가 부족합니다");
         }
     }
 
-    private void subtractUserCash(User user, MessageDto message){
+    private void subtractUserCash(User user, StockDto message){
         Long leftCash = user.getCash() - (message.getAmount() * message.getPrice());
         user.setCash(leftCash);
     }
@@ -133,11 +131,11 @@ public class OrderService {
         return transactionAmount;
     }
 
-    public BroadcastMessageDto sellMarket(MessageDto message){
-        return BroadcastMessageDto.builder().build();
+    public BroadcastStockDto sellMarket(StockDto message){
+        return BroadcastStockDto.builder().build();
     }
 
-    private void processLeftOrder(MessageDto message,User user, Integer sellingOrderAmount){
+    private void processLeftOrder(StockDto message, User user, Integer sellingOrderAmount){
         Order leftOrder = message.buildOrder(user, vacationRepository.getReferenceById(message.getMarketId()),message.getAmount() - sellingOrderAmount, OrderStatus.ONGOING);
         orderRepository.save(leftOrder);
     }
@@ -164,19 +162,19 @@ public class OrderService {
                 .price(saleOrder.getPrice())
                 .build();
 
-        Transaction savedTransaction = transactionRepository.save(transaction);
+        transactionRepository.save(transaction);
         PriceInfo priceInfo = priceInfoRepository.findByVacationOrderByCreatedAt(vacationId);
 
         if (priceInfo != null) {
-            Double price = (double) (saleOrder.getPrice() - priceInfo.getStandardPrice());
-            Double priceRate = price * 100 / (double) priceInfo.getStandardPrice();
+            Double price = (double) (priceInfo.getStandardPrice() - saleOrder.getPrice());
+            Double priceRate = price * 100 / (double) saleOrder.getPrice();
             redisZSet.add(PRICE.getKey(), vacationId.toString(), price);
             redisZSet.add(PRICE_RATE.getKey(), vacationId.toString(), priceRate);
         }
 
     }
 
-    private void incrementInterestMarketScore( MessageDto message){
+    private void incrementInterestMarketScore( StockDto message){
         String key = CountryKey(vacationRepository.findById(message.getMarketId()).get().getCountry());
         String value = message.getMarketId().toString();
         Integer score = message.getAmount() * orderScore;
