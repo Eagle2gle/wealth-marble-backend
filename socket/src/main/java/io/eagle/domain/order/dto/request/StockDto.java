@@ -10,7 +10,7 @@ import lombok.*;
 import javax.validation.constraints.NotNull;
 
 @Data
-public class MessageDto {
+public class StockDto {
 
     private Long marketId;
     private Integer price;
@@ -29,7 +29,6 @@ public class MessageDto {
                 .price(this.getPrice())
                 .user(user)
                 .vacation(vacation)
-//                .vacationId(this.getMarketId())
                 .build();
     }
 }
