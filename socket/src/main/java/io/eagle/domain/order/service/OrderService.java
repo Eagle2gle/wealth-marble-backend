@@ -52,73 +52,87 @@ public class OrderService {
     }
 
     @Transactional
-    public BroadcastStockDto purchaseMarket(StockDto message){
-        verifyMessage(message);
-        User user = userRepository.findById(message.getRequesterId()).orElseThrow(()-> new SocketException("존재하지 않는 사용자입니다."));
-        verifyUserCash(user.getCash(), message); // 사용자 잔여 캐쉬 확인 (사려는 가격보다 부족하면 에러)
-        subtractUserCash(user, message);
-        incrementInterestMarketScore(message);
+    public BroadcastStockDto purchaseMarket(StockDto stockDto) {
+        // 요청내역 검증
+        StockDto verifiedStock = verifyStock(stockDto, OrderType.BUY);
+        User user = verifyUser(
+                userRepository.findById(verifiedStock.getRequesterId()).orElseThrow(()-> new SocketException("존재하지 않는 사용자입니다.")),
+                verifiedStock
+        );
+        incrementInterestMarketScore(verifiedStock);
 
         //  order 확인해서 매도 수량 있는지 확인
-        message.setOrderType(OrderType.BUY);
         // TODO : 한번에 전체를 가져오지 않고 부분적으로 가져와 처리 후 모자라면 다시 그다음 리스트를 가져오도록 하기
-        List<Order> sellingOrders = orderRepository.findAllByVacation(message.getMarketId(), OrderType.SELL, message.getPrice());
+        List<Order> sellingOrders = orderRepository.findAllByVacation(verifiedStock.getMarketId(), OrderType.SELL, verifiedStock.getPrice());
         Integer sellingOrderAmount = sellingOrders.stream().mapToInt(Order::getAmount).sum();
-        log.debug("waiting order : {}ea",sellingOrderAmount);
-        Order doneOrder = message.buildOrder(user, vacationRepository.getReferenceById(message.getMarketId()),sellingOrderAmount, OrderStatus.DONE);
-        if(sellingOrderAmount > 0) { // 실 거래 가능
+        log.debug("waiting order : {}", sellingOrderAmount);
+
+        Order doneOrder = verifiedStock.buildOrder(user, vacationRepository.getReferenceById(verifiedStock.getMarketId()), sellingOrderAmount, OrderStatus.DONE);
+        if (sellingOrderAmount > 0) { // 실 거래 가능
             orderRepository.save(doneOrder);
             Integer requestAmount = doneOrder.getAmount();
-            for(Order sellingOrder: sellingOrders){ // 매도 별로 하나 씩 transaction 생성
+            for(Order sellingOrder: sellingOrders) { // 매도 별로 하나 씩 transaction 생성
                 if(requestAmount <= 0) break;
                 requestAmount -= processOrdering(OrderType.BUY, requestAmount, doneOrder, sellingOrder);
             }
         }
 
-        if( message.getAmount() > sellingOrderAmount ) { // 나와있는 매도 물량 부족해 일부 요청 수량은 ongoing으로
-            processLeftOrder(message, user, sellingOrderAmount);
+        if (verifiedStock.getAmount() > sellingOrderAmount) { // 나와있는 매도 물량 부족해 일부 요청 수량은 ongoing으로
+            processLeftOrder(verifiedStock, user, sellingOrderAmount);
         }
 
         //   해당 가격의 수량 확인해서 전달
-        TotalMountDto leftAmount = orderRepository.getCurrentOrderAmount(message.getMarketId(),message.getPrice(), message.getOrderType());
+        TotalMountDto leftAmount = orderRepository.getCurrentOrderAmount(verifiedStock.getMarketId(), verifiedStock.getPrice(), verifiedStock.getOrderType());
         log.debug(leftAmount.toString());
         return BroadcastStockDto.builder()
-                .marketId(message.getMarketId())
-                .price(message.getPrice())
+                .marketId(verifiedStock.getMarketId())
+                .price(verifiedStock.getPrice())
                 .amount(leftAmount.getAmount())
                 .orderType(leftAmount.getType())
                 .build();
     }
 
-    private void verifyMessage(StockDto message){
-        try{
-            Long userId = jwtTokenProvider.getUserIdFromToken(message.getToken());
-            message.setRequesterId(userId);
+    private StockDto verifyStock(StockDto stock, OrderType orderType){
+        if(stock.getAmount() <= 0) throw new SocketException("요청 수량이 올바르지 않습니다.");
+        if(stock.getPrice() <= 0) throw new SocketException("요청 가격이 올바르지 않습니다.");
+
+        try {
+            Long userId = jwtTokenProvider.getUserIdFromToken(stock.getToken());
+            stock.setRequesterId(userId);
+            stock.setOrderType(orderType);
+            return stock;
         } catch(Exception e){
             throw new SocketException("요청자가 올바르지 않습니다.");
         }
-        if(message.getAmount() <= 0) throw new SocketException("요청 수량이 올바르지 않습니다.");
-        if(message.getPrice() <= 0) throw new SocketException("요청 가격이 올바르지 않습니다.");
     }
-    private void verifyUserCash(Long userCash, StockDto message){
-        Integer totalPrice = message.getPrice() * message.getAmount();
-        if(totalPrice > userCash){// error handling
+
+    private User verifyUser(User user, StockDto stock) {
+        verifyUserCash(user.getCash(), stock);
+        return subtractUserCash(user, stock);
+    }
+
+    private void verifyUserCash(Long userCash, StockDto stock){
+        Integer totalPrice = stock.getPrice() * stock.getAmount();
+        if (totalPrice > userCash) { // error handling
             throw new SocketException("사용자 캐시가 부족합니다");
         }
     }
 
-    private void subtractUserCash(User user, StockDto message){
-        Long leftCash = user.getCash() - (message.getAmount() * message.getPrice());
+    private User subtractUserCash(User user, StockDto stock){
+        Long leftCash = user.getCash() - (stock.getAmount() * stock.getPrice());
         user.setCash(leftCash);
+        return userRepository.save(user);
     }
+
     private Integer processOrdering(OrderType type, Integer requestAmount, Order purchaseOrder, Order saleOrder){
         Integer transactionAmount = getMin(requestAmount, purchaseOrder.getAmount(), saleOrder.getAmount());
         Order waitingOrder = (type.equals(OrderType.BUY) ? saleOrder : purchaseOrder);
         Order doneOrder;
-        if(transactionAmount < waitingOrder.getAmount()){ // 대기 중인 매도가 요청 매수양 보다 많은 경우 쪼개기
+
+        if (transactionAmount < waitingOrder.getAmount()) { // 대기 중인 매도가 요청 매수양 보다 많은 경우 쪼개기
             doneOrder = splitDoneOrder(waitingOrder, transactionAmount);
             waitingOrder.setAmount(waitingOrder.getAmount() - transactionAmount);
-        } else{ // 기존 tuple을 그대로 완료 처리
+        } else { // 기존 tuple을 그대로 완료 처리
             waitingOrder.setStatus(OrderStatus.DONE);
             doneOrder = waitingOrder;
         }
@@ -147,8 +161,7 @@ public class OrderService {
         Order doneSaleOrder = order.deepCopy();
         doneSaleOrder.setAmount(amount);
         doneSaleOrder.setStatus(OrderStatus.DONE);
-        orderRepository.save(doneSaleOrder);
-        return doneSaleOrder;
+        return orderRepository.save(doneSaleOrder);
     }
 
     public Integer getMin(Integer a, Integer b, Integer c){
@@ -176,10 +189,10 @@ public class OrderService {
         }
     }
 
-    private void incrementInterestMarketScore( StockDto message){
-        String key = CountryKey(vacationRepository.findById(message.getMarketId()).get().getCountry());
-        String value = message.getMarketId().toString();
-        Integer score = message.getAmount() * orderScore;
+    private void incrementInterestMarketScore(StockDto stock){
+        String key = CountryKey(vacationRepository.findById(stock.getMarketId()).get().getCountry());
+        String value = stock.getMarketId().toString();
+        Integer score = stock.getAmount() * orderScore;
         redisZSet.incrementScore(key, value, (double) score);
     }
 }
