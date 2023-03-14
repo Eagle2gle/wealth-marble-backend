@@ -1,4 +1,4 @@
-package io.eagle.common;
+package io.eagle.aop;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.springframework.stereotype.Component;
