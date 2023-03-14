@@ -7,7 +7,7 @@ import org.springframework.expression.spel.support.StandardEvaluationContext;
 
 public class CustomSpringELParser {
 
-    public Object getDynamicValue(String[] parameterNames, Object[] args, String key) {
+    public static Object getDynamicValue(String[] parameterNames, Object[] args, String key) {
         ExpressionParser parser = new SpelExpressionParser();
         StandardEvaluationContext context = new StandardEvaluationContext();
 
