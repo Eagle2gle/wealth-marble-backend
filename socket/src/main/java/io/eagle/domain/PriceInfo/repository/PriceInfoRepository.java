@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 public interface PriceInfoRepository extends JpaRepository<PriceInfo, Long> {
 
     @Query(value = "SELECT * FROM price_info p WHERE p.vacation_id = :id ORDER BY p.created_at LIMIT 1", nativeQuery = true)
-    PriceInfo findByVacationOrderByCreatedAt(
+    PriceInfo findOneByVacationOrderByCreatedAt(
         @Param("id") Long id
     );
 
