@@ -7,7 +7,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class BroadcastMessageDto {
+public class BroadcastStockDto {
     private Long marketId;
     private Integer price;
     private Integer amount;

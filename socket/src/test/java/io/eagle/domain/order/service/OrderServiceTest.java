@@ -1,7 +1,7 @@
 package io.eagle.domain.order.service;
 
 import io.eagle.common.TestUtil;
-import io.eagle.domain.order.dto.request.MessageDto;
+import io.eagle.domain.order.dto.request.StockDto;
 import io.eagle.domain.order.repository.OrderRepository;
 import io.eagle.domain.transaction.repository.TransactionRepository;
 import io.eagle.domain.vacation.repository.VacationRepository;
@@ -68,8 +68,8 @@ public class OrderServiceTest {
 
     }
 
-    MessageDto createMessage(Long vacationId, Long requesterId, Integer price, Integer amount){
-        MessageDto message = new MessageDto();
+    StockDto createMessage(Long vacationId, Long requesterId, Integer price, Integer amount){
+        StockDto message = new StockDto();
         message.setPrice(price);
         message.setAmount(amount);
         message.setMarketId(vacationId);
@@ -90,7 +90,7 @@ public class OrderServiceTest {
         sellOrderList.add(orderRepository.save(testUtil.createOrder(owner, vacation, 1780, 3, OrderType.SELL)));
 
         // when
-        MessageDto message = createMessage(vacation.getId(), buyer.getId(), 1719, 6);
+        StockDto message = createMessage(vacation.getId(), buyer.getId(), 1719, 6);
         orderService.purchaseMarket(message);
 
         // then
@@ -149,7 +149,7 @@ public class OrderServiceTest {
         sellOrderList.add(orderRepository.save(testUtil.createOrder(owner, vacation, 1780, 3, OrderType.SELL)));
 
         // when
-        MessageDto message = createMessage(vacation.getId(), buyer.getId(), 1719, 15);
+        StockDto message = createMessage(vacation.getId(), buyer.getId(), 1719, 15);
         orderService.purchaseMarket(message);
 
         // then

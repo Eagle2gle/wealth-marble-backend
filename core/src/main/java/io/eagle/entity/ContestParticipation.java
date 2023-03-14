@@ -1,16 +1,14 @@
 package io.eagle.entity;
 
 import io.eagle.entity.type.ContestParticipationStatus;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.Positive;
 
 @Entity
-@Data
+@Getter
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ContestParticipation extends BaseEntity {
     @Id

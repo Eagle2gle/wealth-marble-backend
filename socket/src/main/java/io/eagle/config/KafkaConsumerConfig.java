@@ -2,7 +2,7 @@ package io.eagle.config;
 
 import com.google.common.collect.ImmutableMap;
 import io.eagle.common.KafkaConstants;
-import io.eagle.domain.order.dto.response.BroadcastMessageDto;
+import io.eagle.domain.order.dto.response.BroadcastStockDto;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
@@ -22,20 +22,20 @@ import java.util.Map;
 public class KafkaConsumerConfig {
 
     @Bean
-    ConcurrentKafkaListenerContainerFactory<String, BroadcastMessageDto> kafkaListenerContainerFactory() {
-        ConcurrentKafkaListenerContainerFactory<String, BroadcastMessageDto> factory = new ConcurrentKafkaListenerContainerFactory<>();
+    ConcurrentKafkaListenerContainerFactory<String, BroadcastStockDto> kafkaListenerContainerFactory() {
+        ConcurrentKafkaListenerContainerFactory<String, BroadcastStockDto> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory());
         return factory;
     }
 
     @Bean
-    public ConsumerFactory<String, BroadcastMessageDto> consumerFactory() {
-        return new DefaultKafkaConsumerFactory<>(consumerConfigurations(), new StringDeserializer(), new ErrorHandlingDeserializer(new JsonDeserializer<>(BroadcastMessageDto.class)));
+    public ConsumerFactory<String, BroadcastStockDto> consumerFactory() {
+        return new DefaultKafkaConsumerFactory<>(consumerConfigurations(), new StringDeserializer(), new ErrorHandlingDeserializer(new JsonDeserializer<>(BroadcastStockDto.class)));
     }
 
     @Bean
     public Map<String, Object> consumerConfigurations() {
-        JsonDeserializer<BroadcastMessageDto> deserializer = new JsonDeserializer<>(BroadcastMessageDto.class);
+        JsonDeserializer<BroadcastStockDto> deserializer = new JsonDeserializer<>(BroadcastStockDto.class);
         deserializer.setRemoveTypeHeaders(false);
         deserializer.addTrustedPackages("*");
         deserializer.setUseTypeMapperForKey(true);

@@ -11,7 +11,6 @@ import io.eagle.domain.transaction.dto.response.TransactionResponseDto;
 import io.eagle.domain.transaction.dto.response.UserTransactionInfoDto;
 import io.eagle.domain.transaction.repository.TransactionRepository;
 import io.eagle.domain.vacation.repository.VacationRepository;
-import io.eagle.entity.Picture;
 import io.eagle.entity.PriceInfo;
 import io.eagle.entity.User;
 import io.eagle.entity.Vacation;
@@ -57,7 +56,7 @@ public class TransactionService {
     }
 
     public SseEmitter subscribeRecentTransaction(String randomId) {
-        SseEmitter sseEmitter = new SseEmitter();
+        SseEmitter sseEmitter = new SseEmitter(60000L);
         CLIENTS.put(randomId, sseEmitter);
 
         try {

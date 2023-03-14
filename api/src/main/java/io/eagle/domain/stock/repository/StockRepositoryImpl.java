@@ -48,7 +48,7 @@ public class StockRepositoryImpl implements StockRepositoryCustom {
         JpaResultMapper jpaResultMapper = new JpaResultMapper();
         return jpaResultMapper.list(query, StockMineVO.class).stream().map(vo -> {
             Double pricePerStock = (vo.getTotalPrice() / (double) vo.getTotalAmount());
-            Double profitRate = Double.valueOf(String.format("%.2f", (pricePerStock * 100 / (double) vo.getCurrentPrice())));
+            Double profitRate = Double.valueOf(String.format("%.2f", (vo.getCurrentPrice() * 100 / pricePerStock) - 100));
             return StockMineDto
                 .builder()
                 .title(vo.getTitle())

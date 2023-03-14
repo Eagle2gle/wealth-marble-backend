@@ -7,7 +7,8 @@ import lombok.*;
 import javax.persistence.*;
 
 @Entity
-@Data
+@Getter
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Picture extends BaseEntity {
 
