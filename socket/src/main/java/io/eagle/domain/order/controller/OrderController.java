@@ -37,9 +37,9 @@ public class OrderController {
 
     @MessageExceptionHandler
     @SendToUser("/queue/errors") // '/user/queue/errors' 를 구독하고 있어야함
-    public ErrorDto handleException(SocketException exception) {
+    public ResponseDto handleException(SocketException exception) {
         log.warn(exception.getMessage());
-        ErrorDto errorMessage = ErrorDto.builder().status("fail").message(exception.getMessage()).build();
+        ResponseDto errorMessage = ResponseDto.builder().status("fail").message(exception.getMessage()).build();
         return errorMessage;
     }
 
