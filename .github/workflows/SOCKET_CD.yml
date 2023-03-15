@@ -69,16 +69,6 @@ jobs:
             docker run -d -p 7070:8080 --name wm-socket-server --add-host host.docker.internal:host-gateway ${{ secrets.DOCKERHUB_USERNAME }}/wm-socket-server:${GITHUB_SHA::7}
             docker image prune -af
 
-#      - name: Slack Deploy bot 실행
-#        uses: 8398a7/action-slack@v3
-#        with:
-#          status: ${{ job.status }}
-#          author_name: Backend Deploy Success
-#          fields: repo,commit,message,author
-#        env:
-#          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_DEPLOY_URL }}
-#        if: always()
-
       - name: Discord notification
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
