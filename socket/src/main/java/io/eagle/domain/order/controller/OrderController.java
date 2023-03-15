@@ -1,7 +1,7 @@
 package io.eagle.domain.order.controller;
 
 import io.eagle.common.KafkaConstants;
-import io.eagle.domain.order.dto.response.ErrorDto;
+import io.eagle.domain.order.dto.response.ResponseDto;
 import io.eagle.domain.order.dto.request.StockDto;
 import io.eagle.domain.order.dto.response.BroadcastStockDto;
 import io.eagle.domain.order.service.OrderService;
@@ -22,10 +22,13 @@ public class OrderController {
     private final OrderService orderService;
 
     @MessageMapping("/purchase") //   url : "order/purchase" 로 들어오는 정보 처리
-    public void purchase(StockDto stockDto){
+    @SendToUser("/queue/success")
+    public ResponseDto purchase(StockDto stockDto){
         BroadcastStockDto broadcastMessageDto = orderService.purchaseMarket(stockDto);
         log.info("[STOMP Producer] user purchase market {} price : {}, amount : {}, left : {}", stockDto.getMarketId(), stockDto.getPrice(), stockDto.getAmount(), broadcastMessageDto.getAmount());
         kafkaTemplate.send(KafkaConstants.KAFKA_TOPIC, broadcastMessageDto);
+        ResponseDto successDto = ResponseDto.builder().status("success").message("주문 성공").build();
+        return successDto;
     }
 
     @MessageMapping("/sale") //   url : "order/sale"
