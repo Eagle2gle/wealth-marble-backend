@@ -1,5 +1,6 @@
 package io.eagle.domain.order.service;
 
+import io.eagle.aop.DistributeLock;
 import io.eagle.domain.PriceInfo.repository.PriceInfoRepository;
 import io.eagle.domain.order.dto.request.StockDto;
 import io.eagle.domain.order.dto.response.BroadcastStockDto;
@@ -92,6 +93,24 @@ public class OrderService {
                 .build();
     }
 
+    @DistributeLock(key = "ORDER_KEY")
+    public BroadcastStockDto sellMarket(StockDto stockDto) {
+        StockDto verifiedStock = verifyStock(stockDto, OrderType.SELL);
+        User user = verifyUser(
+                userRepository.findById(verifiedStock.getRequesterId()).orElseThrow(() -> new SocketException("존재하지 않는 사용자입니다.")),
+                verifiedStock
+        );
+        List<Order> buyingOrders = orderRepository.findAllByVacation(verifiedStock.getMarketId(), OrderType.BUY, verifiedStock.getPrice());
+        Integer buyingOrderAmount = buyingOrders.stream().mapToInt(Order::getAmount).sum();
+
+
+        if (buyingOrderAmount > 0) {
+
+        }
+
+        return BroadcastStockDto.builder().build();
+    }
+
     private StockDto verifyStock(StockDto stock, OrderType orderType){
         if(stock.getAmount() <= 0) throw new SocketException("요청 수량이 올바르지 않습니다.");
         if(stock.getPrice() <= 0) throw new SocketException("요청 가격이 올바르지 않습니다.");
@@ -146,10 +165,6 @@ public class OrderService {
         // 최근 거래 휴양지 데이터 업데이트
         updateRecentTransactionDataInRedis(transaction);
         return transactionAmount;
-    }
-
-    public BroadcastStockDto sellMarket(StockDto message){
-        return BroadcastStockDto.builder().build();
     }
 
     private void processLeftOrder(StockDto message, User user, Integer sellingOrderAmount){
