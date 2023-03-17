@@ -5,6 +5,7 @@ import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.JPQLQueryFactory;
 import io.eagle.domain.vacation.dto.*;
 import io.eagle.domain.vacation.dto.response.*;
@@ -189,7 +190,7 @@ public class VacationCustomImpl implements VacationCustom {
     }
 
     public RecommendMarketDto getRecommendMarket(Long vacationId, Long userId){
-        List<RecommendMarketDto> result = queryFactory
+        JPQLQuery<RecommendMarketDto> tempQuery = queryFactory
                 .select(Projections.fields(RecommendMarketDto.class,
                         vacation.id,
                         vacation.title,
@@ -198,7 +199,17 @@ public class VacationCustomImpl implements VacationCustom {
                         interest.isNotNull().as("isInterest")
                 ))
                 .from(vacation)
-                .leftJoin(picture).on(picture.vacation.id.eq(vacationId))
+                .leftJoin(picture).on(picture.vacation.id.eq(vacationId));
+
+        if(userId == null){
+            List<RecommendMarketDto> result = tempQuery
+                    .leftJoin(interest).on(interest.vacation.id.eq(vacationId))
+                    .where(vacation.id.eq(vacationId))
+                    .fetch();
+            result.get(0).setIsInterest(false);
+            return result.get(0);
+        }
+        List<RecommendMarketDto> result = tempQuery
                 .leftJoin(interest).on(interest.vacation.id.eq(vacationId), isInterest(userId))
                 .where(vacation.id.eq(vacationId))
                 .fetch();
