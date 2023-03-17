@@ -1,9 +1,7 @@
 package io.eagle.domain.vacation.controller;
 
 import io.eagle.common.ApiResponse;
-import io.eagle.domain.vacation.common.Utils;
 import io.eagle.domain.vacation.dto.MarketInfoConditionDto;
-import io.eagle.domain.vacation.dto.request.OptionalUserIdDto;
 import io.eagle.domain.vacation.service.MarketService;
 import io.eagle.entity.type.MarketRankingType;
 import lombok.RequiredArgsConstructor;
@@ -52,7 +50,6 @@ public class MarketController {
 
     @GetMapping("/markets/recommend")
     public ApiResponse getRankingPrice(String country, Long userId) {
-        System.out.println(userId);
         return ApiResponse.createSuccess(marketService.getRecommendMarketByCountry(country, userId));
     }
 }
