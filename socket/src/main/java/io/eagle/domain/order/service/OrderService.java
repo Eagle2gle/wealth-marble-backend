@@ -81,12 +81,12 @@ public class OrderService {
 
         //   해당 가격의 수량 확인해서 전달
         TotalMountDto leftAmount = orderRepository.getCurrentOrderAmount(message.getMarketId(),message.getPrice(), message.getOrderType());
-        log.debug(leftAmount.toString());
+        log.debug(leftAmount != null ? leftAmount.toString(): "No left any more sell done!");
         return BroadcastStockDto.builder()
                 .marketId(message.getMarketId())
                 .price(message.getPrice())
-                .amount(leftAmount.getAmount())
-                .orderType(leftAmount.getType())
+                .amount(leftAmount != null ? leftAmount.getAmount() : 0)
+                .orderType(leftAmount != null ? leftAmount.getType() : message.getOrderType())
                 .build();
     }
 
