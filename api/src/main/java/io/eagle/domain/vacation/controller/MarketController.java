@@ -51,7 +51,8 @@ public class MarketController {
     }
 
     @GetMapping("/markets/recommend")
-    public ApiResponse getRankingPrice(String country, @RequestBody(required = false) OptionalUserIdDto user) {
-        return ApiResponse.createSuccess(marketService.getRecommendMarketByCountry(country, Utils.getUserId(user)));
+    public ApiResponse getRankingPrice(String country, Long userId) {
+        System.out.println(userId);
+        return ApiResponse.createSuccess(marketService.getRecommendMarketByCountry(country, userId));
     }
 }
