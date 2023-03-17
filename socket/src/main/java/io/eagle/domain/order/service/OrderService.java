@@ -94,19 +94,14 @@ public class OrderService {
     }
 
     @DistributeLock(key = "ORDER_KEY")
-    public BroadcastStockDto sellMarket(StockDto stockDto) {
+    public BroadcastStockDto sellMarket(Long marketId, StockDto stockDto) {
         StockDto verifiedStock = verifyStock(stockDto, OrderType.SELL);
         User user = verifyUser(
                 userRepository.findById(verifiedStock.getRequesterId()).orElseThrow(() -> new SocketException("존재하지 않는 사용자입니다.")),
                 verifiedStock
         );
-        List<Order> buyingOrders = orderRepository.findAllByVacation(verifiedStock.getMarketId(), OrderType.BUY, verifiedStock.getPrice());
+        List<Order> buyingOrders = orderRepository.findAllByVacation(marketId, OrderType.BUY, verifiedStock.getPrice());
         Integer buyingOrderAmount = buyingOrders.stream().mapToInt(Order::getAmount).sum();
-
-
-        if (buyingOrderAmount > 0) {
-
-        }
 
         return BroadcastStockDto.builder().build();
     }

@@ -27,7 +27,7 @@ public class DistributeLockAop {
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
         Method method = signature.getMethod();
         DistributeLock distributeLock = method.getAnnotation(DistributeLock.class);
-        String key = REDISSON_KEY_PREFIX + CustomSpringELParser.getDynamicValue(signature.getParameterNames(), joinPoint.getArgs(), distributeLock.key());
+        String key = REDISSON_KEY_PREFIX + CustomSpringELParser.getMarketValue(signature.getParameterNames(), joinPoint.getArgs(), distributeLock.key());
         RLock rLock = redissonClient.getLock(key);
 
         try {

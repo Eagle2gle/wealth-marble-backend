@@ -30,7 +30,7 @@ public class OrderController {
 
     @MessageMapping("/sale") //   url : "order/sale" 로 들어오는 정보 처리
     public void sale(StockDto stock){
-        BroadcastStockDto broadcastStockDto = orderService.sellMarket(stock);
+        BroadcastStockDto broadcastStockDto = orderService.sellMarket(stock.getMarketId(), stock);
         log.info("[STOMP Producer] user sell market {} price : {}, amount : {}, left : {}", stock.getMarketId(), stock.getPrice(), stock.getAmount());
         kafkaTemplate.send(KafkaConstants.KAFKA_TOPIC, broadcastStockDto);
     }
