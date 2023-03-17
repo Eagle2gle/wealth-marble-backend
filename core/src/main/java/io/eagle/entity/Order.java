@@ -44,6 +44,9 @@ public class Order extends BaseEntity {
     @Column(nullable = false)
     private OrderStatus status;
 
+    @Version
+    private Integer version;
+
     public Order deepCopy(){
         return Order.builder()
                 .status(getStatus())
