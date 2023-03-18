@@ -2,7 +2,7 @@ package io.eagle.config;
 
 import com.google.common.collect.ImmutableMap;
 import io.eagle.common.KafkaConstants;
-import io.eagle.domain.order.dto.response.BroadcastStockDto;
+import io.eagle.domain.order.dto.StockVO;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.context.annotation.Bean;
@@ -20,7 +20,7 @@ import java.util.Map;
 public class KafkaProducerConfig {
 
     @Bean
-    public ProducerFactory<String, BroadcastStockDto> producerFactory() {
+    public ProducerFactory<String, StockVO> producerFactory() {
         return new DefaultKafkaProducerFactory<>(kafkaProducerConfiguration());
     }
 
@@ -30,12 +30,11 @@ public class KafkaProducerConfig {
                 .put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, KafkaConstants.BROKER)
                 .put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class)
                 .put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class)
-//                .put("group.id", KafkaConstants.GROUP_ID)
                 .build();
     }
 
     @Bean
-    public KafkaTemplate<String, BroadcastStockDto> kafkaTemplate() {
+    public KafkaTemplate<String, StockVO> kafkaTemplate() {
         return new KafkaTemplate<>(producerFactory());
     }
 }
