@@ -57,4 +57,18 @@ public class Order extends BaseEntity {
                 .amount(getAmount())
                 .build();
     }
+
+    @Override
+    public String toString() {
+        return "Order{" +
+            "id=" + id +
+            ", user=" + user +
+            ", vacation=" + vacation +
+            ", orderType=" + orderType +
+            ", price=" + price +
+            ", amount=" + amount +
+            ", status=" + status +
+            ", version=" + version +
+            '}';
+    }
 }
