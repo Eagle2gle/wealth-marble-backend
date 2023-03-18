@@ -33,7 +33,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class OrderServiceTest {
 
     @Autowired
-    private OrderService orderService;
+    private OrderProduceService orderProduceService;
+
+    @Autowired
+    private OrderConsumeService orderConsumeService;
+
     @Autowired
     private TransactionRepository transactionRepository;
 

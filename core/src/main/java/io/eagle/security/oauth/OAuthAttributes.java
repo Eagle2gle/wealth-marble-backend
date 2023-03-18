@@ -51,6 +51,7 @@ public class OAuthAttributes {
             .providerType(ProviderType.GOOGLE)
             .role(Role.USER)
             .ranks(Ranks.NAMJAK)
+            .cash(1000000L)
             .build();
     }
 }

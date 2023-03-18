@@ -12,8 +12,7 @@ import java.util.Optional;
 public interface OrderRepositoryCustom {
 
     List<Order> findAllByUser(User user);
-
     List<Order> findAllByVacation(Long vacationId, OrderType type, Integer price);
-
     TotalMountDto getCurrentOrderAmount(Long vacationId, Integer price, OrderType type);
+
 }

@@ -44,6 +44,9 @@ public class Order extends BaseEntity {
     @Column(nullable = false)
     private OrderStatus status;
 
+    @Version
+    private Integer version;
+
     public Order deepCopy(){
         return Order.builder()
                 .status(getStatus())
@@ -53,5 +56,19 @@ public class Order extends BaseEntity {
                 .orderType(getOrderType())
                 .amount(getAmount())
                 .build();
+    }
+
+    @Override
+    public String toString() {
+        return "Order{" +
+            "id=" + id +
+            ", user=" + user +
+            ", vacation=" + vacation +
+            ", orderType=" + orderType +
+            ", price=" + price +
+            ", amount=" + amount +
+            ", status=" + status +
+            ", version=" + version +
+            '}';
     }
 }
