@@ -11,13 +11,11 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/ws-market")
                 .setAllowedOriginPatterns("*");
-//                .withSockJS();
     } // handshake endpoint
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
         config.setApplicationDestinationPrefixes("/order"); // client -> server
-        config.enableSimpleBroker("/topic", "/queue"); // broker로 가세요.. 구독 요청
+        config.enableSimpleBroker("/topic", "/queue"); // broker 로 가세요.. 구독 요청
     }
-
 }
