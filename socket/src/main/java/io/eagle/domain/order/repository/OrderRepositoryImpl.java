@@ -46,12 +46,10 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom {
         return jpqlQueryFactory
                 .select(Projections.fields(TotalMountDto.class,order.orderType.as("type"), order.amount.sum().as("amount")))
                 .from(order)
-                .where(order.vacation.id.eq(vacationId),
-                        isEqualPrice(price),
-                        isOngoing())
-                .groupBy(order.orderType)
+                .where(order.status.eq(OrderStatus.ONGOING))
+                .groupBy(order.orderType, order.vacation.id, order.price)
+                .having(order.vacation.id.eq(vacationId), isEqualPrice(price))
                 .fetchOne();
-
     }
 
     private BooleanExpression isEqualType(OrderType type){
