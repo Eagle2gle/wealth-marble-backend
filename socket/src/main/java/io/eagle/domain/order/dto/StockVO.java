@@ -1,4 +1,4 @@
-package io.eagle.domain.order.dto.response;
+package io.eagle.domain.order.dto;
 
 import io.eagle.entity.type.OrderType;
 import lombok.*;
@@ -7,10 +7,11 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class BroadcastStockDto {
+public class StockVO {
+    private Long orderId;
+    private Long userId;
     private Long marketId;
     private Integer price;
     private Integer amount;
-
     private OrderType orderType;
 }
