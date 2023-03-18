@@ -3,8 +3,9 @@ package io.eagle.domain.order.controller;
 import io.eagle.common.KafkaConstants;
 import io.eagle.domain.order.dto.response.ErrorDto;
 import io.eagle.domain.order.dto.request.StockDto;
-import io.eagle.domain.order.dto.response.BroadcastStockDto;
-import io.eagle.domain.order.service.OrderService;
+import io.eagle.domain.order.dto.StockVO;
+import io.eagle.domain.order.service.OrderProduceService;
+import io.eagle.entity.type.OrderType;
 import io.eagle.exception.SocketException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,21 +19,22 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @Slf4j
 public class OrderController {
-    private final KafkaTemplate<String, BroadcastStockDto> kafkaTemplate;
-    private final OrderService orderService;
+
+    private final KafkaTemplate<String, StockVO> kafkaTemplate;
+    private final OrderProduceService orderProduceService;
 
     @MessageMapping("/purchase") //   url : "order/purchase" 로 들어오는 정보 처리
     public void purchase(StockDto stockDto){
-        BroadcastStockDto broadcastMessageDto = orderService.purchaseMarket(stockDto);
-        log.info("[STOMP Producer] user purchase market {} price : {}, amount : {}, left : {}", stockDto.getMarketId(), stockDto.getPrice(), stockDto.getAmount(), broadcastMessageDto.getAmount());
-        kafkaTemplate.send(KafkaConstants.KAFKA_TOPIC, broadcastMessageDto);
+        StockVO stockVO = orderProduceService.saveMarketOrder(stockDto, OrderType.BUY);
+        log.info("[STOMP Producer] user purchase market {} price : {}, amount : {}", stockDto.getMarketId(), stockDto.getPrice(), stockDto.getAmount());
+        kafkaTemplate.send(KafkaConstants.KAFKA_TOPIC, stockVO);
     }
 
     @MessageMapping("/sale") //   url : "order/sale" 로 들어오는 정보 처리
     public void sale(StockDto stock){
-        BroadcastStockDto broadcastStockDto = orderService.sellMarket(stock.getMarketId(), stock);
+        StockVO stockVO = orderProduceService.saveMarketOrder(stock, OrderType.SELL);
         log.info("[STOMP Producer] user sell market {} price : {}, amount : {}, left : {}", stock.getMarketId(), stock.getPrice(), stock.getAmount());
-        kafkaTemplate.send(KafkaConstants.KAFKA_TOPIC, broadcastStockDto);
+        kafkaTemplate.send(KafkaConstants.KAFKA_TOPIC, stockVO);
     }
 
     @MessageExceptionHandler
