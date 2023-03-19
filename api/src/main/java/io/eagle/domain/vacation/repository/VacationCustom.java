@@ -19,6 +19,7 @@ public interface VacationCustom {
     List<ImminentInfoDto> findByImminentEndVacation();
     List<String> getCountries(VacationStatusType type);
     MarketRankDto findMarketRankInfoById(Long id);
-
     RecommendMarketDto getRecommendMarket(Long vacationId, Long userId);
+    List<MarketRankDto> findTop5VacationByReward();
+
 }
