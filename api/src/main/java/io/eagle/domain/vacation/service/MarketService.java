@@ -141,6 +141,15 @@ public class MarketService {
                 .collect(Collectors.toList());
     }
 
+    public List<MarketRankDto> findMainTop5MarketRankByRewardAndTransaction(String property) {
+        if (property.equals("REWARD")) {
+            return vacationRepository.findTop5VacationByReward();
+        } else if (property.equals("TRANSACTION")) {
+            return vacationRepository.findTop5VacationByTransaction();
+        }
+        return null;
+    }
+
     private Set<String> findMarketRankInRedis(String key, Boolean upOrDown) {
         if (upOrDown) {
             return redisZSet.reverseRange(key, 0, 5);
