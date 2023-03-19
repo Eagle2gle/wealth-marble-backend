@@ -52,4 +52,13 @@ public class MarketController {
     public ApiResponse getRankingPrice(String country, Long userId) {
         return ApiResponse.createSuccess(marketService.getRecommendMarketByCountry(country, userId));
     }
+
+    @GetMapping("/markets/top")
+    public ApiResponse getTop5Ranking(
+        @RequestParam(value = "property", defaultValue = "REWARD") String property
+    ) {
+        return ApiResponse.createSuccess(
+            marketService.findMainTop5MarketRankByRewardAndTransaction(property)
+        );
+    }
 }
