@@ -218,24 +218,37 @@ public class VacationCustomImpl implements VacationCustom {
 
     @Override
     public List<MarketRankDto> findTop5VacationByReward() {
-        String sql = "" +
+        String sql = findTop5VacationSQL("t.price");
+        JpaResultMapper jpaResultMapper = new JpaResultMapper();
+        Query query = entityManager.createNativeQuery(sql);
+        return jpaResultMapper.list(query, MarketQueryVO.class)
+            .stream().map(MarketRankDto::new)
+            .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<MarketRankDto> findTop5VacationByTransaction() {
+        String sql = findTop5VacationSQL("price.transaction_amount");
+        JpaResultMapper jpaResultMapper = new JpaResultMapper();
+        Query query = entityManager.createNativeQuery(sql);
+        return jpaResultMapper.list(query, MarketQueryVO.class)
+            .stream().map(MarketRankDto::new)
+            .collect(Collectors.toList());
+    }
+
+    private String findTop5VacationSQL(String property) {
+        return "" +
             "SELECT " +
             "pic.url as pictureUrl," +
             "v.title as title, " +
             "t.price as currentPrice, " +
             "price.standard_price as startPrice " +
             "FROM vacation AS v " +
-            "LEFT JOIN price_info AS price ON price.id = v.id " +
-            "LEFT JOIN picture AS pic ON pic.id = v.id " +
-            "LEFT JOIN transaction AS t ON t.id = v.id " +
-            "ORDER BY t.price " +
+            "LEFT JOIN price_info AS price ON price.id = (SELECT MAX(p2.id) FROM price_info AS p2 WHERE p2.vacation_id = v.id) " +
+            "LEFT JOIN picture AS pic ON pic.id = (SELECT MAX(pic2.id) FROM picture AS pic2 WHERE pic2.cahoots_id = v.id) " +
+            "LEFT JOIN transaction AS t ON t.id = (SELECT MAX(t2.id) FROM transaction AS t2 WHERE t2.vacation_id = v.id) " +
+            "ORDER BY " + property + " " +
             "LIMIT 5";
-
-        JpaResultMapper jpaResultMapper = new JpaResultMapper();
-        Query query = entityManager.createNativeQuery(sql);
-        return jpaResultMapper.list(query, MarketQueryVO.class)
-            .stream().map(MarketRankDto::new)
-            .collect(Collectors.toList());
     }
 
     private BooleanExpression isInStatus(VacationStatusType[] statusTypes){
