@@ -7,6 +7,7 @@ import org.springframework.data.redis.core.RedisHash;
 @Getter
 public class MarketRankDto {
 
+    private Long vacationId = 0L;
     private String pictureUrl = "";
     private String title = "";
     private Integer currentPrice = 0;
@@ -16,6 +17,7 @@ public class MarketRankDto {
     private Double dividendRate = 0.0;
 
     public MarketRankDto(MarketQueryVO vo) {
+        this.vacationId = vo.getVacationId().longValue();
         this.pictureUrl = vo.getPictureUrl();
         this.title = vo.getTitle();
         if (vo.getCurrentPrice() != null && vo.getStartPrice() != null) {
