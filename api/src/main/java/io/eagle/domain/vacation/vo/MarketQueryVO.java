@@ -8,12 +8,14 @@ import java.math.BigInteger;
 @Getter
 public class MarketQueryVO {
 
+    private BigInteger vacationId;
     private String pictureUrl;
     private String title;
     private Integer currentPrice;
     private Integer startPrice;
 
-    public MarketQueryVO(String pictureUrl, String title, Integer currentPrice,  Integer startPrice) {
+    public MarketQueryVO(BigInteger vacationId, String pictureUrl, String title, Integer currentPrice,  Integer startPrice) {
+        this.vacationId = vacationId;
         this.pictureUrl = pictureUrl;
         this.title = title;
         this.currentPrice = currentPrice;
@@ -22,7 +24,7 @@ public class MarketQueryVO {
 
     @Override
     public String toString() {
-        return this.pictureUrl + " " + this.title + " " + this.currentPrice + " " + this.startPrice;
+        return this.vacationId + " " + this.pictureUrl + " " + this.title + " " + this.currentPrice + " " + this.startPrice;
     }
 
 }
