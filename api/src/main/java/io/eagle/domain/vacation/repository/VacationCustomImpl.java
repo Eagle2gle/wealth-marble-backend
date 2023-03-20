@@ -167,8 +167,8 @@ public class VacationCustomImpl implements VacationCustom {
     @Override
     public MarketRankDto findMarketRankInfoById(Long id) {
         String sql = "" +
-            "SELECT " +
-            "pic.url as pictureUrl," +
+            "SELECT v.id as vacationId, " +
+            "pic.url as pictureUrl, " +
             "v.title as title, " +
             "t.price as currentPrice, " +
             "price.standard_price as startPrice " +
@@ -238,8 +238,8 @@ public class VacationCustomImpl implements VacationCustom {
 
     private String findTop5VacationSQL(String property) {
         return "" +
-            "SELECT " +
-            "pic.url as pictureUrl," +
+            "SELECT v.id as vacationId, " +
+            "pic.url as pictureUrl, " +
             "v.title as title, " +
             "t.price as currentPrice, " +
             "price.standard_price as startPrice " +
