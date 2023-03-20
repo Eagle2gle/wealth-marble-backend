@@ -111,7 +111,9 @@ public class MarketService {
         Integer startPrice = priceInfo.getStartPrice();
         Integer standardPrice = priceInfo.getStandardPrice();
 
-        if (startPrice > standardPrice) {
+        if (startPrice == null || standardPrice == null) {
+            return PriceStatus.SAME;
+        } else if (startPrice > standardPrice) {
             return PriceStatus.DOWN;
         } else if (startPrice.equals(standardPrice)) {
             return PriceStatus.SAME;
