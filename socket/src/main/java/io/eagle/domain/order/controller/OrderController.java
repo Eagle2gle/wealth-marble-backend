@@ -35,10 +35,15 @@ public class OrderController {
 
     @MessageMapping("/sale") //   url : "order/sale" 로 들어오는 정보 처리
     @SendToUser("/queue/success")
-    public void sale(StockDto stock){
+    public ResponseDto sale(StockDto stock){
         StockVO stockVO = orderProduceService.saveMarketOrder(stock, OrderType.SELL);
         log.info("[STOMP Producer] user sell market {} price : {}, amount : {}, left : {}", stock.getMarketId(), stock.getPrice(), stock.getAmount());
         kafkaTemplate.send(KafkaConstants.KAFKA_TOPIC, stockVO);
+        return ResponseDto
+            .builder()
+            .status("success")
+            .message("주문 성공")
+            .build();
     }
 
     @MessageExceptionHandler
