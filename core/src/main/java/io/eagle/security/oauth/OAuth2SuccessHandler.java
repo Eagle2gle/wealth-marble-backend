@@ -46,7 +46,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
             response.setContentType("application/json");
             response.setCharacterEncoding("utf-8");
-            response.sendRedirect("http://localhost:3000/oauth2/redirect?token=" + accessToken);
+            response.sendRedirect("http://wealth-marble.kro.kr/oauth2/redirect?token=" + accessToken);
         }
     }
 }
