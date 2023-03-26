@@ -1,6 +1,8 @@
 name: Server API CD
 
 on:
+  push:
+    branches: ["deploy"]
   pull_request:
     branches: [ "main", "dev", "deploy-test"]
     paths:
@@ -11,7 +13,7 @@ on:
 
 jobs:
   build:
-    if: ${{ github.event.pull_request.merged == true }}
+#    if: ${{ github.event.pull_request.merged == true }}
     runs-on: ubuntu-latest
     steps:
       - name: 체크아웃
