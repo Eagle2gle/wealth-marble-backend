@@ -58,7 +58,7 @@ public class PriceInfoJobConfig {
         return stepBuilderFactory.get(TRANSACTIONS_SUMMARY_STEP)
                 .<PriceInfoVO, PriceInfo>chunk(CHUNK_SIZE)
                 .reader(transactionsSummaryItemReader())
-                .processor(transactionsSummaryItemProcessor())
+                .processor(new PriceInfoProcessor())
                 .writer(transactionsSummaryItemWriter())
                 .listener(new CustomStepExecutionListener())
                 .build();
@@ -81,11 +81,6 @@ public class PriceInfoJobConfig {
                 .beanRowMapper(PriceInfoVO.class)
                 .build();
     }
-    @Bean(TRANSACTIONS_SUMMARY_STEP + "_processor")
-    @StepScope
-    public ItemProcessor<PriceInfoVO, PriceInfo> transactionsSummaryItemProcessor() {
-        return new PriceInfoProcessor();
-    }
 
     @Bean(TRANSACTIONS_SUMMARY_STEP + "_writer")
     @StepScope
@@ -101,7 +96,7 @@ public class PriceInfoJobConfig {
         return stepBuilderFactory.get(TRANSFER_LASTDAY_PRICEINFO_STEP)
                 .<PriceInfoVO, PriceInfo>chunk(CHUNK_SIZE)
                 .reader(transferLastdayPriceInfoItemReader())
-                .processor(transferLastdayPriceInfoItemProcessor())
+                .processor(new CopyPriceInfoProcessor())
                 .writer(transferLastdayPriceInfoItemWriter())
                 .listener(new CustomStepExecutionListener())
                 .build();
@@ -125,11 +120,6 @@ public class PriceInfoJobConfig {
                 .build();
     }
 
-    @Bean(TRANSFER_LASTDAY_PRICEINFO_STEP + "_processor")
-    @StepScope
-    public ItemProcessor<PriceInfoVO, PriceInfo> transferLastdayPriceInfoItemProcessor() {
-        return new CopyPriceInfoProcessor();
-    }
 
     @Bean(TRANSFER_LASTDAY_PRICEINFO_STEP + "_writer")
     @StepScope
