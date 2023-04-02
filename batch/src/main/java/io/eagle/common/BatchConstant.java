@@ -18,4 +18,8 @@ public final class BatchConstant {
 
     public static final String RECENT_TRANSACTION_JOB = "recentTransactionJob";
     public static final String RECENT_TRANSACTION_STEP = "recentTransactionStep";
+
+    public static final String INIT_PRICE_INFO_JOB = "initiatePriceInfoJob";
+    public static final String INIT_PRICE_INFO_STEP = "initiatePriceInfoStep";
+    public static final String INIT_PRICE_INFO_READER = "initiatePriceInfoItemReader";
 }
