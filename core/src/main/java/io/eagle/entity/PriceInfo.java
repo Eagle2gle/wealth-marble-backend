@@ -3,6 +3,7 @@ package io.eagle.entity;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -19,6 +20,9 @@ public class PriceInfo extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "vacation_id")
     private Vacation vacation;
+
+    @Column
+    private LocalDateTime createdAt;
 
     @Column
     private Integer startPrice;

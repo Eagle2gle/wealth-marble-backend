@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 
 @Data
 @Builder
@@ -13,6 +15,7 @@ import lombok.NoArgsConstructor;
 public class PriceInfoVO {
 
     private Long vacationId;
+    private LocalDateTime createdAt;
     private Integer startPrice;
     private Integer highPrice;
     private Integer lowPrice;
