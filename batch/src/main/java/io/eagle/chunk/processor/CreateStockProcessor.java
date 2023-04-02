@@ -62,7 +62,7 @@ public class CreateStockProcessor implements ItemProcessor<Vacation, List<Stock>
 
     private List<ContestParticipation> findAllContestParticipationByVacation(Long vacationId) {
         return jdbcTemplate.query(
-            "select * from contest_participation where vacation_id = ?",
+            "select * from contest_participation as c where c.cahoots_id = ?",
             new BeanPropertyRowMapper<>(ContestParticipation.class),
             vacationId
         );
