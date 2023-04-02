@@ -1,12 +1,14 @@
 package io.eagle.job;
 
 import io.eagle.chunk.processor.CreateStockProcessor;
+import io.eagle.chunk.processor.InitPriceInfoProcessor;
 import io.eagle.chunk.processor.RetrieveMoneyProcessor;
 import io.eagle.chunk.processor.VacationTransitionProcessor;
 import io.eagle.chunk.writer.CreateStockItemWriter;
 import io.eagle.chunk.writer.DeleteContestParticipationItemWriter;
 import io.eagle.chunk.writer.RetrieveMoneyWriter;
 import io.eagle.domain.RetrieveMoneyVO;
+import io.eagle.entity.PriceInfo;
 import io.eagle.entity.Stock;
 import io.eagle.entity.Vacation;
 import io.eagle.entity.type.VacationStatusType;
@@ -57,6 +59,7 @@ public class VacationJobConfiguration {
             .start(vacationTransitionStep())
             .next(createStockStep())
             .next(retrieveMoneyStep())
+            .next(createFirstPriceInfoStep())
             .build();
     }
 
@@ -198,4 +201,37 @@ public class VacationJobConfiguration {
         return new DeleteContestParticipationItemWriter(jdbcBatchItemWriter);
     }
 
+    @Bean
+    @JobScope
+    public Step createFirstPriceInfoStep() {
+        return stepBuilderFactory.get(INIT_PRICE_INFO_JOB)
+                .<Vacation, PriceInfo>chunk(CHUNK_SIZE)
+                .reader(initPriceInfoItemReader())
+                .processor(new InitPriceInfoProcessor())
+                .writer(initPriceInfoItemWriter())
+                .listener(new CustomStepExecutionListener())
+                .build();
+    }
+
+    @Bean(INIT_PRICE_INFO_STEP + "_reader")
+    @StepScope
+    public JpaCursorItemReader<Vacation> initPriceInfoItemReader() {
+        HashMap<String, Object> parameters = new HashMap<>();
+        parameters.put("end", LocalDate.now().minusDays(1L));
+        parameters.put("status", MARKET_ONGOING);
+        return new JpaCursorItemReaderBuilder<Vacation>()
+                .queryString("SELECT v FROM Vacation v WHERE stockPeriod.end = :end and status = :status")
+                .entityManagerFactory(entityManagerFactory)
+                .parameterValues(parameters)
+                .name(INIT_PRICE_INFO_READER)
+                .build();
+    }
+
+    @Bean(INIT_PRICE_INFO_STEP + "_writer")
+    @StepScope
+    public JpaItemWriter<PriceInfo> initPriceInfoItemWriter() {
+        return new JpaItemWriterBuilder<PriceInfo>()
+                .entityManagerFactory(entityManagerFactory)
+                .build();
+    }
 }
