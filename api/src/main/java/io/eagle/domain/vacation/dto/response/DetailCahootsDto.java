@@ -1,5 +1,6 @@
 package io.eagle.domain.vacation.dto.response;
 
+import io.eagle.domain.vacation.vo.DetailCahootsVO;
 import io.eagle.entity.type.ThemeBuildingType;
 import io.eagle.entity.type.ThemeLocationType;
 import io.eagle.entity.type.VacationStatusType;
@@ -9,10 +10,14 @@ import lombok.*;
 
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Data
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
 public class DetailCahootsDto {
 
     private Long id;
@@ -49,33 +54,42 @@ public class DetailCahootsDto {
 
     private Integer expectedRateOfReturn;
 
-    // TODO : hashtag
-
     private List<String> images;
 
     private Integer interestCount;
 
     private Boolean isInterest;
 
-//    public static DetailCahootsDto toDto(Vacation vacation, Integer competitionRate) {
-//        return DetailCahootsDto.builder()
-//                .id(vacation.getId())
-//                .title(vacation.getTitle())
-//                .descritption(vacation.getDescritption())
-//                .location(vacation.getLocation())
-//                .expectedMonth(vacation.getPlan().getExpectedMonth())
-//                .expectedTotalCost(vacation.getPlan().getExpectedTotalCost())
-//                .shortDescription(vacation.getShortDescription())
-//                .stockStart(vacation.getStockPeriod().getStart())
-//                .stockEnd(vacation.getStockPeriod().getEnd())
-//                .stockPrice(vacation.getStock().getPrice())
-//                .competitionRate(competitionRate)
-//                .themeLocation(vacation.getTheme().getThemeLocation())
-//                .themeBuilding(vacation.getTheme().getThemeBuilding())
-//                .status(vacation.getStatus())
-//                .build();
-//
-//    }
+    public static DetailCahootsDto toDto(List<DetailCahootsVO> vacationDetailList) {
+        if(vacationDetailList.size() == 0){
+            throw new ApiException(ErrorCode.VACATION_NOT_FOUND);
+        }
+        DetailCahootsVO vd = vacationDetailList.get(0);
+        List<String> images = vacationDetailList.stream().map(DetailCahootsVO::getImages).collect(Collectors.toList());
+
+        return DetailCahootsDto.builder()
+                .id(vd.getId())
+                .title(vd.getTitle())
+                .country(vd.getCountry())
+                .description(vd.getDescription())
+                .location(vd.getLocation())
+                .expectedMonth(vd.getExpectedMonth())
+                .expectedTotalCost(vd.getExpectedTotalCost())
+                .shortDescription(vd.getShortDescription())
+                .stockStart(vd.getStockStart())
+                .stockEnd(vd.getStockEnd())
+                .stockPrice(vd.getStockPrice())
+                .stockNum(vd.getStockNum())
+                .competitionRate(vd.getCompetitionRate())
+                .expectedRateOfReturn(vd.getExpectedRateOfReturn())
+                .themeLocation(vd.getThemeLocation())
+                .themeBuilding(vd.getThemeBuilding())
+                .status(vd.getStatus())
+                .images(images)
+                .interestCount(vd.getInterestCount())
+                .isInterest(vd.getIsInterest())
+                .build();
+    }
 
     public DetailCahootsDto checkNull(){
         if(this.id == null) {
