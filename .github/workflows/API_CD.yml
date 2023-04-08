@@ -66,10 +66,8 @@ jobs:
           port: ${{ secrets.EC2_REMOTE_SSH_PORT }}
           envs: GITHUB_SHA
           script: |
-#            sudo docker rm -f wm-api-server
             sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/wm-api-serverr:${GITHUB_SHA::7}
             docker run -d -p 8082:8080 --name wm-api-serverr --add-host host.docker.internal:host-gateway ${{ secrets.DOCKERHUB_USERNAME }}/wm-api-serverr:${GITHUB_SHA::7}
-#            docker image prune -af
 
       - name: Discord notification
         env:
