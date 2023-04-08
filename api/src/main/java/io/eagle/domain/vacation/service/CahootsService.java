@@ -4,6 +4,7 @@ import io.eagle.domain.interest.repository.InterestRepository;
 import io.eagle.domain.picture.S3;
 import io.eagle.domain.vacation.dto.request.CreateCahootsDto;
 import io.eagle.domain.vacation.dto.response.*;
+import io.eagle.domain.vacation.vo.DetailCahootsVO;
 import io.eagle.entity.Interest;
 import io.eagle.entity.Picture;
 import io.eagle.domain.picture.repository.PictureRepository;
@@ -45,12 +46,8 @@ public class CahootsService {
     }
 
     public DetailCahootsDto getDetail(Long cahootsId, Long userId) {
-        DetailCahootsDto detailCahootsDto = vacationRepository.getVacationDetail(cahootsId).checkNull();
-        List<Interest> interests = interestRepository.findByVacation(vacationRepository.getReferenceById(cahootsId));
-        detailCahootsDto.setInterestCount(interests.size());
-        Boolean isInterest = (userId != null ? interests.stream().map(Interest::getUser).map(User::getId).anyMatch(id -> id.equals(userId)) : false);
-        detailCahootsDto.setIsInterest(isInterest);
-        detailCahootsDto.setImages(getImageUrls(cahootsId));
+        List<DetailCahootsVO> vacationDetailList = vacationRepository.findVacationDetail(cahootsId, userId);
+        DetailCahootsDto detailCahootsDto = DetailCahootsDto.toDto(vacationDetailList);
         return detailCahootsDto;
     }
 
