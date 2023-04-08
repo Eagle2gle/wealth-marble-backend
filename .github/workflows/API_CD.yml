@@ -53,9 +53,9 @@ jobs:
       - name: 도커 이미지 빌드 및 도커 허브 푸쉬
         run: |
           docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
-          docker build -t wm-api-server ./api
-          docker tag wm-api-server ${{ secrets.DOCKERHUB_USERNAME }}/wm-api-server:${GITHUB_SHA::7}
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/wm-api-server:${GITHUB_SHA::7}
+          docker build -t wm-api-server2 ./api
+          docker tag wm-api-server2 ${{ secrets.DOCKERHUB_USERNAME }}/wm-api-server2:${GITHUB_SHA::7}
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/wm-api-server2:${GITHUB_SHA::7}
 
       - name: execute remot ssh
         uses: appleboy/ssh-action@master
@@ -66,10 +66,10 @@ jobs:
           port: ${{ secrets.EC2_REMOTE_SSH_PORT }}
           envs: GITHUB_SHA
           script: |
-            sudo docker rm -f wm-api-server
-            sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/wm-api-server:${GITHUB_SHA::7}
-            docker run -d -p 8080:8080 --name wm-api-server --add-host host.docker.internal:host-gateway ${{ secrets.DOCKERHUB_USERNAME }}/wm-api-server:${GITHUB_SHA::7}
-            docker image prune -af
+#            sudo docker rm -f wm-api-server
+            sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/wm-api-server2:${GITHUB_SHA::7}
+            docker run -d -p 8082:8080 --name wm-api-server2 --add-host host.docker.internal:host-gateway ${{ secrets.DOCKERHUB_USERNAME }}/wm-api-server2:${GITHUB_SHA::7}
+#            docker image prune -af
 
       - name: Discord notification
         env:
