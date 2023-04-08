@@ -2,6 +2,7 @@ package io.eagle.domain.vacation.repository;
 
 import io.eagle.domain.vacation.dto.*;
 import io.eagle.domain.vacation.dto.response.*;
+import io.eagle.domain.vacation.vo.DetailCahootsVO;
 import io.eagle.entity.Vacation;
 import io.eagle.entity.type.VacationStatusType;
 import org.springframework.data.domain.Pageable;
@@ -10,6 +11,7 @@ import java.util.List;
 
 public interface VacationCustom {
     DetailCahootsDto getVacationDetail(Long cahootsId);
+    List<DetailCahootsVO> findVacationDetail(Long cahootsId, Long userId);
 
     List<Long> findVacationIdByUserInterested(Long userId);
     List<BreifCahootsDto> getVacationsBreif(InfoConditionDto infoConditionDto);

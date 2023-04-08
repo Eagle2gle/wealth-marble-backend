@@ -1,12 +1,18 @@
 package io.eagle.domain.vacation.repository;
 
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.CaseBuilder;
+import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.JPQLQueryFactory;
 import io.eagle.domain.vacation.dto.*;
 import io.eagle.domain.vacation.dto.response.*;
+import io.eagle.domain.vacation.vo.DetailCahootsVO;
 import io.eagle.domain.vacation.vo.MarketQueryVO;
 import io.eagle.entity.Vacation;
 import io.eagle.entity.type.VacationStatusType;
@@ -21,6 +27,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.querydsl.core.types.ExpressionUtils.count;
 import static io.eagle.entity.QContestParticipation.contestParticipation;
 import static io.eagle.entity.QInterest.interest;
 import static io.eagle.entity.QPicture.picture;
@@ -68,6 +75,47 @@ public class VacationCustomImpl implements VacationCustom {
                 .leftJoin(vacation.historyList, contestParticipation)
                 .where(vacation.id.eq(cahootsId))
                 .fetchOne();
+    }
+
+    public List<DetailCahootsVO> findVacationDetail(Long cahootsId, Long userId){
+        JPQLQuery<DetailCahootsVO> query = queryFactory
+                .select(Projections.fields(DetailCahootsVO.class,
+                        vacation.id,
+                        vacation.title,
+                        vacation.location,
+                        vacation.country,
+                        vacation.status,
+                        vacation.theme.themeLocation,
+                        vacation.theme.themeBuilding,
+                        vacation.plan.expectedTotalCost,
+                        vacation.plan.expectedMonth,
+                        vacation.shortDescription,
+                        vacation.description,
+                        vacation.expectedRateOfReturn,
+                        vacation.stock.price.as("stockPrice"),
+                        vacation.stock.num.as("stockNum"),
+                        vacation.stockPeriod.start.as("stockStart"),
+                        vacation.stockPeriod.end.as("stockEnd"),
+                        picture.url.as("images"),
+                        ExpressionUtils.as(JPAExpressions.select(interest.id.count().intValue()).from(interest)
+                                        .where(interest.vacation.id.eq(cahootsId)),"interestCount"),
+                        interest.user.id.isNotNull().as("isInterest"),
+                        ExpressionUtils.as((contestParticipation.stocks.sum().coalesce(0).multiply(100).divide(vacation.stock.num)), "competitionRate")))
+                .from(vacation)
+                .leftJoin(vacation.historyList, contestParticipation)
+                .leftJoin(picture).on(picture.vacation.id.eq(cahootsId))
+                .leftJoin(interest);
+
+        if(userId == null){
+            return query.on(interest.vacation.id.eq(cahootsId))
+                    .where(vacation.id.eq(cahootsId))
+                    .groupBy(picture.url)
+                    .fetch();
+        }
+        return query.on(interest.vacation.id.eq(cahootsId), isInterest(userId))
+                .where(vacation.id.eq(cahootsId))
+                .groupBy(picture.url)
+                .fetch();
     }
 
     public List<Long> findVacationIdByUserInterested(Long userId) {
