@@ -1,5 +1,6 @@
 package io.eagle.chunk.processor;
 
+import io.eagle.domain.ContestParticipationVO;
 import io.eagle.entity.*;
 import io.eagle.entity.type.OrderStatus;
 import io.eagle.entity.type.VacationStatusType;
@@ -22,33 +23,32 @@ public class CreateStockProcessor implements ItemProcessor<Vacation, List<Stock>
 
     @Override
     public List<Stock> process(Vacation item) throws Exception {
-        List<ContestParticipation> contestParticipations = this.findAllContestParticipationByVacation(item.getId());
+        List<ContestParticipationVO> contestParticipations = this.findAllContestParticipationByVacation(item.getId());
         Integer total = this.totalAmount(contestParticipations);
         return this.assignStocks(contestParticipations, total, item);
     }
 
-    private List<Stock> assignStocks(List<ContestParticipation> contestParticipations, Integer total, Vacation item) {
+    private List<Stock> assignStocks(List<ContestParticipationVO> contestParticipations, Integer total, Vacation item) {
         List<Stock> stocks = new ArrayList<>();
-        for (ContestParticipation contestParticipation: contestParticipations) {
-            User user = contestParticipation.getUser();
-            if (total <= 0) {
-                stocks.add(this.createStock(user, item, 0));
-            } else {
-                Double amount = Math.ceil(contestParticipation.getStocks() * 100 / total);
-                if (total <= amount.intValue()) {
+        for (ContestParticipationVO contestParticipation: contestParticipations) {
+            Long userId = contestParticipation.getUserId();
+            User user = findUserById(userId);
+            if (total > 0) {
+                Integer amount = Math.round(contestParticipation.getStocks() * item.getStock().getNum() / total);
+                if (total <= amount) {
                     stocks.add(this.createStock(user, item, total));
                     total = 0;
                 } else {
                     stocks.add(this.createStock(user, item, amount.intValue()));
-                    total -= amount.intValue();
+                    total -= amount;
                 }
             }
         }
         return stocks;
     }
 
-    private Integer totalAmount(List<ContestParticipation> contestParticipations) {
-        return contestParticipations.stream().mapToInt(ContestParticipation::getStocks).sum();
+    private Integer totalAmount(List<ContestParticipationVO> contestParticipations) {
+        return contestParticipations.stream().mapToInt(ContestParticipationVO::getStocks).sum();
     }
 
     private Stock createStock(User user, Vacation vacation, Integer amount) {
@@ -60,11 +60,25 @@ public class CreateStockProcessor implements ItemProcessor<Vacation, List<Stock>
             .build();
     }
 
-    private List<ContestParticipation> findAllContestParticipationByVacation(Long vacationId) {
+    private List<ContestParticipationVO> findAllContestParticipationByVacation(Long vacationId) {
         return jdbcTemplate.query(
-            "select * from contest_participation as c where c.cahoots_id = ?",
-            new BeanPropertyRowMapper<>(ContestParticipation.class),
+            "select c.id, c.user_id as userId, c.cahoots_id as vacationId, c.stocks, c.status" +
+                " from contest_participation as c where c.cahoots_id = ?",
+            new BeanPropertyRowMapper<>(ContestParticipationVO.class),
             vacationId
         );
+    }
+
+    private User findUserById(Long userId) {
+        List<User> users = jdbcTemplate.query(
+            "select * from user as u where u.id = ?",
+            new BeanPropertyRowMapper<>(User.class),
+            userId
+        );
+
+        if (users == null || users.size() < 1) {
+            return null;
+        }
+        return users.get(0);
     }
 }
