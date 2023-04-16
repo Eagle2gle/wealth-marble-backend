@@ -70,22 +70,29 @@ public class TransactionService {
         return sseEmitter;
     }
 
-    public void publishRecentTransaction(RecentTransactionRequestDto request) {
+    public String publishRecentTransaction(RecentTransactionRequestDto request) {
         Set<String> deadRandomIds = new HashSet<>();
         RecentTransactionResponseDto response = this.createRecentTransactionResponseDto(request);
-        CLIENTS.forEach((randomId, emitter) -> {
-            try {
-                emitter.send(ApiResponse.createSuccess(response));
-            } catch (Exception e) {
-                deadRandomIds.add(randomId);
-            }
-        });
-        deadRandomIds.forEach(CLIENTS::remove);
+        if (response != null) {
+            CLIENTS.forEach((randomId, emitter) -> {
+                try {
+                    emitter.send(ApiResponse.createSuccess(response));
+                } catch (Exception e) {
+                    deadRandomIds.add(randomId);
+                }
+            });
+            deadRandomIds.forEach(CLIENTS::remove);
+            return "success";
+        }
+        return "fail";
     }
 
     public RecentTransactionResponseDto createRecentTransactionResponseDto(RecentTransactionRequestDto request) {
         Long vacationId = request.getVacationId();
         Vacation vacation = vacationRepository.findById(vacationId).orElse(null);
+        if (vacation == null || request.getCurrentPrice().equals(0)) {
+            return null;
+        }
         try {
             List<String> pictureUrls = pictureRepository.findUrlsByCahootsId(vacationId);
             PriceInfo priceInfo = priceInfoRepository.findOneByVacationId(vacationId);
