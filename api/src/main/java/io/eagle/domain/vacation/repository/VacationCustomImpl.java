@@ -236,6 +236,28 @@ public class VacationCustomImpl implements VacationCustom {
             .collect(Collectors.toList());
     }
 
+    @Override
+    public List<MarketRankDto> findTop5MarketByPrice() {
+        String sql = findTop5VacationSQL("t.price");
+        JpaResultMapper jpaResultMapper = new JpaResultMapper();
+        Query query = entityManager.createNativeQuery(sql);
+        return jpaResultMapper.list(query, MarketQueryVO.class)
+            .stream().map(MarketRankDto::new)
+            .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<MarketRankDto> findTop5MarketByPriceRate() {
+        String sql = findTop5VacationSQL(
+            "(t.price - price.standard_price) / price.standard_price * 100"
+        );
+        JpaResultMapper jpaResultMapper = new JpaResultMapper();
+        Query query = entityManager.createNativeQuery(sql);
+        return jpaResultMapper.list(query, MarketQueryVO.class)
+            .stream().map(MarketRankDto::new)
+            .collect(Collectors.toList());
+    }
+
     private String findTop5VacationSQL(String property) {
         return "" +
             "SELECT v.id as vacationId, " +
