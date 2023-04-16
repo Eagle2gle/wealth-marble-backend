@@ -12,6 +12,7 @@ import io.eagle.domain.transaction.dto.response.UserTransactionInfoDto;
 import io.eagle.domain.transaction.repository.TransactionRepository;
 import io.eagle.domain.vacation.repository.VacationRepository;
 import io.eagle.entity.PriceInfo;
+import io.eagle.entity.Transaction;
 import io.eagle.entity.User;
 import io.eagle.entity.Vacation;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -59,8 +61,10 @@ public class TransactionService {
         SseEmitter sseEmitter = new SseEmitter(60000L);
         CLIENTS.put(randomId, sseEmitter);
 
+        List<RecentTransactionResponseDto> recentTransactions = transactionRepository.findRecentTransactions().stream().map(this::createRecentTransactionResponseDto).collect(Collectors.toList());
+
         try {
-            sseEmitter.send(SseEmitter.event().name("connect").data("connected"));
+            sseEmitter.send(SseEmitter.event().name("connect").data(recentTransactions));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -70,22 +74,29 @@ public class TransactionService {
         return sseEmitter;
     }
 
-    public void publishRecentTransaction(RecentTransactionRequestDto request) {
+    public String publishRecentTransaction(RecentTransactionRequestDto request) {
         Set<String> deadRandomIds = new HashSet<>();
         RecentTransactionResponseDto response = this.createRecentTransactionResponseDto(request);
-        CLIENTS.forEach((randomId, emitter) -> {
-            try {
-                emitter.send(ApiResponse.createSuccess(response));
-            } catch (Exception e) {
-                deadRandomIds.add(randomId);
-            }
-        });
-        deadRandomIds.forEach(CLIENTS::remove);
+        if (response != null) {
+            CLIENTS.forEach((randomId, emitter) -> {
+                try {
+                    emitter.send(ApiResponse.createSuccess(response));
+                } catch (Exception e) {
+                    deadRandomIds.add(randomId);
+                }
+            });
+            deadRandomIds.forEach(CLIENTS::remove);
+            return "success";
+        }
+        return "fail";
     }
 
     public RecentTransactionResponseDto createRecentTransactionResponseDto(RecentTransactionRequestDto request) {
         Long vacationId = request.getVacationId();
         Vacation vacation = vacationRepository.findById(vacationId).orElse(null);
+        if (vacation == null || request.getCurrentPrice().equals(0)) {
+            return null;
+        }
         try {
             List<String> pictureUrls = pictureRepository.findUrlsByCahootsId(vacationId);
             PriceInfo priceInfo = priceInfoRepository.findOneByVacationId(vacationId);
