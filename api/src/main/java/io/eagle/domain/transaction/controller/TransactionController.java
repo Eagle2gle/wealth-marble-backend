@@ -4,6 +4,7 @@ import io.eagle.auth.AuthDetails;
 import io.eagle.common.ApiResponse;
 import io.eagle.domain.transaction.dto.request.RecentTransactionRequestDto;
 import io.eagle.domain.transaction.dto.request.TransactionRequestDto;
+import io.eagle.domain.transaction.dto.response.RecentTransactionResponseDto;
 import io.eagle.domain.transaction.service.TransactionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -66,7 +67,10 @@ public class TransactionController {
     @PostMapping("/transactions/publish-recent")
     public ApiResponse publishRecentTransaction(@RequestBody RecentTransactionRequestDto request) {
         try {
-            transactionService.publishRecentTransaction(request);
+            String result = transactionService.publishRecentTransaction(request);
+            if (result.equals("fail")) {
+                return ApiResponse.createError("잘못된 형식의 데이터입니다.");
+            }
             return ApiResponse.createSuccessWithNoContent();
         } catch (Exception e) {
             return ApiResponse.createError("Cannot Send Data");
