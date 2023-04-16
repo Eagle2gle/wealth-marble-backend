@@ -1,5 +1,6 @@
 package io.eagle.domain.transaction.repository;
 
+import io.eagle.domain.transaction.dto.request.RecentTransactionRequestDto;
 import io.eagle.domain.transaction.dto.request.TransactionRequestDto;
 import io.eagle.domain.transaction.dto.response.TransactionResponseDto;
 import io.eagle.entity.Order;
@@ -13,5 +14,6 @@ public interface TransactionRepositoryCustom {
     List<Transaction> findAllByOrder(Order order);
     Transaction findOneByVacation(Long vacationId);
     List<TransactionResponseDto> findByVacationOrderByCreatedAtDesc(Pageable pageable, TransactionRequestDto requestDto);
+    List<RecentTransactionRequestDto> findRecentTransactions();
 
 }

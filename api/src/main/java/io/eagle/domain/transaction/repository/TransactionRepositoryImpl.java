@@ -3,6 +3,7 @@ package io.eagle.domain.transaction.repository;
 import com.querydsl.core.types.dsl.DateTemplate;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.JPQLQueryFactory;
+import io.eagle.domain.transaction.dto.request.RecentTransactionRequestDto;
 import io.eagle.domain.transaction.dto.response.QTransactionResponseDto;
 import io.eagle.domain.transaction.dto.request.TransactionRequestDto;
 import io.eagle.domain.transaction.dto.response.TransactionResponseDto;
@@ -60,6 +61,22 @@ public class TransactionRepositoryImpl implements TransactionRepositoryCustom{
             .limit(page.getPageSize())
             .orderBy(transaction.createdAt.desc())
             .fetch();
+    }
+
+    @Override
+    public List<RecentTransactionRequestDto> findRecentTransactions() {
+        return jpqlQueryFactory
+            .selectFrom(transaction)
+            .orderBy(transaction.createdAt.desc())
+            .limit(5L)
+            .fetch()
+            .stream()
+            .map(t -> RecentTransactionRequestDto.builder()
+                .vacationId(t.getVacation().getId())
+                .currentPrice(t.getPrice())
+                .createdAt(t.getCreatedAt())
+                .build()
+            ).collect(Collectors.toList());
     }
 
     private DateTemplate<LocalDateTime> convertIntoDateTemplate(LocalDate date) {
