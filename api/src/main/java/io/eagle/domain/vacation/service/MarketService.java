@@ -24,10 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static io.eagle.entity.type.MarketRankingType.CountryKey;
@@ -127,12 +124,22 @@ public class MarketService {
     }
 
     public List<MarketRankDto> getTop5MarketRankingByProperty(MarketRankingType type, Boolean upOrDown) {
-        return this.findMarketRankInRedis(type.getKey(), upOrDown)
+        List<MarketRankDto> markets = this.findMarketRankInRedis(type.getKey(), upOrDown)
             .stream()
             .map(e -> this.findMarketRankInfoById(
                 Long.parseLong(Objects.requireNonNull(e)))
             )
             .collect(Collectors.toList());
+
+        removeNullElements(markets);
+        if (markets.size() == 0) {
+            if (type.equals(MarketRankingType.PRICE)) {
+                return vacationRepository.findTop5MarketByPrice();
+            } else {
+                return vacationRepository.findTop5MarketByPriceRate();
+            }
+        }
+        return markets;
     }
 
     public List<RecommendMarketDto> getRecommendMarketByCountry(String country, Long userId){
@@ -171,5 +178,12 @@ public class MarketService {
         if(vacation.getStatus() != MARKET_ONGOING){
             throw new ApiException(VACATION_IS_NOT_MARKET);
         }
+    }
+
+    private void removeNullElements(List<?> list) {
+        if (list == null) {
+            return;
+        }
+        list.removeAll(Collections.singleton(null));
     }
 }

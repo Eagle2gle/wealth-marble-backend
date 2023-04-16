@@ -22,5 +22,7 @@ public interface VacationCustom {
     RecommendMarketDto getRecommendMarket(Long vacationId, Long userId);
     List<MarketRankDto> findTop5VacationByReward();
     List<MarketRankDto> findTop5VacationByTransaction();
+    List<MarketRankDto> findTop5MarketByPrice();
+    List<MarketRankDto> findTop5MarketByPriceRate();
 
 }
