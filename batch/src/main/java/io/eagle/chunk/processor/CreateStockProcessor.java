@@ -31,17 +31,16 @@ public class CreateStockProcessor implements ItemProcessor<Vacation, List<Stock>
     private List<Stock> assignStocks(List<ContestParticipationVO> contestParticipations, Integer total, Vacation item) {
         List<Stock> stocks = new ArrayList<>();
         for (ContestParticipationVO contestParticipation: contestParticipations) {
-            System.out.println(contestParticipation.toString());
             Long userId = contestParticipation.getUserId();
             User user = findUserById(userId);
             if (total > 0) {
-                Double amount = Math.ceil(contestParticipation.getStocks() * 100 / total);
-                if (total <= amount.intValue()) {
+                Integer amount = Math.round(contestParticipation.getStocks() * item.getStock().getNum() / total);
+                if (total <= amount) {
                     stocks.add(this.createStock(user, item, total));
                     total = 0;
                 } else {
                     stocks.add(this.createStock(user, item, amount.intValue()));
-                    total -= amount.intValue();
+                    total -= amount;
                 }
             }
         }
