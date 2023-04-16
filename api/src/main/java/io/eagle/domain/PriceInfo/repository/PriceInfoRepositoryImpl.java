@@ -42,9 +42,19 @@ public class PriceInfoRepositoryImpl implements PriceInfoRepositoryCustom {
     public PriceInfo getYesterdayPriceInfo() {
         DateTemplate<LocalDateTime> formattedDate = Expressions.dateTemplate(LocalDateTime.class, "DATE_FORMAT({0}, {1})", priceInfo.createdAt, "%Y-%m-%d");
         DateTemplate<LocalDateTime> yesterday = Expressions.dateTemplate(LocalDateTime.class, "DATE_FORMAT({0}, {1})", LocalDate.now().minusDays(1), "%Y-%m-%d");
-        return jpqlQueryFactory
+        List<PriceInfo> priceInfos = jpqlQueryFactory
             .selectFrom(priceInfo)
             .where(formattedDate.eq(yesterday))
-            .fetchOne();
+            .fetch();
+
+        if (priceInfos == null || priceInfos.size() < 1) {
+            return PriceInfo.builder()
+                .standardPrice(0)
+                .highPrice(0)
+                .lowPrice(0)
+                .transactionAmount(0)
+                .build();
+        }
+        return priceInfos.get(0);
     }
 }
