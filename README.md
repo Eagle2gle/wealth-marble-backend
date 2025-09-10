@@ -26,7 +26,7 @@
 <table>
   <tbody>
     <tr>
-        <td align="center"><a href="https://github.com/CEOJINSUNG">김진성</a></td>
+        <td align="center"><a href="https://github.com/Jinovate">김진성</a></td>
         <td align="center"><a href="https://github.com/NaayoungKwon">권나영</a></td>
         <td align="center"><a href="https://github.com/m4nd4r1n">김도형</a></td>
         <td align="center"><a href="https://github.com/YuriKwon">권유리</a></td>
